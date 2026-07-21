@@ -1,4 +1,4 @@
-import { getStore } from '@netlify/blobs';
+import { getStore, connectLambda } from '@netlify/blobs';
 import type { Context } from '@netlify/functions';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
@@ -6,6 +6,13 @@ import crypto from 'crypto';
 // Store names
 const DATA_STORE = 'portfolio-data';
 const UPLOADS_STORE = 'portfolio-uploads';
+
+// Must be called once per request before using getStore in Lambda mode
+export function initBlobs(event: any) {
+  if (event) {
+    try { connectLambda(event); } catch {}
+  }
+}
 
 // Data keys
 export const KEYS = {
@@ -27,11 +34,21 @@ export const KEYS = {
 
 // Get the portfolio data store
 export function getDataStore() {
+  const siteID = process.env.NETLIFY_SITE_ID || process.env.SITE_ID;
+  const token = process.env.NETLIFY_BLOBS_TOKEN || process.env.BLOBS_TOKEN;
+  if (siteID && token) {
+    return getStore({ name: DATA_STORE, consistency: 'strong', siteID, token });
+  }
   return getStore({ name: DATA_STORE, consistency: 'strong' });
 }
 
 // Get the uploads store
 export function getUploadsStore() {
+  const siteID = process.env.NETLIFY_SITE_ID || process.env.SITE_ID;
+  const token = process.env.NETLIFY_BLOBS_TOKEN || process.env.BLOBS_TOKEN;
+  if (siteID && token) {
+    return getStore({ name: UPLOADS_STORE, consistency: 'strong', siteID, token });
+  }
   return getStore({ name: UPLOADS_STORE, consistency: 'strong' });
 }
 

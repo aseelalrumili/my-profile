@@ -1,7 +1,8 @@
 import type { Context } from '@netlify/functions';
-import { getUploadsStore, binary, notFound, getMimeType } from './_lib';
+import { getUploadsStore, binary, notFound, getMimeType, initBlobs } from './_lib';
 
 export const handler = async (event: any, context: any) => {
+  initBlobs(event);
   // Handle CORS preflight
   if (event.httpMethod === 'OPTIONS') {
     return {

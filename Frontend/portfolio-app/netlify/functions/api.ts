@@ -21,6 +21,7 @@ import {
   KEYS,
   getUploadsStore,
   FunctionResponse,
+  initBlobs,
 } from './_lib';
 
 function matchPath(pattern: string, path: string): Record<string, string> | null {
@@ -164,6 +165,7 @@ async function handleSubCrud(
 }
 
 export const handler = async (event: any, context: any): Promise<FunctionResponse> => {
+  initBlobs(event);
   try {
     const method = event.httpMethod || 'GET';
     const rawPath = event.path || '/';
