@@ -167,7 +167,7 @@ export const handler = async (event: any, context: any): Promise<FunctionRespons
   try {
     const method = event.httpMethod || 'GET';
     const rawPath = event.path || '/';
-    const path = rawPath.replace(/^\/api/, '') || '/';
+    const path = rawPath.replace(/^\/\.netlify\/functions\/api/, '').replace(/^\/api/, '') || '/';
     const segments = getSegments(path);
 
     if (segments.length === 0 || (segments.length === 1 && segments[0] === '')) {
