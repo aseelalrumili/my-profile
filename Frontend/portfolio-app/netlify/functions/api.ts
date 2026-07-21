@@ -163,7 +163,7 @@ async function handleSubCrud(
   return null;
 }
 
-export default async (event: any, context: any): Promise<FunctionResponse> => {
+export const handler = async (event: any, context: any): Promise<FunctionResponse> => {
   try {
     const method = event.httpMethod || 'GET';
     const rawPath = event.path || '/';
