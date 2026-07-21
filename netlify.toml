@@ -1,0 +1,26 @@
+[build]
+  base = "Frontend/portfolio-app"
+  command = "npm run build"
+  publish = "dist"
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# API routes → Netlify Function
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+
+# Upload routes → get-upload function
+[[redirects]]
+  from = "/uploads/*"
+  to = "/.netlify/functions/get-upload/:splat"
+  status = 200
+
+# SPA fallback — must be LAST
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

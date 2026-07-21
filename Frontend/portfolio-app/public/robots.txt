@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /panel-access
+Disallow: /api/
+
+Sitemap: https://asilux.dev/sitemap.xml

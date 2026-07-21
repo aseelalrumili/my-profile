@@ -1,0 +1,46 @@
+/* ===== PRINT STYLES ===== */
+@media print {
+  *, *::before, *::after {
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    text-shadow: none !important;
+  }
+
+  body, html {
+    background: white !important;
+    color: #000 !important;
+  }
+
+  .nav, .footer, .back-to-top, .resume-print-btn, .particles-container,
+  .reading-progress, .hero-social, .hero-actions,
+  .admin-overlay, .login-overlay, .mobile-menu, .mobile-menu-overlay,
+  .hero-scroll-indicator { 
+    display: none !important; 
+  }
+
+  a { color: #000 !important; text-decoration: underline !important; }
+  
+  h1, h2, h3, h4, h5, h6 { color: #000 !important; }
+  
+  .resume-page { padding: 0 !important; max-width: 100% !important; }
+  .resume-header h1 { color: #000 !important; font-size: 1.5rem !important; }
+  .resume-header .job-title { color: #333 !important; }
+  .resume-section h2 { color: #333 !important; border-bottom-color: #ccc !important; }
+  .resume-item .period { color: #333 !important; }
+  .resume-item .description { color: #333 !important; }
+  .resume-skill-tag { border-color: #ccc !important; color: #333 !important; }
+
+  .hero-section { 
+    background: white !important; 
+    min-height: auto !important;
+    padding: 2rem 0 !important; 
+  }
+  
+  .hero-gradient-bg { display: none !important; }
+  .floating-shape { display: none !important; }
+  
+  img { max-width: 100% !important; filter: grayscale(100%) !important; }
+  
+  .section { break-inside: avoid; padding: 2rem 1rem !important; }
+}

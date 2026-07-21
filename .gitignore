@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+dist/
+.env
+.env.local
+
+# .NET
+Backend/PortfolioAPI/bin/
+Backend/PortfolioAPI/obj/
+Backend/PortfolioAPI/appsettings.Development.json
+
+# Backend secrets
+Backend/PortfolioAPI/appsettings.json
+Backend/PortfolioAPI/.env
+Backend/PortfolioAPI/appsettings.Example.json
+
+# Uploads
+Uploads/*
+!Uploads/.gitkeep
+Backend/PortfolioAPI/wwwroot/uploads/*
+
+# IDE
+.vs/
+.vscode/
+*.user
+*.suo
+
+# Logs
+*.log

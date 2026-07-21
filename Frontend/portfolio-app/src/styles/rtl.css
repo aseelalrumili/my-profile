@@ -1,0 +1,10 @@
+/* ===== RTL SUPPORT ===== */
+[dir="rtl"] .timeline { padding-left: 0; padding-right: var(--space-5); }
+[dir="rtl"] .timeline::before { left: auto; right: 0; }
+[dir="rtl"] .timeline-item::before { left: auto; right: calc(-1 * var(--space-5)); transform: translateX(4px); }
+[dir="rtl"] .mobile-menu { right: auto; left: 0; border-left: none; border-right: 1px solid var(--border); }
+[dir="rtl"] .mobile-menu-close { right: auto; left: 1.25rem; }
+[dir="rtl"] .about-timeline { padding-left: 0; padding-right: var(--space-5); }
+[dir="rtl"] .about-timeline::before { left: auto; right: 0; }
+[dir="rtl"] .about-timeline-dot { left: auto; right: calc(-1 * var(--space-5)); transform: translateX(4px); }
+[dir="rtl"] .back-to-top { right: auto; left: 2rem; }

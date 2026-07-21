@@ -1,0 +1,32 @@
+import type { AppData } from './types';
+
+export const fallbackData: AppData = {
+  profile: {
+    id: 1,
+    fullName: 'Asil Al-Aziz Al-Rumaili',
+    fullNameAr: 'أصيل العزي محمد الرميلي',
+    jobTitle: 'Graphic Designer',
+    jobTitleAr: 'مصمم جرافيك',
+    bio: 'Crafting visual identities that communicate, inspire, and endure.',
+    bioAr: 'أبتكر هويات بصرية تواصل وتلهم وتدوم.',
+    photoUrl: '',
+    email: '',
+    location: 'Riyadh, KSA',
+    locationAr: 'الرياض، المملكة العربية السعودية',
+    heroEffect: 'Parallax' as const,
+    themeColor: '#c9a84c',
+    statsProjects: 0,
+    statsExperience: 0,
+    statsClients: 0,
+    statsAwards: 0,
+  },
+  socialLinks: [],
+  skills: [],
+  experience: [],
+  education: [],
+  certifications: [],
+  projects: [],
+  blogPosts: [],
+  testimonials: [],
+  settings: {},
+};

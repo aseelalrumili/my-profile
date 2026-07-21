@@ -1,0 +1,131 @@
+/* ===== RESUME PAGE (ATS-Friendly) ===== */
+.resume-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--space-7) var(--container-padding) var(--space-6);
+}
+
+.resume-actions {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+}
+
+.resume-content {
+  background: var(--bg-primary);
+  padding: var(--space-5);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.resume-header {
+  text-align: center;
+  margin-bottom: var(--space-5);
+  padding-bottom: var(--space-4);
+  border-bottom: 2px solid var(--accent);
+}
+
+.resume-header h1 {
+  font-size: var(--fs-h1);
+  font-weight: var(--fw-bold);
+  margin-bottom: var(--space-2);
+}
+
+.resume-header .job-title {
+  color: var(--accent);
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-regular);
+}
+
+.resume-section {
+  margin-bottom: var(--space-5);
+}
+
+.resume-section h2 {
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-semibold);
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border);
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.resume-text {
+  color: var(--text-secondary);
+  line-height: var(--lh-relaxed);
+  font-weight: var(--fw-regular);
+}
+
+.resume-contact {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+}
+
+.resume-skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.resume-skill-tag {
+  padding: var(--space-1) var(--space-3);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+}
+
+.resume-item {
+  margin-bottom: var(--space-4);
+}
+
+.resume-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.resume-item h3 {
+  font-size: var(--fs-body);
+  font-weight: var(--fw-semibold);
+}
+
+.resume-period {
+  color: var(--accent);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  white-space: nowrap;
+}
+
+.resume-institution {
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+}
+
+.resume-description {
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-relaxed);
+  margin-top: var(--space-1);
+  font-weight: var(--fw-regular);
+}
+
+/* Print styles */
+@media print {
+  .no-print { display: none !important; }
+  .resume-page { padding: 0; }
+  .resume-content { border: none; padding: 0; }
+  body { background: white; color: black; }
+  .resume-section h2 { border-bottom-color: #333; color: #333; }
+  .resume-header { border-bottom-color: #333; }
+  .resume-period { color: #333; }
+  .resume-skill-tag { background: #f0f0f0; border-color: #ccc; }
+}

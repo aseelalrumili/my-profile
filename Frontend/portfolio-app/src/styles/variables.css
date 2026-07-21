@@ -1,0 +1,119 @@
+/* ===== DESIGN SYSTEM — variables.css ===== */
+
+/* ─── Palette: Dark ─── */
+:root, [data-theme="dark"] {
+  --bg-primary: #0b0e14;
+  --bg-secondary: #12161f;
+  --bg-elevated: #1a2030;
+  --bg-card: rgba(26, 39, 68, 0.35);
+  --bg-glass: rgba(18, 22, 31, 0.7);
+
+  --border: rgba(201, 168, 76, 0.14);
+  --border-hover: rgba(201, 168, 76, 0.4);
+
+  --text: #eef0f4;
+  --text-secondary: #a3a9b8;
+  --text-muted: #6b7280;
+
+  --accent: #c9a84c;
+  --accent-hover: #d9bd67;
+  --accent-secondary: #7c9cbf;
+  --navy: #1a2744;
+  --navy-light: #243352;
+
+  --success: #22c55e;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.25);
+  --shadow-md: 0 8px 32px rgba(0,0,0,0.3);
+  --shadow-lg: 0 20px 60px rgba(0,0,0,0.4);
+  --shadow: 0 8px 32px rgba(0,0,0,0.3);
+
+  --radius-sm: 8px;
+  --radius: 14px;
+  --radius-lg: 20px;
+}
+
+/* ─── Palette: Light ─── */
+[data-theme="light"] {
+  --bg-primary: #fafafa;
+  --bg-secondary: #ffffff;
+  --bg-elevated: #f2f3f5;
+  --bg-card: rgba(255,255,255,0.85);
+  --bg-glass: rgba(255,255,255,0.85);
+
+  --border: rgba(26,39,68,0.1);
+  --border-hover: rgba(26,39,68,0.28);
+
+  --text: #14161f;
+  --text-secondary: #4b5060;
+  --text-muted: #8a8f9a;
+
+  --accent: #8a6d1b;
+  --accent-hover: #a07f22;
+  --accent-secondary: #4a6f8f;
+  --navy: #1a2744;
+  --navy-light: #243352;
+
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-md: 0 8px 32px rgba(0,0,0,0.08);
+  --shadow-lg: 0 20px 60px rgba(0,0,0,0.1);
+  --shadow: 0 8px 32px rgba(0,0,0,0.08);
+}
+
+/* ─── Typography ─── */
+:root {
+  --font-heading: 'IBM Plex Sans Arabic', 'IBM Plex Sans', sans-serif;
+  --font-body: 'IBM Plex Sans', 'IBM Plex Sans Arabic', sans-serif;
+
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-body: 1rem;
+  --fs-lg: 1.25rem;
+  --fs-h3: 1.563rem;
+  --fs-h2: 1.953rem;
+  --fs-h1: 2.441rem;
+  --fs-hero: 3.815rem;
+
+  --fs-small: 0.8rem;
+
+  --lh-tight: 1.2;
+  --lh-normal: 1.6;
+  --lh-relaxed: 1.8;
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --fs-hero: 2.441rem;
+    --fs-h1: 1.953rem;
+    --fs-h2: 1.563rem;
+  }
+}
+
+/* ─── Spacing ─── */
+:root {
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 1rem;
+  --space-4: 1.5rem;
+  --space-5: 2.5rem;
+  --space-6: 4rem;
+  --space-7: 6rem;
+
+  --container-max: 1200px;
+  --container-padding: clamp(1rem, 5vw, 3rem);
+}
+
+/* ─── Motion ─── */
+:root {
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 150ms;
+  --dur-base: 300ms;
+  --dur-slow: 600ms;
+}

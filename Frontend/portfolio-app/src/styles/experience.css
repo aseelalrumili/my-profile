@@ -1,0 +1,59 @@
+/* ===== EXPERIENCE ===== */
+.timeline {
+  position: relative;
+  padding-left: var(--space-5);
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--border-hover);
+}
+
+.timeline-item {
+  position: relative;
+  padding-bottom: var(--space-5);
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: calc(-1 * var(--space-5));
+  top: 0.5rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 3px solid var(--bg-primary);
+  transform: translateX(-5px);
+}
+
+.timeline-item .period {
+  font-size: var(--fs-sm);
+  color: var(--accent);
+  margin-bottom: var(--space-1);
+  font-weight: var(--fw-medium);
+}
+
+.timeline-item h3 {
+  font-size: var(--fs-body);
+  font-weight: var(--fw-semibold);
+}
+
+.timeline-item .company {
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-2);
+}
+
+.timeline-item .desc {
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+  line-height: var(--lh-relaxed);
+  font-weight: var(--fw-regular);
+  max-width: 65ch;
+}
