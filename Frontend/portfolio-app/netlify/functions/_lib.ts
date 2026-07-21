@@ -37,9 +37,9 @@ export function getDataStore() {
   const siteID = process.env.NETLIFY_SITE_ID || process.env.SITE_ID;
   const token = process.env.NETLIFY_BLOBS_TOKEN || process.env.BLOBS_TOKEN;
   if (siteID && token) {
-    return getStore({ name: DATA_STORE, consistency: 'strong', siteID, token });
+    return getStore({ name: DATA_STORE });
   }
-  return getStore({ name: DATA_STORE, consistency: 'strong' });
+  return getStore({ name: DATA_STORE });
 }
 
 // Get the uploads store
@@ -47,9 +47,9 @@ export function getUploadsStore() {
   const siteID = process.env.NETLIFY_SITE_ID || process.env.SITE_ID;
   const token = process.env.NETLIFY_BLOBS_TOKEN || process.env.BLOBS_TOKEN;
   if (siteID && token) {
-    return getStore({ name: UPLOADS_STORE, consistency: 'strong', siteID, token });
+    return getStore({ name: UPLOADS_STORE });
   }
-  return getStore({ name: UPLOADS_STORE, consistency: 'strong' });
+  return getStore({ name: UPLOADS_STORE });
 }
 
 // Generic CRUD helpers for array-based entities
