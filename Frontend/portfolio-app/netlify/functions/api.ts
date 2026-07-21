@@ -831,6 +831,7 @@ export const handler = async (event: any, context: any): Promise<FunctionRespons
 
     return notFound('Route not found');
   } catch (err: any) {
+    console.error('API Error:', err);
     return serverError(err.message || 'Internal server error');
   }
 };
