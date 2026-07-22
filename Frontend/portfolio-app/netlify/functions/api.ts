@@ -908,39 +908,6 @@ export const handler = async (event: any, context: any): Promise<FunctionRespons
       }
     }
 
-    if (segments[0] === 'uploads' && segments.length === 2 && method === 'GET') {
-      const key = segments[1];
-      if (!key) return notFound('No file key provided');
-      try {
-        const store = getUploadsStore();
-        const data = await store.get(key);
-        if (!data) return notFound('File not found');
-        return binary(data, 200, getMimeType(key));
-      } catch {
-        return notFound('File not found');
-      }
-    }
-
-    if (segments[0] === 'upload' && method === 'POST') {
-      const auth = requireAuth(event);
-      if (!auth) return unauthorized();
-      const ct = event.headers['content-type'] || event.headers['Content-Type'] || '';
-      if (!ct.includes('multipart/form-data')) {
-        return badRequest('multipart/form-data required');
-      }
-      const fields = parseMultipart(ct, event.body || '', event.isBase64Encoded || false);
-      const fileFields = fields.filter((f: any) => f.filename);
-      if (fileFields.length === 0) return badRequest('No file uploaded');
-      const file = fileFields[0];
-      const fileData = file.data;
-      if (!fileData || fileData.length === 0) return badRequest('Empty file');
-      const maxSize = 50 * 1024 * 1024;
-      if (fileData.length > maxSize) return badRequest('File too large (max 50MB)');
-      const uploads = getUploadsStore();
-      const key = `${uuid()}-${file.filename}`;
-      uploads.set(key, { data: fileData, contentType: file.contentType || getMimeType(file.filename) });
-      return json({ url: `/api/uploads/${key}` }, 201);
-    }
 
     if (segments[0] === 'import' && method === 'POST') {
       const auth = requireAuth(event);
