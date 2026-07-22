@@ -226,6 +226,7 @@ export const handler = async (event: any, context: any): Promise<FunctionRespons
       const certifications = await getArray<any>(KEYS.CERTIFICATIONS);
       const blogPosts = await getArray<any>(KEYS.BLOG_POSTS);
       const testimonials = await getArray<any>(KEYS.TESTIMONIALS);
+      const reviews = await getArray<any>(KEYS.REVIEWS);
       const settings = await getObject<any>('settings') || {};
       return json({
         profile,
@@ -237,6 +238,7 @@ export const handler = async (event: any, context: any): Promise<FunctionRespons
         certifications,
         blogPosts,
         testimonials,
+        reviews,
         settings,
       });
     }
@@ -683,6 +685,94 @@ export const handler = async (event: any, context: any): Promise<FunctionRespons
       }
     }
 
+    if (segments[0] === 'reviews') {
+      if (segments.length === 1) {
+        if (method === 'GET') {
+          const reviews = await getArray<any>(KEYS.REVIEWS);
+          const approved = reviews.filter((r: any) => r.isApproved);
+          approved.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+          return json(approved);
+        }
+        if (method === 'POST') {
+          const body = parseJsonBody(event.body);
+          if (!body.name || !body.rating || !body.comment) {
+            return badRequest('name, rating, and comment are required');
+          }
+          const rating = parseInt(body.rating, 10);
+          if (isNaN(rating) || rating < 1 || rating > 5) {
+            return badRequest('rating must be between 1 and 5');
+          }
+          const review = {
+            id: nextId(await getArray<any>(KEYS.REVIEWS)),
+            name: body.name,
+            rating,
+            comment: body.comment,
+            isApproved: true,
+            createdAt: new Date().toISOString(),
+          };
+          const arr = [...await getArray<any>(KEYS.REVIEWS), review];
+          await setArray(KEYS.REVIEWS, arr);
+          return json(review, 201);
+        }
+      }
+
+      if (segments.length === 2 && segments[1] === 'all' && method === 'GET') {
+        const auth = requireAuth(event);
+        if (!auth) return unauthorized();
+        const reviews = await getArray<any>(KEYS.REVIEWS);
+        reviews.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        return json(reviews);
+      }
+
+      if (segments.length === 3 && segments[1] === 'stats' && method === 'GET') {
+        const reviews = await getArray<any>(KEYS.REVIEWS);
+        const approved = reviews.filter((r: any) => r.isApproved);
+        const total = approved.length;
+        const avg = total > 0 ? approved.reduce((sum: number, r: any) => sum + r.rating, 0) / total : 0;
+        return json({ total, average: Math.round(avg * 10) / 10 });
+      }
+
+      if (segments.length === 3 && isNumericId(segments[1])) {
+        const id = parseInt(segments[1], 10);
+
+        if (method === 'PUT') {
+          const auth = requireAuth(event);
+          if (!auth) return unauthorized();
+          const body = parseJsonBody(event.body);
+          const reviews = await getArray<any>(KEYS.REVIEWS);
+          const idx = reviews.findIndex((r: any) => r.id === id);
+          if (idx === -1) return notFound('Review not found');
+          reviews[idx] = { ...reviews[idx], ...body, id };
+          await setArray(KEYS.REVIEWS, reviews);
+          return json(reviews[idx]);
+        }
+
+        if (method === 'DELETE') {
+          const auth = requireAuth(event);
+          if (!auth) return unauthorized();
+          const reviews = await getArray<any>(KEYS.REVIEWS);
+          const filtered = reviews.filter((r: any) => r.id !== id);
+          if (filtered.length === reviews.length) return notFound('Review not found');
+          await setArray(KEYS.REVIEWS, filtered);
+          return json({ success: true });
+        }
+      }
+
+      if (segments.length === 4 && isNumericId(segments[1]) && segments[3] === 'approve') {
+        if (method === 'PUT') {
+          const auth = requireAuth(event);
+          if (!auth) return unauthorized();
+          const id = parseInt(segments[1], 10);
+          const reviews = await getArray<any>(KEYS.REVIEWS);
+          const idx = reviews.findIndex((r: any) => r.id === id);
+          if (idx === -1) return notFound('Review not found');
+          reviews[idx].isApproved = true;
+          await setArray(KEYS.REVIEWS, reviews);
+          return json(reviews[idx]);
+        }
+      }
+    }
+
     if (segments[0] === 'messages') {
       if (segments.length === 1) {
         if (method === 'GET') {
@@ -830,6 +920,7 @@ export const handler = async (event: any, context: any): Promise<FunctionRespons
         certifications: KEYS.CERTIFICATIONS,
         blogPosts: KEYS.BLOG_POSTS,
         testimonials: KEYS.TESTIMONIALS,
+        reviews: KEYS.REVIEWS,
         messages: KEYS.MESSAGES,
         visitors: KEYS.VISITORS,
         blogComments: KEYS.BLOG_COMMENTS,
