@@ -30,12 +30,12 @@ export default function ProjectCard({ project, onSelect, onKeyDown }: Props) {
       aria-label={`${getTitle()} - ${project.type}`}
     >
       {(() => {
-        const primaryImg = project.media.find((m) => m.mediaType === 'Image' && m.isPrimary) || project.media.find((m) => m.mediaType === 'Image');
+        const primaryImg = (project.media || []).find((m) => m.mediaType === 'Image' && m.isPrimary) || (project.media || []).find((m) => m.mediaType === 'Image');
         return primaryImg ? (
           <LazyImage src={primaryImg.url} alt={getTitle()} className="project-card-image" />
         ) : (
           <div className="project-card-image project-card-image-placeholder">
-            {project.media.length > 0 ? '3D Project' : 'No image'}
+            {(project.media || []).length > 0 ? '3D Project' : 'No image'}
           </div>
         );
       })()}
