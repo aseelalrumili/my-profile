@@ -42,8 +42,11 @@ export default function Reviews({ settings }: { settings?: Record<string, string
 
   const load = async () => {
     try {
-      const [r, s] = await Promise.all([fetchReviews(), fetchReviewStats()]);
+      const r = await fetchReviews();
       setReviews(r);
+    } catch {}
+    try {
+      const s = await fetchReviewStats();
       setStats(s);
     } catch {}
   };
