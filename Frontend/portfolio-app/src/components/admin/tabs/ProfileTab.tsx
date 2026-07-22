@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { updateProfile } from '../../../api/api';
-import { getUploadUrl } from '../../../api/client';
+import { getUploadUrl, fileToBase64 } from '../../../api/client';
 import type { AppData, Profile } from '../../../types';
 import { getErrorMessage } from '../helpers';
 
@@ -25,12 +25,11 @@ export default function ProfileTab({ data, onDataUpdate }: { data: AppData; onDa
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const fd = new FormData();
-    Object.entries(form).forEach(([k, v]) => fd.append(k, String(v)));
-    if (photoFile) fd.append('Photo', photoFile);
-    if (resumeFile) fd.append('Resume', resumeFile);
     try {
-      await updateProfile(fd);
+      const payload: any = { ...form };
+      if (photoFile) payload.photoUrl = await fileToBase64(photoFile);
+      if (resumeFile) payload.resumeUrl = await fileToBase64(resumeFile);
+      await updateProfile(payload);
       await onDataUpdate();
       toast.success(t('admin.profileUpdated'));
     } catch (err: any) { toast.error(getErrorMessage(err, t('admin.failedToUpdateProfile'))); }

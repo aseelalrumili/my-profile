@@ -9,8 +9,8 @@ export const fetchAll = async (): Promise<AppData> => {
   return data;
 };
 
-export const updateProfile = async (formData: FormData): Promise<Profile> => {
-  const { data } = await API.put('/profile', formData);
+export const updateProfile = async (payload: Record<string, any>): Promise<Profile> => {
+  const { data } = await API.put('/profile', payload);
   return data;
 };
 
