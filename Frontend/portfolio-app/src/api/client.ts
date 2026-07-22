@@ -30,6 +30,17 @@ export async function convertToWebP(file: File, quality = 0.8): Promise<File> {
   return new File([blob], file.name.replace(/\.[^.]+$/, '.webp'), { type: 'image/webp' });
 }
 
+export async function uploadImage(file: File): Promise<string> {
+  const converted = await convertToWebP(file);
+  const base64 = await fileToBase64(converted);
+  const { data } = await API.post('/upload', {
+    fileName: file.name,
+    mimeType: 'image/webp',
+    base64,
+  });
+  return data.url;
+}
+
 API.interceptors.request.use(function (config) {
   var token = localStorage.getItem('token');
   if (token) {

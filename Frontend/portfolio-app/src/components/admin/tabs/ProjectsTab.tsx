@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { createProject, updateProject, deleteProject, deleteMedia, fetchProjects } from '../../../api/api';
-import { getUploadUrl, fileToBase64, convertToWebP } from '../../../api/client';
+import { getUploadUrl, uploadImage } from '../../../api/client';
 import type { AppData, Project } from '../../../types';
 import { getErrorMessage } from '../helpers';
 
@@ -28,12 +28,11 @@ function ProjectForm({ project, onSave, onClose, onDeleteMedia }: {
       }
     }
     for (const f of files) {
-      const converted = await convertToWebP(f);
-      const dataUrl = await fileToBase64(converted);
+      const url = await uploadImage(f);
       media.push({
         id: Date.now() + Math.random(),
         mediaType: 'Image',
-        url: dataUrl,
+        url,
         fileName: f.name,
         isPrimary: media.length === 0,
       });

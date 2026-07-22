@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { updateProfile } from '../../../api/api';
-import { getUploadUrl, fileToBase64, convertToWebP } from '../../../api/client';
+import { getUploadUrl, uploadImage } from '../../../api/client';
 import type { AppData, Profile } from '../../../types';
 import { getErrorMessage } from '../helpers';
 
@@ -27,8 +27,8 @@ export default function ProfileTab({ data, onDataUpdate }: { data: AppData; onDa
     setLoading(true);
     try {
       const payload: any = { ...form };
-      if (photoFile) payload.photoUrl = await fileToBase64(await convertToWebP(photoFile));
-      if (resumeFile) payload.resumeUrl = await fileToBase64(await convertToWebP(resumeFile));
+      if (photoFile) payload.photoUrl = await uploadImage(photoFile);
+      if (resumeFile) payload.resumeUrl = await uploadImage(resumeFile);
       await updateProfile(payload);
       await onDataUpdate();
       toast.success(t('admin.profileUpdated'));

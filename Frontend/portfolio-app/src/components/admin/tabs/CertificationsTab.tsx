@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { addCertification, updateCertification, deleteCertification, fetchCertifications } from '../../../api/api';
-import { getUploadUrl, fileToBase64, convertToWebP } from '../../../api/client';
+import { getUploadUrl, uploadImage } from '../../../api/client';
 import type { AppData, Certification } from '../../../types';
 import { getErrorMessage, moveItem, SortArrows } from '../helpers';
 
@@ -22,8 +22,7 @@ export default function CertificationsTab({ data, onDataUpdate }: { data: AppDat
       const payload: any = { ...form, sortOrder: String(items.length) };
       for (let i = 0; i < 3; i++) {
         if (imageFiles[i]) {
-          const converted = await convertToWebP(imageFiles[i]!);
-          payload[`imageUrl${i + 1}`] = await fileToBase64(converted);
+          payload[`imageUrl${i + 1}`] = await uploadImage(imageFiles[i]!);
         } else if (existingImages[i]?.url) {
           payload[`imageUrl${i + 1}`] = existingImages[i].url;
         }
