@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { getUploadUrl } from '../api/client';
+import { getUploadUrl, getCachedImage } from '../api/client';
 
 interface Props {
   src: string;
@@ -13,7 +13,7 @@ export default function LazyImage({ src, alt, className, style, onClick }: Props
   const [loaded, setLoaded] = useState(false);
   const [inView, setInView] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const resolvedSrc = getUploadUrl(src);
+  const resolvedSrc = getCachedImage(getUploadUrl(src)) || getUploadUrl(src);
 
   useEffect(() => {
     if (!ref.current) return;

@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useRef } from 'react';
-import { getUploadUrl } from '../api/client';
+import { getUploadUrl, getCachedImage } from '../api/client';
 
 interface Props {
   imageUrl: string;
@@ -41,7 +41,7 @@ export default function Lightbox({ imageUrl, alt = 'Lightbox image', onClose }: 
       >
         <button className="lightbox-close" ref={closeRef} onClick={onClose} aria-label="Close lightbox">&times;</button>
         <motion.img
-          src={getUploadUrl(imageUrl)}
+          src={getCachedImage(getUploadUrl(imageUrl)) || getUploadUrl(imageUrl)}
           alt={alt}
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}

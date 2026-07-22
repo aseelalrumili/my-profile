@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { fetchBlogPost } from '../api/api';
-import { getUploadUrl } from '../api/client';
+import { getUploadUrl, getCachedImage } from '../api/client';
 import type { BlogPost as BlogPostType } from '../types';
 import ShareButtons from './ShareButtons';
 import CommentSection from './CommentSection';
@@ -44,7 +44,7 @@ export default function BlogPost() {
         transition={{ duration: 0.5 }}
       >
         {post.coverImageUrl && (
-          <img className="blog-post-cover" src={getUploadUrl(post.coverImageUrl)} alt={isAr && post.titleAr ? post.titleAr : post.title} loading="lazy" />
+          <img className="blog-post-cover" src={getCachedImage(getUploadUrl(post.coverImageUrl)) || getUploadUrl(post.coverImageUrl)} alt={isAr && post.titleAr ? post.titleAr : post.title} loading="lazy" />
         )}
 
         <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '1rem' }}>
