@@ -83,8 +83,8 @@
     "subtitle": "Feedback from those I've had the pleasure of working with"
   },
   "reviews": {
-    "title": "Client Reviews",
-    "subtitle": "What my clients say about me",
+    "title": "Reviews & Ratings",
+    "subtitle": "Professional reviews from colleagues, managers, and clients throughout my career",
     "addReview": "Add Your Review",
     "yourReview": "Leave Your Review",
     "namePlaceholder": "Your name",
@@ -93,6 +93,7 @@
     "submit": "Submit",
     "submitting": "Submitting...",
     "cancel": "Cancel",
+    "loadMore": "Load More",
     "noReviews": "No reviews yet."
   },
   "contact": {
