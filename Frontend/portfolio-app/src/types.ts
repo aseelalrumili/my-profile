@@ -174,6 +174,7 @@ export interface Review {
   name: string;
   rating: number;
   comment: string;
+  avatarUrl?: string;
   isApproved: boolean;
   createdAt: string;
 }

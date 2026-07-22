@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { FiEye, FiEyeOff, FiTrash2 } from 'react-icons/fi';
 import type { AppData, Review } from '../../../types';
 import { fetchAllReviews, updateReview, deleteReview, approveReview } from '../../../api/reviews';
+import { getUploadUrl } from '../../../api/client';
 import { getErrorMessage } from '../helpers';
 
 interface Props {
@@ -109,13 +110,21 @@ export default function ReviewsTab({ data, onDataUpdate }: Props) {
         gap: '0.75rem',
       }}
     >
-      <div style={{
-        width: 36, height: 36, borderRadius: '50%', background: 'var(--navy)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        color: 'var(--accent)', fontWeight: 700, fontSize: '0.8rem', flexShrink: 0,
-      }}>
-        {r.name.charAt(0)}
-      </div>
+      {r.avatarUrl ? (
+        <img
+          src={getUploadUrl(r.avatarUrl)}
+          alt={r.name}
+          style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover', flexShrink: 0, border: '2px solid var(--accent)' }}
+        />
+      ) : (
+        <div style={{
+          width: 36, height: 36, borderRadius: '50%', background: 'var(--navy)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          color: 'var(--accent)', fontWeight: 700, fontSize: '0.8rem', flexShrink: 0,
+        }}>
+          {r.name.charAt(0)}
+        </div>
+      )}
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem' }}>
           <strong style={{ fontSize: '0.85rem' }}>{r.name}</strong>
