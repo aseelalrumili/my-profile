@@ -28,7 +28,7 @@ function StarInput({ value, onChange }: { value: number; onChange: (v: number) =
   );
 }
 
-export default function Reviews() {
+export default function Reviews({ settings }: { settings?: Record<string, string> }) {
   const { t, i18n } = useTranslation();
   const isAr = i18n.language === 'ar';
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -83,6 +83,8 @@ export default function Reviews() {
   const visible = reviews.slice(0, visibleCount);
   const hasMore = visibleCount < reviews.length;
   const allLoaded = !hasMore && reviews.length > 0;
+
+  if (settings?.reviewsSectionVisible === 'false') return null;
 
   return (
     <section className="section" id="reviews">

@@ -93,7 +93,7 @@ function HomePage({ data, onLoadData }: { data: AppData; onLoadData: () => Promi
       <div id="projects"><Projects data={data} /></div>
       <div id="experience"><Experience data={data} /></div>
       <div id="certifications"><Certifications data={data} limit={3} /></div>
-      <Reviews />
+      <Reviews settings={data.settings} />
       <div id="contact"><Contact data={data} /></div>
     </PageLayout>
   );
