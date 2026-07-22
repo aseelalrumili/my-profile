@@ -202,6 +202,20 @@ export const handler = async (event: any, context: any): Promise<FunctionRespons
       return json({ message: 'Admin configured successfully' }, 201);
     }
 
+    if (method === 'POST' && route === 'auth/update') {
+      const auth = requireAuth(event);
+      if (!auth) return unauthorized();
+      const body = parseJsonBody(event.body);
+      const { username, password } = body;
+      if (!username || !password) return badRequest('Username and password required');
+      const passwordHash = await hashPassword(password);
+      const existing = await getObject<any>('auth:admin');
+      const id = existing?.id || 1;
+      await setObject('auth:admin', { id, username, passwordHash });
+      const newToken = signToken(username, id);
+      return json({ message: 'Admin updated successfully', token: newToken, username });
+    }
+
     if (method === 'GET' && route === 'profile/all') {
       const profile = await getObject<any>('profile') || { ...DEFAULT_PROFILE };
       const socialLinks = await getArray<any>(KEYS.SOCIAL_LINKS);
