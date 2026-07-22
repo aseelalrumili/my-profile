@@ -26,6 +26,7 @@ export const KEYS = {
   BLOG_POSTS: 'blog-posts',
   BLOG_COMMENTS: 'blog-comments',
   TESTIMONIALS: 'testimonials',
+  REVIEWS: 'reviews',
   MESSAGES: 'contact-messages',
   VISITORS: 'visitors-log',
   settings: 'settings',

@@ -82,6 +82,19 @@
     "title": "التقييمات والأراء",
     "subtitle": "آراء من أعمل معهم"
   },
+  "reviews": {
+    "title": "آراء العملاء",
+    "subtitle": "ماذا يقول عملائي عني",
+    "addReview": "أضف تقييمك",
+    "yourReview": "أضف رأيك",
+    "namePlaceholder": "اسمك",
+    "commentPlaceholder": "اكتب تعليقك...",
+    "rating": "التقييم",
+    "submit": "إرسال",
+    "submitting": "جاري الإرسال...",
+    "cancel": "إلغاء",
+    "noReviews": "لا توجد تقييمات بعد."
+  },
   "contact": {
     "title": "تواصل معي",
     "subtitle": "لنتعاون في مشروعك القادم",
@@ -160,6 +173,7 @@
     "certifications": "الشهادات",
     "blog": "المدونة",
     "testimonials": "شهادات العملاء",
+    "reviews": "التقييمات",
     "messages": "الرسائل",
     "settings": "الإعدادات",
     "exportData": "تصدير البيانات",
@@ -225,6 +239,9 @@
     "certificationSaved": "تم حفظ الشهادة!",
     "blogPostSaved": "تم حفظ المقالة!",
     "testimonialSaved": "تم حفظ الشهادة!",
+    "reviewApproved": "تم اعتماد التقييم!",
+    "approve": "اعتماد",
+    "hide": "إخفاء",
     "failed": "فشل",
     "deleted": "تم الحذف!",
     "select": "اختر...",

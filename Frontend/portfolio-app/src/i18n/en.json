@@ -82,6 +82,19 @@
     "title": "Testimonials & Reviews",
     "subtitle": "Feedback from those I've had the pleasure of working with"
   },
+  "reviews": {
+    "title": "Client Reviews",
+    "subtitle": "What my clients say about me",
+    "addReview": "Add Your Review",
+    "yourReview": "Leave Your Review",
+    "namePlaceholder": "Your name",
+    "commentPlaceholder": "Write your comment...",
+    "rating": "Rating",
+    "submit": "Submit",
+    "submitting": "Submitting...",
+    "cancel": "Cancel",
+    "noReviews": "No reviews yet."
+  },
   "contact": {
     "title": "Get In Touch",
     "subtitle": "Let's collaborate on your next project",
@@ -160,6 +173,7 @@
     "certifications": "Certifications",
     "blog": "Blog",
     "testimonials": "Testimonials",
+    "reviews": "Reviews",
     "messages": "Messages",
     "settings": "Settings",
     "exportData": "Export Data",
@@ -225,6 +239,9 @@
     "certificationSaved": "Certification saved!",
     "blogPostSaved": "Blog post saved!",
     "testimonialSaved": "Testimonial saved!",
+    "reviewApproved": "Review approved!",
+    "approve": "Approve",
+    "hide": "Hide",
     "failed": "Failed",
     "deleted": "Deleted!",
     "select": "Select...",

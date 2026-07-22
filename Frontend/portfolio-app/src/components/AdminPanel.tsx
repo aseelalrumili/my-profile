@@ -15,6 +15,7 @@ import ProjectsTab from './admin/tabs/ProjectsTab';
 import CertificationsTab from './admin/tabs/CertificationsTab';
 import BlogTab from './admin/tabs/BlogTab';
 import TestimonialsTab from './admin/tabs/TestimonialsTab';
+import ReviewsTab from './admin/tabs/ReviewsTab';
 import MessagesTab from './admin/tabs/MessagesTab';
 import SettingsTab from './admin/tabs/SettingsTab';
 
@@ -25,7 +26,7 @@ interface Props {
   onLogout: () => void;
 }
 
-type Tab = 'profile' | 'social' | 'skills' | 'experience' | 'education' | 'projects' | 'certifications' | 'blog' | 'testimonials' | 'messages' | 'settings';
+type Tab = 'profile' | 'social' | 'skills' | 'experience' | 'education' | 'projects' | 'certifications' | 'blog' | 'testimonials' | 'reviews' | 'messages' | 'settings';
 
 export default function AdminPanel({ data, onClose, onDataUpdate, onLogout }: Props) {
   const { t } = useTranslation();
@@ -76,6 +77,7 @@ export default function AdminPanel({ data, onClose, onDataUpdate, onLogout }: Pr
     { key: 'certifications', label: t('admin.certifications') },
     { key: 'blog', label: t('admin.blog') },
     { key: 'testimonials', label: t('admin.testimonials') },
+    { key: 'reviews', label: t('admin.reviews') },
     { key: 'messages', label: t('admin.messages') },
     { key: 'settings', label: t('admin.settings') },
   ];
@@ -118,6 +120,7 @@ export default function AdminPanel({ data, onClose, onDataUpdate, onLogout }: Pr
         {tab === 'certifications' && <CertificationsTab data={data} onDataUpdate={onDataUpdate} />}
         {tab === 'blog' && <BlogTab data={data} onDataUpdate={onDataUpdate} />}
         {tab === 'testimonials' && <TestimonialsTab data={data} onDataUpdate={onDataUpdate} />}
+        {tab === 'reviews' && <ReviewsTab data={data} onDataUpdate={onDataUpdate} />}
         {tab === 'messages' && <MessagesTab />}
         {tab === 'settings' && <SettingsTab />}
       </motion.div>

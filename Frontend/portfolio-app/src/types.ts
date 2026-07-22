@@ -169,6 +169,15 @@ export interface BlogComment {
   createdAt: string;
 }
 
+export interface Review {
+  id: number;
+  name: string;
+  rating: number;
+  comment: string;
+  isApproved: boolean;
+  createdAt: string;
+}
+
 export interface LoginResponse {
   token: string;
   username: string;
@@ -185,5 +194,6 @@ export interface AppData {
   certifications: Certification[];
   blogPosts: BlogPost[];
   testimonials: Testimonial[];
+  reviews: Review[];
   settings: Record<string, string>;
 }
