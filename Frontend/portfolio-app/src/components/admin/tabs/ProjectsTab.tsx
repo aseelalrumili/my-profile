@@ -2,12 +2,12 @@ import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { createProject, updateProject, deleteProject, deleteMedia, fetchProjects } from '../../../api/api';
-import { getUploadUrl, fileToBase64 } from '../../../api/client';
+import { getUploadUrl } from '../../../api/client';
 import type { AppData, Project } from '../../../types';
 import { getErrorMessage } from '../helpers';
 
 function ProjectForm({ project, onSave, onClose, onDeleteMedia }: {
-  project: Project | null; onSave: (payload: any) => Promise<void>; onClose: () => void; onDeleteMedia: (id: number) => Promise<void>;
+  project: Project | null; onSave: (fd: FormData) => Promise<void>; onClose: () => void; onDeleteMedia: (id: number) => Promise<void>;
 }) {
   const { t } = useTranslation();
   const [title, setTitle] = useState(project?.title || '');
@@ -21,24 +21,11 @@ function ProjectForm({ project, onSave, onClose, onDeleteMedia }: {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault(); setSaving(true);
-    const media: any[] = [];
-    for (const f of files) {
-      const dataUrl = await fileToBase64(f);
-      media.push({
-        id: Date.now() + Math.random(),
-        mediaType: 'Image',
-        url: dataUrl,
-        fileName: f.name,
-        isPrimary: media.length === 0,
-      });
-    }
-    const payload: any = { title, description, type, category, techStack, liveUrl, sortOrder: '0' };
-    if (project) {
-      payload.media = [...(project.media || []), ...media];
-    } else {
-      payload.media = media;
-    }
-    await onSave(payload); setSaving(false);
+    const fd = new FormData();
+    fd.append('Title', title); fd.append('Description', description); fd.append('Type', type);
+    fd.append('Category', category); fd.append('TechStack', techStack); fd.append('LiveUrl', liveUrl); fd.append('SortOrder', '0');
+    files.forEach(f => fd.append('Files', f));
+    await onSave(fd); setSaving(false);
   };
 
   return (
@@ -108,10 +95,10 @@ export default function ProjectsTab({ data, onDataUpdate }: { data: AppData; onD
       {showForm && (
         <ProjectForm
           project={editingProject}
-          onSave={async (payload) => {
+          onSave={async (fd) => {
             try {
-              if (editingProject) await updateProject(editingProject.id, payload);
-              else await createProject(payload);
+              if (editingProject) await updateProject(editingProject.id, fd);
+              else await createProject(fd);
               setShowForm(false); setEditingProject(null);
               setItems(await fetchProjects());
               toast.success(t('admin.projectSaved'));
