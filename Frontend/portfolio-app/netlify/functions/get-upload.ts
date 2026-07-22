@@ -1,9 +1,8 @@
-import type { Context } from '@netlify/functions';
 import { getUploadsStore, binary, notFound, getMimeType, initBlobs } from './_lib';
 
-export const handler = async (event: any, context: any) => {
+export const handler = async (event: any) => {
   initBlobs(event);
-  // Handle CORS preflight
+
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 204,
@@ -16,12 +15,10 @@ export const handler = async (event: any, context: any) => {
     };
   }
 
-  // Only GET allowed
   if (event.httpMethod !== 'GET') {
     return { statusCode: 405, headers: {}, body: 'Method Not Allowed' };
   }
 
-  // Extract key from path: /uploads/<key> or /get-upload/<key>
   const path = event.path || '';
   const segments = path.split('/').filter(Boolean);
   const key = segments[segments.length - 1];
@@ -32,15 +29,15 @@ export const handler = async (event: any, context: any) => {
 
   try {
     const store = getUploadsStore();
-    const data = await store.get(key);
-    
-    if (!data) {
+    const result = await store.getWithMetadata(key, { type: 'arrayBuffer' });
+
+    if (!result?.data) {
       return notFound('File not found');
     }
 
-    const contentType = getMimeType(key);
-    return binary(data, 200, contentType);
-  } catch (err) {
+    const contentType = result.metadata?.contentType || getMimeType(key);
+    return binary(Buffer.from(result.data), 200, contentType);
+  } catch {
     return notFound('File not found');
   }
 };
