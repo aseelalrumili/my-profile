@@ -1,4 +1,4 @@
-import { requireAuth, getUploadsStore, getMimeType, notFound, badRequest, unauthorized, json, initBlobs } from './_lib';
+import { requireAuth, getUploadsStore, getMimeType, notFound, badRequest, unauthorized, json, initBlobs, uuid } from './_lib';
 
 export const handler = async (event: any) => {
   initBlobs(event);
@@ -41,7 +41,7 @@ export const handler = async (event: any) => {
   if (buffer.length > 50 * 1024 * 1024) return badRequest('File too large (max 50MB)');
 
   const store = getUploadsStore();
-  const key = `${crypto.randomUUID()}-${fileName}`;
+  const key = `${uuid()}-${fileName}`;
   await store.set(key, buffer, {
     metadata: { contentType: mimeType || getMimeType(fileName) },
   });
