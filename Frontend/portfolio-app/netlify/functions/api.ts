@@ -908,6 +908,22 @@ export const handler = async (event: any, context: any): Promise<FunctionRespons
       }
     }
 
+    if (segments[0] === 'upload' && method === 'POST') {
+      const auth = requireAuth(event);
+      if (!auth) return unauthorized();
+      let body: any;
+      try { body = JSON.parse(event.body || '{}'); } catch { return badRequest('Invalid JSON'); }
+      const { fileName, mimeType, base64 } = body;
+      if (!base64 || !fileName) return badRequest('fileName and base64 required');
+      const cleanBase64 = base64.includes(',') ? base64.split(',')[1] : base64;
+      const buffer = Buffer.from(cleanBase64, 'base64');
+      if (buffer.length === 0) return badRequest('Empty file');
+      if (buffer.length > 50 * 1024 * 1024) return badRequest('File too large (max 50MB)');
+      const store = getUploadsStore();
+      const key = `${uuid()}-${fileName}`;
+      await store.set(key, buffer, { metadata: { contentType: mimeType || getMimeType(fileName) } });
+      return json({ url: `/uploads/${key}` }, 201);
+    }
 
     if (segments[0] === 'import' && method === 'POST') {
       const auth = requireAuth(event);
