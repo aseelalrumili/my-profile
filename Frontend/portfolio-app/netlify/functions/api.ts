@@ -694,19 +694,40 @@ export const handler = async (event: any, context: any): Promise<FunctionRespons
           return json(approved);
         }
         if (method === 'POST') {
-          const body = parseJsonBody(event.body);
-          if (!body.name || !body.rating || !body.comment) {
+          const ct = event.headers['content-type'] || event.headers['Content-Type'] || '';
+          let name = '', ratingStr = '', comment = '', avatarUrl = '';
+          if (ct.includes('multipart/form-data')) {
+            const fields = parseMultipart(ct, event.body || '', event.isBase64Encoded || false);
+            for (const f of fields) {
+              if (f.fieldName === 'name') name = f.data.toString('utf8');
+              else if (f.fieldName === 'rating') ratingStr = f.data.toString('utf8');
+              else if (f.fieldName === 'comment') comment = f.data.toString('utf8');
+              else if (f.fieldName === 'avatar' && f.filename) {
+                const uploads = getUploadsStore();
+                const key = `${uuid()}-${f.filename}`;
+                uploads.set(key, { data: f.data, contentType: f.contentType || getMimeType(f.filename) });
+                avatarUrl = `/.netlify/functions/get-upload/${key}`;
+              }
+            }
+          } else {
+            const body = parseJsonBody(event.body);
+            name = body.name || '';
+            ratingStr = String(body.rating || '');
+            comment = body.comment || '';
+          }
+          if (!name || !ratingStr || !comment) {
             return badRequest('name, rating, and comment are required');
           }
-          const rating = parseInt(body.rating, 10);
+          const rating = parseInt(ratingStr, 10);
           if (isNaN(rating) || rating < 1 || rating > 5) {
             return badRequest('rating must be between 1 and 5');
           }
           const review = {
             id: nextId(await getArray<any>(KEYS.REVIEWS)),
-            name: body.name,
+            name,
             rating,
-            comment: body.comment,
+            comment,
+            avatarUrl: avatarUrl || undefined,
             isApproved: false,
             createdAt: new Date().toISOString(),
           };
