@@ -6,6 +6,7 @@ export const API = axios.create({ baseURL: API_BASE });
 
 export const getUploadUrl = (path: string): string => {
   if (!path) return path;
+  if (path.startsWith('data:')) return path;
   return path;
 };
 
@@ -32,29 +33,21 @@ export async function convertToWebP(file: File, quality = 0.8): Promise<File> {
 
 export async function uploadImage(file: File): Promise<string> {
   const converted = await convertToWebP(file);
-  const base64 = await fileToBase64(converted);
-  const { data } = await API.post('/upload', {
-    fileName: file.name,
-    mimeType: 'image/webp',
-    base64,
-  });
-  cacheImage(data.url, base64);
-  return data.url;
+  return await fileToBase64(converted);
+}
+
+export async function uploadFile(file: File): Promise<string> {
+  return await fileToBase64(file);
 }
 
 export function cacheImage(url: string, data: string): void {
+  if (url.startsWith('data:')) return;
   try { localStorage.setItem('img:' + url, data); } catch {}
 }
 
 export function getCachedImage(url: string): string | null {
-  if (!url) return null;
+  if (!url || url.startsWith('data:')) return null;
   try { return localStorage.getItem('img:' + url) || null; } catch { return null; }
-}
-
-export function resolveImage(src: string | undefined | null): string {
-  if (!src) return '';
-  const url = getUploadUrl(src);
-  return getCachedImage(url) || url;
 }
 
 API.interceptors.request.use(function (config) {

@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { createProject, updateProject, deleteProject, deleteMedia, fetchProjects } from '../../../api/api';
-import { getUploadUrl, uploadImage, getCachedImage } from '../../../api/client';
+import { uploadImage } from '../../../api/client';
 import type { AppData, Project } from '../../../types';
 import { getErrorMessage } from '../helpers';
 
@@ -24,13 +24,13 @@ function ProjectForm({ project, onSave, onClose, onDeleteMedia }: {
     const media: any[] = [];
     if (project) {
       for (const m of project.media) {
-        if (m.url.startsWith('data:')) media.push(m);
+        media.push(m);
       }
     }
     for (const f of files) {
       const url = await uploadImage(f);
       media.push({
-        id: Date.now() + Math.random(),
+        id: Math.floor(Date.now() + Math.random()),
         mediaType: 'Image',
         url,
         fileName: f.name,
@@ -66,7 +66,7 @@ function ProjectForm({ project, onSave, onClose, onDeleteMedia }: {
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
             {project.media.map((m) => (
               <div key={m.id} style={{ position: 'relative', width: '70px', height: '70px', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--border)' }}>
-                {m.mediaType === 'Image' ? <img src={getCachedImage(getUploadUrl(m.url)) || getUploadUrl(m.url)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-secondary)', fontSize: '0.6rem', color: 'var(--text-muted)' }}>3D</div>}
+                {m.mediaType === 'Image' ? <img src={m.url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-secondary)', fontSize: '0.6rem', color: 'var(--text-muted)' }}>3D</div>}
                 <button type="button" onClick={() => onDeleteMedia(m.id)} style={{ position: 'absolute', top: '2px', right: '2px', background: 'rgba(0,0,0,0.7)', border: 'none', color: 'var(--danger)', width: '18px', height: '18px', borderRadius: '50%', cursor: 'pointer', fontSize: '0.6rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>x</button>
               </div>
             ))}
