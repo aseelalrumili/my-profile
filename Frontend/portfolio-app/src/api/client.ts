@@ -17,6 +17,19 @@ export const fileToBase64 = (file: File): Promise<string> =>
     reader.readAsDataURL(file);
   });
 
+export async function convertToWebP(file: File, quality = 0.8): Promise<File> {
+  const bitmap = await createImageBitmap(file);
+  const canvas = document.createElement('canvas');
+  canvas.width = bitmap.width;
+  canvas.height = bitmap.height;
+  const ctx = canvas.getContext('2d')!;
+  ctx.drawImage(bitmap, 0, 0);
+  const blob: Blob = await new Promise((resolve) =>
+    canvas.toBlob((b) => resolve(b!), 'image/webp', quality)
+  );
+  return new File([blob], file.name.replace(/\.[^.]+$/, '.webp'), { type: 'image/webp' });
+}
+
 API.interceptors.request.use(function (config) {
   var token = localStorage.getItem('token');
   if (token) {
