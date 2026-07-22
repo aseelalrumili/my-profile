@@ -80,7 +80,7 @@ export default function Hero({ data }: { data: AppData }) {
 
   const handleMouseLeave = useCallback(() => setTransform(''), []);
 
-  const filteredSocial = socialLinks;
+  const filteredSocial = socialLinks || [];
 
   return (
     <section className="hero-section" ref={sectionRef}>
