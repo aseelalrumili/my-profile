@@ -732,7 +732,7 @@ export const handler = async (event: any, context: any): Promise<FunctionRespons
         return json({ total, average: Math.round(avg * 10) / 10 });
       }
 
-      if (segments.length === 3 && isNumericId(segments[1])) {
+      if (segments.length === 2 && isNumericId(segments[1])) {
         const id = parseInt(segments[1], 10);
 
         if (method === 'PUT') {
@@ -758,7 +758,7 @@ export const handler = async (event: any, context: any): Promise<FunctionRespons
         }
       }
 
-      if (segments.length === 4 && isNumericId(segments[1]) && segments[3] === 'approve') {
+      if (segments.length === 3 && isNumericId(segments[1]) && segments[2] === 'approve') {
         if (method === 'PUT') {
           const auth = requireAuth(event);
           if (!auth) return unauthorized();
