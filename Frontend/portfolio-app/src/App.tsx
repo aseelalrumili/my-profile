@@ -16,7 +16,6 @@ import Experience from './components/Experience';
 import Skills from './components/Skills';
 import Projects from './components/Projects';
 import Certifications from './components/Certifications';
-import Testimonials from './components/Testimonials';
 import Reviews from './components/Reviews';
 import Footer from './components/Footer';
 import Contact from './components/Contact';
@@ -94,7 +93,6 @@ function HomePage({ data, onLoadData }: { data: AppData; onLoadData: () => Promi
       <div id="projects"><Projects data={data} /></div>
       <div id="experience"><Experience data={data} /></div>
       <div id="certifications"><Certifications data={data} limit={3} /></div>
-      <Testimonials data={data} />
       <Reviews />
       <div id="contact"><Contact data={data} /></div>
     </PageLayout>

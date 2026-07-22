@@ -161,7 +161,7 @@ export default function Reviews() {
         </motion.button>
       )}
 
-      {allLoaded && !showForm && (
+      {(reviews.length === 0 || allLoaded) && !showForm && (
         <motion.button
           className="btn btn-primary review-add-btn"
           onClick={() => setShowForm(true)}
