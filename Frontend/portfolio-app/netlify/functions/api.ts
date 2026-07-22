@@ -724,7 +724,7 @@ export const handler = async (event: any, context: any): Promise<FunctionRespons
         return json(reviews);
       }
 
-      if (segments.length === 3 && segments[1] === 'stats' && method === 'GET') {
+      if (segments.length === 2 && segments[1] === 'stats' && method === 'GET') {
         const reviews = await getArray<any>(KEYS.REVIEWS);
         const approved = reviews.filter((r: any) => r.isApproved);
         const total = approved.length;
