@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { addCertification, updateCertification, deleteCertification, fetchCertifications } from '../../../api/api';
-import { getUploadUrl } from '../../../api/client';
+import { getUploadUrl, fileToBase64 } from '../../../api/client';
 import type { AppData, Certification } from '../../../types';
 import { getErrorMessage, moveItem, SortArrows } from '../helpers';
 
@@ -19,14 +19,16 @@ export default function CertificationsTab({ data, onDataUpdate }: { data: AppDat
   const handleAdd = async () => {
     if (!form.name) return;
     try {
-      const fd = new FormData();
-      Object.entries(form).forEach(([k, v]) => fd.append(k, v));
-      fd.append('SortOrder', String(items.length));
-      imageFiles.forEach((file) => {
-        if (file) fd.append('Files', file);
-      });
-      if (editingId) { await updateCertification(editingId, fd); setEditingId(null); }
-      else { await addCertification(fd); }
+      const payload: any = { ...form, sortOrder: String(items.length) };
+      for (let i = 0; i < 3; i++) {
+        if (imageFiles[i]) {
+          payload[`imageUrl${i + 1}`] = await fileToBase64(imageFiles[i]!);
+        } else if (existingImages[i]?.url) {
+          payload[`imageUrl${i + 1}`] = existingImages[i].url;
+        }
+      }
+      if (editingId) { await updateCertification(editingId, payload); setEditingId(null); }
+      else { await addCertification(payload); }
       setForm({ name: '', nameAr: '', issuer: '', issuerAr: '', issueDate: '', expiryDate: '', credentialUrl: '', logoUrl: '', category: '', categoryAr: '' });
       setImageFiles([null, null, null]);
       setExistingImages([]);
@@ -45,7 +47,7 @@ export default function CertificationsTab({ data, onDataUpdate }: { data: AppDat
     const newItems = moveItem(items, index, dir);
     setItems(newItems);
     for (const item of newItems) {
-      try { await updateCertification(item.id, new FormData()); } catch {}
+      try { await updateCertification(item.id, item); } catch {}
     }
   };
 
