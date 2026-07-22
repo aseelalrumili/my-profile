@@ -141,7 +141,7 @@ async function handleSubCrud(
           const key2 = `${uuid()}-${file.filename}`;
           uploads.set(key2, { data: file.data, contentType: file.contentType || 'application/octet-stream' });
           if (file.name && body) {
-            body[file.name + 'Url'] = `/.netlify/functions/get-upload/${key2}`;
+            body[file.name + 'Url'] = `/api/uploads/${key2}`;
           }
         }
       } else {
@@ -266,9 +266,9 @@ export const handler = async (event: any, context: any): Promise<FunctionRespons
             const fileKey = `${uuid()}-${file.filename}`;
             uploads.set(fileKey, { data: file.data, contentType: file.contentType || 'application/octet-stream' });
             if (file.name === 'Photo') {
-              body.photoUrl = `/.netlify/functions/get-upload/${fileKey}`;
+              body.photoUrl = `/api/uploads/${fileKey}`;
             } else if (file.name === 'Resume') {
-              body.resumeUrl = `/.netlify/functions/get-upload/${fileKey}`;
+              body.resumeUrl = `/api/uploads/${fileKey}`;
             }
           }
         } else {
@@ -329,7 +329,7 @@ export const handler = async (event: any, context: any): Promise<FunctionRespons
               media.push({
                 id: mediaIdCounter.value++,
                 mediaType: 'Image',
-                url: `/.netlify/functions/get-upload/${fileKey}`,
+                url: `/api/uploads/${fileKey}`,
                 fileName: file.filename,
                 isPrimary: media.length === 0,
               });
@@ -416,7 +416,7 @@ export const handler = async (event: any, context: any): Promise<FunctionRespons
               newMedia.push({
                 id: mediaIdCounter++,
                 mediaType: 'Image',
-                url: `/.netlify/functions/get-upload/${fileKey}`,
+                url: `/api/uploads/${fileKey}`,
                 fileName: file.filename,
                 isPrimary: newMedia.length === 0,
               });
@@ -461,7 +461,7 @@ export const handler = async (event: any, context: any): Promise<FunctionRespons
               const fileKey = `${uuid()}-${file.filename}`;
               uploads.set(fileKey, { data: file.data, contentType: file.contentType || 'application/octet-stream' });
               const fieldUrl = `${file.name}Url`;
-              textField[fieldUrl] = `/.netlify/functions/get-upload/${fileKey}`;
+              textField[fieldUrl] = `/api/uploads/${fileKey}`;
             }
             const cert = {
               id: nextId(await getArray<any>(KEYS.CERTIFICATIONS)),
@@ -507,7 +507,7 @@ export const handler = async (event: any, context: any): Promise<FunctionRespons
               const fileKey = `${uuid()}-${file.filename}`;
               uploads.set(fileKey, { data: file.data, contentType: file.contentType || 'application/octet-stream' });
               const fieldUrl = `${file.name}Url`;
-              textField[fieldUrl] = `/.netlify/functions/get-upload/${fileKey}`;
+              textField[fieldUrl] = `/api/uploads/${fileKey}`;
             }
             arr[idx] = { ...arr[idx], ...textField, id };
           } else {
@@ -706,7 +706,7 @@ export const handler = async (event: any, context: any): Promise<FunctionRespons
                 const uploads = getUploadsStore();
                 const key = `${uuid()}-${f.filename}`;
                 uploads.set(key, { data: f.data, contentType: f.contentType || getMimeType(f.filename) });
-                avatarUrl = `/.netlify/functions/get-upload/${key}`;
+                avatarUrl = `/api/uploads/${key}`;
               }
             }
           } else {
@@ -908,6 +908,19 @@ export const handler = async (event: any, context: any): Promise<FunctionRespons
       }
     }
 
+    if (segments[0] === 'uploads' && segments.length === 2 && method === 'GET') {
+      const key = segments[1];
+      if (!key) return notFound('No file key provided');
+      try {
+        const store = getUploadsStore();
+        const data = await store.get(key);
+        if (!data) return notFound('File not found');
+        return binary(data, 200, getMimeType(key));
+      } catch {
+        return notFound('File not found');
+      }
+    }
+
     if (segments[0] === 'upload' && method === 'POST') {
       const auth = requireAuth(event);
       if (!auth) return unauthorized();
@@ -926,7 +939,7 @@ export const handler = async (event: any, context: any): Promise<FunctionRespons
       const uploads = getUploadsStore();
       const key = `${uuid()}-${file.filename}`;
       uploads.set(key, { data: fileData, contentType: file.contentType || getMimeType(file.filename) });
-      return json({ url: `/.netlify/functions/get-upload/${key}` }, 201);
+      return json({ url: `/api/uploads/${key}` }, 201);
     }
 
     if (segments[0] === 'import' && method === 'POST') {
