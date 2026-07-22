@@ -223,7 +223,7 @@ export default function Hero({ data }: { data: AppData }) {
             onMouseLeave={handleMouseLeave}
           >
             {profile.photoUrl ? (
-              <LazyImage src={profile.photoUrl} alt={getName()} className="hero-photo-img" />
+              <img src={profile.photoUrl} alt={getName()} className="hero-photo-img" />
             ) : (
               <div className="hero-photo-placeholder">
                 {(getName() || 'YN').charAt(0)}
