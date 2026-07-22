@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
+import { FiEye, FiEyeOff, FiTrash2 } from 'react-icons/fi';
 import type { AppData, Review } from '../../../types';
 import { fetchAllReviews, updateReview, deleteReview, approveReview } from '../../../api/reviews';
 import { getErrorMessage } from '../helpers';
@@ -9,6 +10,12 @@ interface Props {
   data: AppData;
   onDataUpdate: () => Promise<void>;
 }
+
+const iconBtnBase: React.CSSProperties = {
+  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+  width: 32, height: 32, borderRadius: 6, border: '1px solid var(--border)',
+  background: 'var(--bg-primary)', cursor: 'pointer', transition: 'all 0.15s',
+};
 
 export default function ReviewsTab({ data, onDataUpdate }: Props) {
   const { t } = useTranslation();
@@ -46,11 +53,10 @@ export default function ReviewsTab({ data, onDataUpdate }: Props) {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!window.confirm(t('admin.confirmDelete'))) return;
+  const handleHide = async (id: number) => {
     try {
-      await deleteReview(id);
-      toast.success(t('admin.deleted'));
+      await updateReview(id, { isApproved: false });
+      toast.success(t('admin.hide'));
       await load();
       await onDataUpdate();
     } catch (err) {
@@ -58,10 +64,11 @@ export default function ReviewsTab({ data, onDataUpdate }: Props) {
     }
   };
 
-  const handleToggle = async (id: number, current: boolean) => {
+  const handleDelete = async (id: number) => {
+    if (!window.confirm(t('admin.confirmDelete'))) return;
     try {
-      await updateReview(id, { isApproved: !current });
-      toast.success(t('admin.reviewApproved'));
+      await deleteReview(id);
+      toast.success(t('admin.deleted'));
       await load();
       await onDataUpdate();
     } catch (err) {
@@ -89,14 +96,14 @@ export default function ReviewsTab({ data, onDataUpdate }: Props) {
     }
   };
 
-  const renderCard = (r: Review, showApprove: boolean) => (
+  const renderCard = (r: Review, isPending: boolean) => (
     <div
       key={r.id}
       style={{
         padding: '0.75rem 1rem',
         borderRadius: 'var(--radius-sm)',
-        background: showApprove ? 'rgba(201, 168, 76, 0.08)' : 'var(--bg-primary)',
-        border: `1px solid ${showApprove ? 'var(--accent)' : 'var(--border)'}`,
+        background: isPending ? 'rgba(201, 168, 76, 0.08)' : 'var(--bg-primary)',
+        border: `1px solid ${isPending ? 'var(--accent)' : 'var(--border)'}`,
         display: 'flex',
         alignItems: 'flex-start',
         gap: '0.75rem',
@@ -112,26 +119,46 @@ export default function ReviewsTab({ data, onDataUpdate }: Props) {
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem' }}>
           <strong style={{ fontSize: '0.85rem' }}>{r.name}</strong>
-          <span style={{ color: 'var(--accent)', fontSize: '0.8rem', whiteSpace: 'nowrap' }}>
+          <div style={{ display: 'flex', gap: '0.35rem', flexShrink: 0 }}>
+            {!r.isApproved && (
+              <button
+                title={t('admin.approve')}
+                style={{ ...iconBtnBase, borderColor: 'var(--accent)' }}
+                onClick={() => handleApprove(r.id)}
+                onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--accent)'; e.currentTarget.style.color = '#fff'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--bg-primary)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+              >
+                <FiEye size={15} />
+              </button>
+            )}
+            {r.isApproved && (
+              <button
+                title={t('admin.hide')}
+                style={{ ...iconBtnBase, borderColor: 'var(--accent-secondary)' }}
+                onClick={() => handleHide(r.id)}
+                onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--accent-secondary)'; e.currentTarget.style.color = '#fff'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--bg-primary)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+              >
+                <FiEyeOff size={15} />
+              </button>
+            )}
+            <button
+              title={t('admin.delete')}
+              style={{ ...iconBtnBase, borderColor: '#e74c3c' }}
+              onClick={() => handleDelete(r.id)}
+              onMouseEnter={(e) => { e.currentTarget.style.background = '#e74c3c'; e.currentTarget.style.color = '#fff'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--bg-primary)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+            >
+              <FiTrash2 size={15} />
+            </button>
+          </div>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: '0.25rem 0' }}>
+          <span style={{ color: 'var(--accent)', fontSize: '0.8rem' }}>
             {'\u2605'.repeat(r.rating)}{'\u2606'.repeat(5 - r.rating)}
           </span>
         </div>
-        <p style={{ margin: '0.25rem 0', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{r.comment}</p>
-        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem', flexWrap: 'wrap' }}>
-          {showApprove && (
-            <button className="btn btn-primary btn-sm" onClick={() => handleApprove(r.id)}>
-              {t('admin.approve')}
-            </button>
-          )}
-          {!showApprove && (
-            <button className="btn btn-secondary btn-sm" onClick={() => handleToggle(r.id, r.isApproved)}>
-              {t('admin.hide')}
-            </button>
-          )}
-          <button className="btn btn-danger btn-sm" onClick={() => handleDelete(r.id)}>
-            {t('admin.delete')}
-          </button>
-        </div>
+        <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{r.comment}</p>
       </div>
     </div>
   );
