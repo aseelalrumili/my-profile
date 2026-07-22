@@ -38,7 +38,23 @@ export async function uploadImage(file: File): Promise<string> {
     mimeType: 'image/webp',
     base64,
   });
+  cacheImage(data.url, base64);
   return data.url;
+}
+
+export function cacheImage(url: string, data: string): void {
+  try { localStorage.setItem('img:' + url, data); } catch {}
+}
+
+export function getCachedImage(url: string): string | null {
+  if (!url) return null;
+  try { return localStorage.getItem('img:' + url) || null; } catch { return null; }
+}
+
+export function resolveImage(src: string | undefined | null): string {
+  if (!src) return '';
+  const url = getUploadUrl(src);
+  return getCachedImage(url) || url;
 }
 
 API.interceptors.request.use(function (config) {

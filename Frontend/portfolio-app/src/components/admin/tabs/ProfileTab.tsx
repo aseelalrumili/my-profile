@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { updateProfile } from '../../../api/api';
-import { getUploadUrl, uploadImage } from '../../../api/client';
+import { getUploadUrl, uploadImage, getCachedImage } from '../../../api/client';
 import type { AppData, Profile } from '../../../types';
 import { getErrorMessage } from '../helpers';
 
@@ -42,7 +42,7 @@ export default function ProfileTab({ data, onDataUpdate }: { data: AppData; onDa
         <label>{t('admin.uploadPhoto')}</label>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
           {data.profile.photoUrl ? (
-            <img src={getUploadUrl(data.profile.photoUrl)} alt={t('admin.photo')} style={{ width: '60px', height: '60px', borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--border)' }} />
+            <img src={getCachedImage(getUploadUrl(data.profile.photoUrl)) || getUploadUrl(data.profile.photoUrl)} alt={t('admin.photo')} style={{ width: '60px', height: '60px', borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--border)' }} />
           ) : (
             <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'var(--bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>?</div>
           )}

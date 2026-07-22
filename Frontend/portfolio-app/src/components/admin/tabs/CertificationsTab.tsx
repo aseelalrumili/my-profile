@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { addCertification, updateCertification, deleteCertification, fetchCertifications } from '../../../api/api';
-import { getUploadUrl, uploadImage } from '../../../api/client';
+import { getUploadUrl, uploadImage, getCachedImage } from '../../../api/client';
 import type { AppData, Certification } from '../../../types';
 import { getErrorMessage, moveItem, SortArrows } from '../helpers';
 
@@ -102,7 +102,7 @@ export default function CertificationsTab({ data, onDataUpdate }: { data: AppDat
             {[0, 1, 2].map((i) => (
               <div key={i} style={{ textAlign: 'center' }}>
                 {existingImages[i]?.url && !imageFiles[i] ? (
-                  <img src={getUploadUrl(existingImages[i].url!)} alt={`${t('admin.image')} ${i + 1}`} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', border: '1px solid var(--border)', display: 'block', marginBottom: '0.25rem' }} />
+                  <img src={getCachedImage(getUploadUrl(existingImages[i].url!)) || getUploadUrl(existingImages[i].url!)} alt={`${t('admin.image')} ${i + 1}`} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', border: '1px solid var(--border)', display: 'block', marginBottom: '0.25rem' }} />
                 ) : imageFiles[i] ? (
                   <img src={URL.createObjectURL(imageFiles[i]!)} alt={`${t('admin.preview')} ${i + 1}`} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', border: '1px solid var(--accent)', display: 'block', marginBottom: '0.25rem' }} />
                 ) : (
