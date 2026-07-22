@@ -650,8 +650,23 @@ export const handler = async (event: any, context: any): Promise<FunctionRespons
     }
 
     if (segments[0] === 'testimonials') {
-      const subResult = await handleSubCrud(segments, method, KEYS.TESTIMONIALS, event);
-      if (subResult) return subResult;
+      if (segments.length === 1) {
+        if (method === 'GET') {
+          return json(await getArray<any>(KEYS.TESTIMONIALS));
+        }
+        if (method === 'POST') {
+          const auth = requireAuth(event);
+          if (!auth) return unauthorized();
+          const body = parseJsonBody(event.body);
+          body.id = nextId(await getArray<any>(KEYS.TESTIMONIALS));
+          const arr = [...await getArray<any>(KEYS.TESTIMONIALS), body];
+          await setArray(KEYS.TESTIMONIALS, arr);
+          return json(body, 201);
+        }
+      } else {
+        const subResult = await handleSubCrud(segments, method, KEYS.TESTIMONIALS, event);
+        if (subResult) return subResult;
+      }
     }
 
     if (segments[0] === 'messages') {
