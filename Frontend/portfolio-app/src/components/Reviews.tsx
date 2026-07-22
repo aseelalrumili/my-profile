@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { fetchReviews, fetchReviewStats, addReview } from '../api/reviews';
-import { getUploadUrl, uploadImage, getCachedImage } from '../api/client';
+import { uploadImage } from '../api/client';
 import type { Review } from '../types';
 
 const PAGE_SIZE = 3;
@@ -51,11 +51,11 @@ export default function Reviews({ settings }: { settings?: Record<string, string
   const load = async () => {
     try {
       const r = await fetchReviews();
-      setReviews(r);
+      if (Array.isArray(r)) setReviews(r);
     } catch {}
     try {
       const s = await fetchReviewStats();
-      setStats(s);
+      if (s && typeof s.total === 'number') setStats(s);
     } catch {}
   };
 
@@ -114,7 +114,7 @@ export default function Reviews({ settings }: { settings?: Record<string, string
 
   const renderAvatar = (r: Review) => {
     if (r.avatarUrl) {
-      return <img className="review-avatar-img" src={getCachedImage(getUploadUrl(r.avatarUrl)) || getUploadUrl(r.avatarUrl)} alt={r.name} />;
+      return <img className="review-avatar-img" src={r.avatarUrl} alt={r.name} />;
     }
     return <div className="review-avatar">{r.name.charAt(0)}</div>;
   };

@@ -30,6 +30,7 @@ import CertificationsPage from './pages/CertificationsPage';
 import PortfolioPage from './pages/PortfolioPage';
 import BlogPage from './pages/BlogPage';
 import BlogPost from './components/BlogPost';
+import ErrorBoundary from './components/ErrorBoundary';
 import { fallbackData } from './fallbackData';
 
 function PageLayout({ children, data }: { children: React.ReactNode; data?: AppData }) {
@@ -191,13 +192,15 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-          <AppRoutes />
-          <ToastContainer position="bottom-right" autoClose={3000} theme="colored" />
-        </BrowserRouter>
-      </AuthProvider>
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider>
+        <AuthProvider>
+          <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+            <AppRoutes />
+            <ToastContainer position="bottom-right" autoClose={3000} theme="colored" />
+          </BrowserRouter>
+        </AuthProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }
