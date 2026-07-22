@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { fetchReviews, fetchReviewStats, addReview } from '../api/reviews';
-import { getUploadUrl } from '../api/client';
+import { getUploadUrl, fileToBase64 } from '../api/client';
 import type { Review } from '../types';
 
 const PAGE_SIZE = 3;
@@ -88,7 +88,8 @@ export default function Reviews({ settings }: { settings?: Record<string, string
     }
     setSubmitting(true);
     try {
-      await addReview({ name: name.trim(), rating, comment: comment.trim(), avatarFile: avatarFile || undefined });
+      const avatarBase64 = avatarFile ? await fileToBase64(avatarFile) : undefined;
+      await addReview({ name: name.trim(), rating, comment: comment.trim(), avatarUrl: avatarBase64 });
       toast.success(isAr ? 'تم إضافة تقييمك!' : 'Review submitted!');
       setName('');
       setRating(0);
