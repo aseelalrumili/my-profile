@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { fetchBlogPosts } from '../api/api';
-import { getUploadUrl, getCachedImage } from '../api/client';
 import type { BlogPost as BlogPostType } from '../types';
 
 export default function BlogPage() {
@@ -72,7 +71,7 @@ export default function BlogPage() {
               <Link to={`/blog/${post.slug}`} style={{ textDecoration: 'none' }}>
                 <article className="blog-card">
                   {post.coverImageUrl && (
-                    <img className="blog-card-image" src={getCachedImage(getUploadUrl(post.coverImageUrl)) || getUploadUrl(post.coverImageUrl)} alt={isAr && post.titleAr ? post.titleAr : post.title} />
+                    <img className="blog-card-image" src={post.coverImageUrl} alt={isAr && post.titleAr ? post.titleAr : post.title} />
                   )}
                   <div className="blog-card-body">
                     <h3>{isAr && post.titleAr ? post.titleAr : post.title}</h3>
