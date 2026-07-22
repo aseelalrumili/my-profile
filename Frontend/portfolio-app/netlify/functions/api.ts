@@ -714,6 +714,7 @@ export const handler = async (event: any, context: any): Promise<FunctionRespons
             name = body.name || '';
             ratingStr = String(body.rating || '');
             comment = body.comment || '';
+            avatarUrl = body.avatarUrl || '';
           }
           if (!name || !ratingStr || !comment) {
             return badRequest('name, rating, and comment are required');
