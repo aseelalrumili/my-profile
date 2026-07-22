@@ -707,7 +707,7 @@ export const handler = async (event: any, context: any): Promise<FunctionRespons
             name: body.name,
             rating,
             comment: body.comment,
-            isApproved: true,
+            isApproved: false,
             createdAt: new Date().toISOString(),
           };
           const arr = [...await getArray<any>(KEYS.REVIEWS), review];
