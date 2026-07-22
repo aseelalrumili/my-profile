@@ -699,10 +699,10 @@ export const handler = async (event: any, context: any): Promise<FunctionRespons
           if (ct.includes('multipart/form-data')) {
             const fields = parseMultipart(ct, event.body || '', event.isBase64Encoded || false);
             for (const f of fields) {
-              if (f.fieldName === 'name') name = f.data.toString('utf8');
-              else if (f.fieldName === 'rating') ratingStr = f.data.toString('utf8');
-              else if (f.fieldName === 'comment') comment = f.data.toString('utf8');
-              else if (f.fieldName === 'avatar' && f.filename) {
+              if (f.name === 'name') name = f.value || '';
+              else if (f.name === 'rating') ratingStr = f.value || '';
+              else if (f.name === 'comment') comment = f.value || '';
+              else if (f.name === 'avatar' && f.filename && f.data) {
                 const uploads = getUploadsStore();
                 const key = `${uuid()}-${f.filename}`;
                 uploads.set(key, { data: f.data, contentType: f.contentType || getMimeType(f.filename) });
