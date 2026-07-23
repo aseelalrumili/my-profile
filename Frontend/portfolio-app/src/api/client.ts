@@ -7,6 +7,10 @@ export const API = axios.create({ baseURL: API_BASE });
 export const getUploadUrl = (path: string): string => {
   if (!path) return path;
   if (path.startsWith('data:')) return path;
+  if (path.startsWith('http')) return path;
+  if (path.startsWith('/.netlify/functions/get-upload/')) {
+    return '/uploads/' + path.slice('/.netlify/functions/get-upload/'.length);
+  }
   return path;
 };
 
