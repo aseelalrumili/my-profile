@@ -5,7 +5,6 @@
   "framework": "vite",
   "rewrites": [
     { "source": "/api/:path*", "destination": "https://profile-aseel.netlify.app/api/:path*" },
-    { "source": "/uploads/:path*", "destination": "https://profile-aseel.netlify.app/uploads/:path*" },
-    { "source": "/((?!api|uploads|assets|favicon\\.ico|robots\\.txt|sitemap\\.xml).*)", "destination": "/index.html" }
+    { "source": "/((?!api|assets|favicon\.ico|robots\.txt|sitemap\.xml).*)", "destination": "/index.html" }
   ]
 }

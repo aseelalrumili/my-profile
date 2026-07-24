@@ -7,26 +7,13 @@
 [build.environment]
   NODE_VERSION = "20"
 
-# API routes → Netlify Function
-[[redirects]]
-  from = "/api/upload"
-  to = "/.netlify/functions/upload"
-  status = 200
-  force = true
-
+# API routes ? Netlify Function
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/api/:splat"
   status = 200
 
-# Upload routes → get-upload function
-[[redirects]]
-  from = "/uploads/*"
-  to = "/.netlify/functions/get-upload/:splat"
-  status = 200
-  force = true
-
-# SPA fallback — must be LAST
+# SPA fallback ? must be LAST
 [[redirects]]
   from = "/*"
   to = "/index.html"

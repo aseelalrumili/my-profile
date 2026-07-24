@@ -1,4 +1,4 @@
-export { API_BASE, getUploadUrl } from './client';
+export { API_BASE, API } from './client';
 export { fetchAll, updateProfile, fetchSocialLinks, addSocialLink, updateSocialLink, deleteSocialLink, fetchSkills, addSkill, updateSkill, deleteSkill, fetchExperience, addExperience, updateExperience, deleteExperience, fetchEducation, addEducation, updateEducation, deleteEducation } from './profile';
 export { fetchProjects, createProject, updateProject, deleteProject, deleteMedia } from './projects';
 export { fetchCertifications, addCertification, updateCertification, deleteCertification } from './certifications';
