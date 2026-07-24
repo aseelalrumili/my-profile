@@ -26,7 +26,7 @@ export default function MessagesTab() {
       {messages.length === 0 ? <p style={{ color: 'var(--text-secondary)' }}>{t('admin.noMessages')}</p> : messages.map((msg) => (
         <div key={msg.id} className="list-item" style={{ opacity: msg.isRead ? 0.6 : 1, flexDirection: 'column', alignItems: 'flex-start', gap: '0.5rem' }}>
           <div className="list-item-info">
-            <h4>{msg.name} <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>({msg.email})</span></h4>
+            <h4>{msg.name} {msg.phone && <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>({msg.phone})</span>}</h4>
             <p style={{ color: 'var(--text-secondary)', marginTop: '0.25rem' }}>{msg.messageText}</p>
             <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{msg.subject && `${msg.subject} - `}{new Date(msg.createdAt).toLocaleString()}</p>
           </div>

@@ -10,7 +10,7 @@ export default function Contact({ data }: { data: AppData }) {
   const { t, i18n } = useTranslation();
   const { profile } = data;
   const isAr = i18n.language === 'ar';
-  const [form, setForm] = useState({ name: '', email: '', subject: '', messageText: '' });
+  const [form, setForm] = useState({ name: '', phone: '', subject: '', messageText: '' });
   const [sending, setSending] = useState(false);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -19,7 +19,7 @@ export default function Contact({ data }: { data: AppData }) {
     try {
       await sendMessage(form);
       toast.success(t('contact.success'));
-      setForm({ name: '', email: '', subject: '', messageText: '' });
+      setForm({ name: '', phone: '', subject: '', messageText: '' });
     } catch {
       toast.error(t('contact.error'));
     } finally {
@@ -72,13 +72,12 @@ export default function Contact({ data }: { data: AppData }) {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="contact-email">{t('contact.email')}</label>
+                <label htmlFor="contact-phone">{t('contact.phone')} <span style={{ fontSize: '0.75em', color: 'var(--text-muted)' }}>({t('contact.optional')})</span></label>
                 <input
-                  id="contact-email"
-                  type="email"
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  required
+                  id="contact-phone"
+                  type="tel"
+                  value={form.phone}
+                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
                 />
               </div>
             </div>

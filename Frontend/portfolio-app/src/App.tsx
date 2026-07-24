@@ -56,6 +56,7 @@ function PageLayout({ children, data }: { children: React.ReactNode; data?: AppD
         onAdminClick={() => isAdmin ? setShowAdmin(true) : setShowLogin(true)}
         onLogout={logout}
         resumeUrl={data?.profile?.resumeUrl}
+        profile={data?.profile}
       />
       {children}
       {data && <Footer data={data} />}

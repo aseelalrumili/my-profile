@@ -2,6 +2,9 @@ export interface Profile {
   id: number;
   fullName: string;
   fullNameAr?: string;
+  firstName?: string;
+  middleName?: string;
+  lastName?: string;
   jobTitle: string;
   jobTitleAr?: string;
   bio?: string;

@@ -10,9 +10,10 @@ interface Props {
   onAdminClick: () => void;
   onLogout: () => void;
   resumeUrl?: string;
+  profile?: { firstName?: string; fullName?: string };
 }
 
-export default function Navbar({ isAdmin, onAdminClick, onLogout, resumeUrl }: Props) {
+export default function Navbar({ isAdmin, onAdminClick, onLogout, resumeUrl, profile }: Props) {
   const { t, i18n } = useTranslation();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
@@ -68,7 +69,7 @@ export default function Navbar({ isAdmin, onAdminClick, onLogout, resumeUrl }: P
   return (
     <>
       <nav className={`nav ${scrolled ? 'scrolled' : ''}`}>
-        <Link to="/" className="nav-logo">ASIL</Link>
+        <Link to="/" className="nav-logo">{profile?.firstName || profile?.fullName?.split(' ')[0] || 'ASIL'}</Link>
 
         <ul className="nav-links">
           {navItems.map((item) => (

@@ -202,7 +202,7 @@ export default function Reviews({ settings }: { settings?: Record<string, string
         </motion.button>
       )}
 
-      {(reviews.length === 0 || allLoaded) && !showForm && (
+      {!showForm && (
         <motion.button
           className="btn btn-primary review-add-btn"
           onClick={() => setShowForm(true)}

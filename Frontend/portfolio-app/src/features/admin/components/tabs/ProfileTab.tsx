@@ -9,6 +9,9 @@ import { getErrorMessage } from '../helpers';
 export default function ProfileTab({ data, onDataUpdate }: { data: AppData; onDataUpdate: () => Promise<void> }) {
   const { t } = useTranslation();
   const [form, setForm] = useState({
+    firstName: data.profile.firstName || '',
+    middleName: data.profile.middleName || '',
+    lastName: data.profile.lastName || '',
     fullName: data.profile.fullName, fullNameAr: data.profile.fullNameAr || '',
     jobTitle: data.profile.jobTitle, jobTitleAr: data.profile.jobTitleAr || '',
     bio: data.profile.bio || '', bioAr: data.profile.bioAr || '',
@@ -26,7 +29,8 @@ export default function ProfileTab({ data, onDataUpdate }: { data: AppData; onDa
     e.preventDefault();
     setLoading(true);
     try {
-      const payload: any = { ...form };
+      const computedFullName = [form.firstName, form.middleName, form.lastName].filter(Boolean).join(' ') || form.fullName;
+      const payload: any = { ...form, fullName: computedFullName };
       if (photoFile) payload.photoUrl = await uploadImage(photoFile);
       if (resumeFile) payload.resumeUrl = await uploadFile(resumeFile);
       await updateProfile(payload);
@@ -53,7 +57,11 @@ export default function ProfileTab({ data, onDataUpdate }: { data: AppData; onDa
         </div>
       </div>
       <div className="form-row">
-        <div className="form-group"><label>{t('admin.fullName')}</label><input type="text" value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} /></div>
+        <div className="form-group"><label>{t('admin.firstName')}</label><input type="text" value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} /></div>
+        <div className="form-group"><label>{t('admin.middleName')}</label><input type="text" value={form.middleName} onChange={(e) => setForm({ ...form, middleName: e.target.value })} /></div>
+        <div className="form-group"><label>{t('admin.lastName')}</label><input type="text" value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} /></div>
+      </div>
+      <div className="form-row">
         <div className="form-group"><label>{t('admin.fullName')} ({t('admin.arSuffix')})</label><input type="text" value={form.fullNameAr} onChange={(e) => setForm({ ...form, fullNameAr: e.target.value })} /></div>
       </div>
       <div className="form-row">

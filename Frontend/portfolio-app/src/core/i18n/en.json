@@ -110,7 +110,8 @@
     "error": "Failed to send message. Please try again.",
     "emailLabel": "Email",
     "phoneLabel": "Phone",
-    "locationLabel": "Location"
+    "locationLabel": "Location",
+    "optional": "optional"
   },
   "resume": {
     "title": "Resume",
@@ -182,6 +183,9 @@
     "visitorStats": "Visitor Stats",
     "invalidCredentials": "Invalid credentials",
     "fullName": "Full Name",
+    "firstName": "First Name",
+    "middleName": "Middle Name",
+    "lastName": "Last Name",
     "email": "Email",
     "jobTitle": "Job Title",
     "bio": "Bio",

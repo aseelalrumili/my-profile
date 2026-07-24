@@ -110,7 +110,8 @@
     "error": "فشل إرسال الرسالة. حاول مرة أخرى.",
     "emailLabel": "البريد الإلكتروني",
     "phoneLabel": "الهاتف",
-    "locationLabel": "الموقع"
+    "locationLabel": "الموقع",
+    "optional": "اختياري"
   },
   "resume": {
     "title": "السيرة الذاتية",
@@ -182,6 +183,9 @@
     "visitorStats": "إحصائيات الزوار",
     "invalidCredentials": "بيانات الدخول غير صحيحة",
     "fullName": "الاسم الكامل",
+    "firstName": "الاسم الأول",
+    "middleName": "الاسم الأوسط",
+    "lastName": "الاسم الأخير",
     "email": "البريد الإلكتروني",
     "jobTitle": "المسمى الوظيفي",
     "bio": "السيرة الذاتية",
