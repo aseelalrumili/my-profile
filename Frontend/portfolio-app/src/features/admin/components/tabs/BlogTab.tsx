@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { createBlogPost, updateBlogPost, deleteBlogPost, fetchAllBlogComments, approveBlogComment, deleteBlogComment } from '../../../../api/api';
+import { uploadImage } from '../../../../api/client';
 import type { AppData, BlogPost, BlogComment } from '../../../../types';
 import { getErrorMessage } from '../helpers';
 
@@ -12,6 +13,9 @@ export default function BlogTab({ data, onDataUpdate }: { data: AppData; onDataU
   const [editingId, setEditingId] = useState<number | null>(null);
   const [comments, setComments] = useState<BlogComment[]>([]);
   const [showComments, setShowComments] = useState(false);
+  const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { setItems(data.blogPosts || []); }, [data.blogPosts]);
 
@@ -24,9 +28,15 @@ export default function BlogTab({ data, onDataUpdate }: { data: AppData; onDataU
   const handleAdd = async () => {
     if (!form.title || !form.slug) return;
     try {
-      if (editingId) { await updateBlogPost(editingId, form); setItems(items.map(i => i.id === editingId ? { ...i, ...form } : i)); setEditingId(null); }
-      else { const newItem = await createBlogPost(form); setItems([...items, newItem]); }
+      const payload: any = { ...form };
+      if (coverImageFile) {
+        payload.coverImageUrl = await uploadImage(coverImageFile);
+      }
+      if (editingId) { await updateBlogPost(editingId, payload); setItems(items.map(i => i.id === editingId ? { ...i, ...payload } : i)); setEditingId(null); }
+      else { const newItem = await createBlogPost(payload); setItems([...items, newItem]); }
       setForm({ title: '', titleAr: '', slug: '', excerpt: '', excerptAr: '', content: '', contentAr: '', coverImageUrl: '', author: '', tags: '', published: true });
+      setCoverImageFile(null);
+      setCoverPreview(null);
       toast.success(t('admin.blogPostSaved'));
     } catch (err: any) { toast.error(getErrorMessage(err, t('admin.failed'))); }
   };
@@ -92,7 +102,7 @@ export default function BlogTab({ data, onDataUpdate }: { data: AppData; onDataU
             <p>{item.published ? t('admin.statusPublished') : t('admin.statusDraft')} - {item.slug}</p>
           </div>
           <div className="list-item-actions">
-            <button className="btn btn-secondary btn-sm" onClick={() => { setForm({ title: item.title, titleAr: item.titleAr || '', slug: item.slug, excerpt: item.excerpt || '', excerptAr: item.excerptAr || '', content: item.content, contentAr: item.contentAr || '', coverImageUrl: item.coverImageUrl || '', author: item.author || '', tags: item.tags || '', published: item.published }); setEditingId(item.id); }}>{t('admin.edit')}</button>
+            <button className="btn btn-secondary btn-sm" onClick={() => { setForm({ title: item.title, titleAr: item.titleAr || '', slug: item.slug, excerpt: item.excerpt || '', excerptAr: item.excerptAr || '', content: item.content, contentAr: item.contentAr || '', coverImageUrl: item.coverImageUrl || '', author: item.author || '', tags: item.tags || '', published: item.published }); setCoverImageFile(null); setCoverPreview(null); setEditingId(item.id); }}>{t('admin.edit')}</button>
             <button className="btn btn-danger btn-sm" onClick={() => handleDelete(item.id)}>{t('admin.delete')}</button>
           </div>
         </div>
@@ -110,7 +120,29 @@ export default function BlogTab({ data, onDataUpdate }: { data: AppData; onDataU
         <div className="form-group"><label>{t('admin.content')}</label><textarea value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} style={{ minHeight: '120px' }} /></div>
         <div className="form-group"><label>{t('admin.content')} ({t('admin.arSuffix')})</label><textarea value={form.contentAr} onChange={(e) => setForm({ ...form, contentAr: e.target.value })} style={{ minHeight: '120px' }} /></div>
         <div className="form-row">
-          <div className="form-group"><label>{t('admin.coverImage')}</label><input type="url" value={form.coverImageUrl} onChange={(e) => setForm({ ...form, coverImageUrl: e.target.value })} /></div>
+          <div className="form-group">
+            <label>{t('admin.coverImage')}</label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+              {(coverPreview || form.coverImageUrl) && (
+                <img src={coverPreview || form.coverImageUrl} alt="Cover" style={{ width: '80px', height: '60px', objectFit: 'cover', borderRadius: '8px', border: '1px solid var(--border)' }} />
+              )}
+              <label className="file-upload-area" style={{ flex: 1 }}>
+                <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => {
+                  const file = e.target.files?.[0] || null;
+                  if (coverPreview) URL.revokeObjectURL(coverPreview);
+                  if (file) {
+                    setCoverImageFile(file);
+                    setCoverPreview(URL.createObjectURL(file));
+                  } else {
+                    setCoverImageFile(null);
+                    setCoverPreview(null);
+                  }
+                }} />
+                <p>{coverImageFile ? coverImageFile.name : t('admin.uploadPhoto')}</p>
+              </label>
+            </div>
+            <input type="url" placeholder="Or paste image URL" value={form.coverImageUrl} onChange={(e) => setForm({ ...form, coverImageUrl: e.target.value })} />
+          </div>
           <div className="form-group"><label>{t('admin.author')}</label><input type="text" value={form.author} onChange={(e) => setForm({ ...form, author: e.target.value })} /></div>
         </div>
         <div className="form-row">

@@ -19,7 +19,7 @@ export default function Footer({ data }: { data: AppData }) {
     <footer className="footer">
       <div className="footer-main">
         <div className="footer-brand">
-          <h3>{data.profile.firstName || data.profile.fullName?.split(' ')[0] || 'ASIL'}</h3>
+          <h3>{isAr ? (data.profile.firstNameAr || data.profile.firstName || data.profile.fullNameAr?.split(' ')[0] || 'ASIL') : (data.profile.firstName || data.profile.fullName?.split(' ')[0] || 'ASIL')}</h3>
           <p>
             {isAr && data.profile.bioAr ? data.profile.bioAr : (data.profile.bio || t('hero.bio'))}
           </p>
@@ -51,8 +51,11 @@ export default function Footer({ data }: { data: AppData }) {
       <div className="footer-bottom">
         <p>&copy; {new Date().getFullYear()} {(() => {
           const p = data.profile;
+          if (isAr) {
+            if (p.firstNameAr && p.lastNameAr) return `${p.firstNameAr} ${p.lastNameAr}`;
+            return p.fullNameAr || p.fullName || 'Portfolio';
+          }
           if (p.firstName && p.lastName) return `${p.firstName} ${p.lastName}`;
-          if (isAr && p.fullNameAr) return p.fullNameAr;
           return p.fullName || 'Portfolio';
         })()}. {t('footer.copyright')}</p>
       </div>

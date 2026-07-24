@@ -14,7 +14,6 @@ import EducationTab from './tabs/EducationTab';
 import ProjectsTab from './tabs/ProjectsTab';
 import CertificationsTab from './tabs/CertificationsTab';
 import BlogTab from './tabs/BlogTab';
-import TestimonialsTab from './tabs/TestimonialsTab';
 import ReviewsTab from './tabs/ReviewsTab';
 import MessagesTab from './tabs/MessagesTab';
 import SettingsTab from './tabs/SettingsTab';
@@ -26,7 +25,7 @@ interface Props {
   onLogout: () => void;
 }
 
-type Tab = 'profile' | 'social' | 'skills' | 'experience' | 'education' | 'projects' | 'certifications' | 'blog' | 'testimonials' | 'reviews' | 'messages' | 'settings';
+type Tab = 'profile' | 'social' | 'skills' | 'experience' | 'education' | 'projects' | 'certifications' | 'blog' | 'reviews' | 'messages' | 'settings';
 
 export default function AdminPanel({ data, onClose, onDataUpdate, onLogout }: Props) {
   const { t } = useTranslation();
@@ -76,54 +75,52 @@ export default function AdminPanel({ data, onClose, onDataUpdate, onLogout }: Pr
     { key: 'projects', label: t('admin.projects') },
     { key: 'certifications', label: t('admin.certifications') },
     { key: 'blog', label: t('admin.blog') },
-    { key: 'testimonials', label: t('admin.testimonials') },
     { key: 'reviews', label: t('admin.reviews') },
     { key: 'messages', label: t('admin.messages') },
     { key: 'settings', label: t('admin.settings') },
   ];
 
   return (
-    <div className="admin-overlay" onClick={onClose}>
-      <motion.div
-        className="admin-panel"
-        onClick={(e) => e.stopPropagation()}
-        style={{ maxWidth: '800px' }}
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.3 }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-          <h2 style={{ fontFamily: 'var(--font-heading)' }}>{t('admin.title')}</h2>
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <button className="btn btn-secondary btn-sm" onClick={handleExport}>{t('admin.exportData')}</button>
-            <button className="btn btn-secondary btn-sm" onClick={handleImportClick} disabled={importing}>{importing ? t('admin.importing') : t('admin.importData')}</button>
-            <input ref={fileInputRef} type="file" accept=".json" style={{ display: 'none' }} onChange={handleImportFile} />
-            <button className="btn btn-danger btn-sm" onClick={handleLogout}>{t('admin.logout')}</button>
-            <button className="btn btn-secondary btn-sm" onClick={onClose}>{t('admin.close')}</button>
-          </div>
+    <motion.div
+      className="admin-fullpage"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+    >
+      <div className="admin-fullpage-header">
+        <h2 style={{ fontFamily: 'var(--font-heading)', margin: 0 }}>{t('admin.title')}</h2>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+          <button className="btn btn-secondary btn-sm" onClick={handleExport}>{t('admin.exportData')}</button>
+          <button className="btn btn-secondary btn-sm" onClick={handleImportClick} disabled={importing}>{importing ? t('admin.importing') : t('admin.importData')}</button>
+          <input ref={fileInputRef} type="file" accept=".json" style={{ display: 'none' }} onChange={handleImportFile} />
+          <button className="btn btn-danger btn-sm" onClick={handleLogout}>{t('admin.logout')}</button>
+          <button className="btn btn-secondary btn-sm" onClick={onClose}>{t('admin.close')}</button>
         </div>
+      </div>
 
-        <div className="admin-tabs">
+      <div className="admin-fullpage-body">
+        <div className="admin-sidebar">
           {tabs.map((t_tab) => (
-            <button key={t_tab.key} className={`admin-tab ${tab === t_tab.key ? 'active' : ''}`} onClick={() => setTab(t_tab.key)}>
+            <button key={t_tab.key} className={`admin-sidebar-tab ${tab === t_tab.key ? 'active' : ''}`} onClick={() => setTab(t_tab.key)}>
               {t_tab.label}
             </button>
           ))}
         </div>
 
-        {tab === 'profile' && <ProfileTab data={data} onDataUpdate={onDataUpdate} />}
-        {tab === 'social' && <SocialTab data={data} onDataUpdate={onDataUpdate} />}
-        {tab === 'skills' && <SkillsTab data={data} onDataUpdate={onDataUpdate} />}
-        {tab === 'experience' && <ExperienceTab data={data} onDataUpdate={onDataUpdate} />}
-        {tab === 'education' && <EducationTab data={data} onDataUpdate={onDataUpdate} />}
-        {tab === 'projects' && <ProjectsTab data={data} onDataUpdate={onDataUpdate} />}
-        {tab === 'certifications' && <CertificationsTab data={data} onDataUpdate={onDataUpdate} />}
-        {tab === 'blog' && <BlogTab data={data} onDataUpdate={onDataUpdate} />}
-        {tab === 'testimonials' && <TestimonialsTab data={data} onDataUpdate={onDataUpdate} />}
-        {tab === 'reviews' && <ReviewsTab data={data} onDataUpdate={onDataUpdate} />}
-        {tab === 'messages' && <MessagesTab />}
-        {tab === 'settings' && <SettingsTab />}
-      </motion.div>
-    </div>
+        <div className="admin-fullpage-content">
+          {tab === 'profile' && <ProfileTab data={data} onDataUpdate={onDataUpdate} />}
+          {tab === 'social' && <SocialTab data={data} onDataUpdate={onDataUpdate} />}
+          {tab === 'skills' && <SkillsTab data={data} onDataUpdate={onDataUpdate} />}
+          {tab === 'experience' && <ExperienceTab data={data} onDataUpdate={onDataUpdate} />}
+          {tab === 'education' && <EducationTab data={data} onDataUpdate={onDataUpdate} />}
+          {tab === 'projects' && <ProjectsTab data={data} onDataUpdate={onDataUpdate} />}
+          {tab === 'certifications' && <CertificationsTab data={data} onDataUpdate={onDataUpdate} />}
+          {tab === 'blog' && <BlogTab data={data} onDataUpdate={onDataUpdate} />}
+          {tab === 'reviews' && <ReviewsTab data={data} onDataUpdate={onDataUpdate} />}
+          {tab === 'messages' && <MessagesTab />}
+          {tab === 'settings' && <SettingsTab />}
+        </div>
+      </div>
+    </motion.div>
   );
 }

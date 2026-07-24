@@ -11,7 +11,7 @@ export default function CertificationsTab({ data, onDataUpdate }: { data: AppDat
   const [items, setItems] = useState<Certification[]>(data.certifications || []);
   const [form, setForm] = useState({ name: '', nameAr: '', issuer: '', issuerAr: '', issueDate: '', expiryDate: '', credentialUrl: '', logoUrl: '', category: '', categoryAr: '' });
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [imageFiles, setImageFiles] = useState<(File | null)[]>([null, null, null]);
+  const [imageFiles, setImageFiles] = useState<(File | null)[]>([null, null]);
   const [existingImages, setExistingImages] = useState<{ url: string | null; index: number }[]>([]);
 
   useEffect(() => { setItems(data.certifications || []); }, [data.certifications]);
@@ -20,7 +20,7 @@ export default function CertificationsTab({ data, onDataUpdate }: { data: AppDat
     if (!form.name) return;
     try {
       const payload: any = { ...form, sortOrder: String(items.length) };
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < 2; i++) {
         if (imageFiles[i]) {
           payload[`imageUrl${i + 1}`] = await uploadImage(imageFiles[i]!);
         } else if (existingImages[i]?.url) {
@@ -65,9 +65,8 @@ export default function CertificationsTab({ data, onDataUpdate }: { data: AppDat
               setExistingImages([
                 { url: item.imageUrl1 || null, index: 0 },
                 { url: item.imageUrl2 || null, index: 1 },
-                { url: item.imageUrl3 || null, index: 2 },
               ]);
-              setImageFiles([null, null, null]);
+              setImageFiles([null, null]);
               setEditingId(item.id);
             }}>{t('admin.edit')}</button>
             <button className="btn btn-danger btn-sm" onClick={() => handleDelete(item.id)}>{t('admin.delete')}</button>
@@ -99,7 +98,7 @@ export default function CertificationsTab({ data, onDataUpdate }: { data: AppDat
         <div className="form-group">
           <label>{t('admin.imageUpload')}</label>
           <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginTop: '0.5rem' }}>
-            {[0, 1, 2].map((i) => (
+            {[0, 1].map((i) => (
               <div key={i} style={{ textAlign: 'center' }}>
                 {existingImages[i]?.url && !imageFiles[i] ? (
                   <img src={existingImages[i].url!} alt={`${t('admin.image')} ${i + 1}`} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', border: '1px solid var(--border)', display: 'block', marginBottom: '0.25rem' }} />

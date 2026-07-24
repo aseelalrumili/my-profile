@@ -50,34 +50,37 @@ function PageLayout({ children, data }: { children: React.ReactNode; data?: AppD
 
   return (
     <>
-      <ReadingProgress />
-      <Navbar
-        isAdmin={isAdmin}
-        onAdminClick={() => isAdmin ? setShowAdmin(true) : setShowLogin(true)}
-        onLogout={logout}
-        resumeUrl={data?.profile?.resumeUrl}
-        profile={data?.profile}
-      />
-      {children}
-      {data && <Footer data={data} />}
-      <BackToTop />
-      {showLogin && (
-        <LoginModal
-          onSuccess={(token, username) => {
-            login(token, username);
-            setShowLogin(false);
-            setShowAdmin(true);
-          }}
-          onClose={() => setShowLogin(false)}
-        />
-      )}
-      {showAdmin && isAdmin && data && (
+      {showAdmin && isAdmin && data ? (
         <AdminPanel
           data={data}
           onClose={() => setShowAdmin(false)}
           onDataUpdate={() => fetchAll().then(() => {})}
           onLogout={() => { logout(); setShowAdmin(false); }}
         />
+      ) : (
+        <>
+          <ReadingProgress />
+          <Navbar
+            isAdmin={isAdmin}
+            onAdminClick={() => isAdmin ? setShowAdmin(true) : setShowLogin(true)}
+            onLogout={logout}
+            resumeUrl={data?.profile?.resumeUrl}
+            profile={data?.profile}
+          />
+          {children}
+          {data && <Footer data={data} />}
+          <BackToTop />
+          {showLogin && (
+            <LoginModal
+              onSuccess={(token, username) => {
+                login(token, username);
+                setShowLogin(false);
+                setShowAdmin(true);
+              }}
+              onClose={() => setShowLogin(false)}
+            />
+          )}
+        </>
       )}
     </>
   );

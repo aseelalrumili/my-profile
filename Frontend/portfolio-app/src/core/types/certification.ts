@@ -10,7 +10,6 @@ export interface Certification {
   logoUrl?: string;
   imageUrl1?: string;
   imageUrl2?: string;
-  imageUrl3?: string;
   category?: string;
   categoryAr?: string;
   sortOrder: number;

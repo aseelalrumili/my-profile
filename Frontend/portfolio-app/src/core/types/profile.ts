@@ -3,8 +3,11 @@ export interface Profile {
   fullName: string;
   fullNameAr?: string;
   firstName?: string;
+  firstNameAr?: string;
   middleName?: string;
+  middleNameAr?: string;
   lastName?: string;
+  lastNameAr?: string;
   jobTitle: string;
   jobTitleAr?: string;
   bio?: string;

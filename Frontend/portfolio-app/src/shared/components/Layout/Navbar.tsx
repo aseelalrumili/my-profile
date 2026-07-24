@@ -10,7 +10,7 @@ interface Props {
   onAdminClick: () => void;
   onLogout: () => void;
   resumeUrl?: string;
-  profile?: { firstName?: string; fullName?: string };
+  profile?: { firstName?: string; firstNameAr?: string; fullName?: string; fullNameAr?: string };
 }
 
 export default function Navbar({ isAdmin, onAdminClick, onLogout, resumeUrl, profile }: Props) {
@@ -69,7 +69,7 @@ export default function Navbar({ isAdmin, onAdminClick, onLogout, resumeUrl, pro
   return (
     <>
       <nav className={`nav ${scrolled ? 'scrolled' : ''}`}>
-        <Link to="/" className="nav-logo">{profile?.firstName || profile?.fullName?.split(' ')[0] || 'ASIL'}</Link>
+        <Link to="/" className="nav-logo">{isAr ? (profile?.firstNameAr || profile?.firstName || profile?.fullNameAr?.split(' ')[0] || 'ASIL') : (profile?.firstName || profile?.fullName?.split(' ')[0] || 'ASIL')}</Link>
 
         <ul className="nav-links">
           {navItems.map((item) => (

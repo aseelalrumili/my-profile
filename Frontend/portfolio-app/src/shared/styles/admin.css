@@ -1,4 +1,104 @@
 /* ===== ADMIN ===== */
+
+/* Full-page admin layout */
+.admin-fullpage {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
+  overflow: clip;
+}
+
+.admin-fullpage-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-secondary);
+  flex-shrink: 0;
+}
+
+.admin-fullpage-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.admin-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border);
+  background: var(--bg-secondary);
+  overflow-y: auto;
+  padding: var(--space-2) 0;
+}
+
+.admin-sidebar-tab {
+  display: block;
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+  cursor: pointer;
+  text-align: left;
+  border-left: 3px solid transparent;
+  transition: all var(--dur-fast);
+}
+
+.admin-sidebar-tab:hover {
+  color: var(--accent);
+  background: var(--bg-primary);
+}
+
+.admin-sidebar-tab.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--bg-primary);
+  font-weight: var(--fw-medium);
+}
+
+.admin-fullpage-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-4);
+}
+
+.admin-fullpage-content .form-group select {
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 768px) {
+  .admin-fullpage-body {
+    flex-direction: column;
+  }
+  .admin-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0;
+  }
+  .admin-sidebar-tab {
+    border-left: none;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    padding: var(--space-2) var(--space-3);
+  }
+  .admin-sidebar-tab.active {
+    border-left-color: transparent;
+    border-bottom-color: var(--accent);
+  }
+}
+
+/* Legacy overlay (still used by LoginModal) */
 .admin-overlay {
   position: fixed;
   inset: 0;
