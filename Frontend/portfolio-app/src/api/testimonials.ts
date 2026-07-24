@@ -1,7 +1,16 @@
 import type { Testimonial } from '../types';
-import { API } from './client';
+import * as store from '../core/store';
 
-export const fetchTestimonials = async (): Promise<Testimonial[]> => (await API.get('/testimonials')).data;
-export const addTestimonial = async (t: Partial<Testimonial>): Promise<Testimonial> => (await API.post('/testimonials', t)).data;
-export const updateTestimonial = async (id: number, t: Partial<Testimonial>): Promise<Testimonial> => (await API.put(`/testimonials/${id}`, t)).data;
-export const deleteTestimonial = async (id: number): Promise<void> => { await API.delete(`/testimonials/${id}`); };
+export const fetchTestimonials = async (): Promise<Testimonial[]> => store.getAll<Testimonial>('testimonials');
+
+export const addTestimonial = async (data: Omit<Testimonial, 'id'>): Promise<Testimonial> => {
+  return store.add<Testimonial>('testimonials', data);
+};
+
+export const updateTestimonial = async (id: number, data: Partial<Testimonial>): Promise<Testimonial> => {
+  return store.update<Testimonial>('testimonials', id, data);
+};
+
+export const deleteTestimonial = async (id: number) => {
+  store.remove<Testimonial>('testimonials', id);
+};

@@ -5,7 +5,7 @@ export { fetchCertifications, addCertification, updateCertification, deleteCerti
 export { fetchBlogPosts, fetchBlogPost, createBlogPost, updateBlogPost, deleteBlogPost, fetchBlogComments, fetchAllBlogComments, addBlogComment, approveBlogComment, deleteBlogComment } from './blog';
 export { fetchTestimonials, addTestimonial, updateTestimonial, deleteTestimonial } from './testimonials';
 export { fetchReviews, fetchAllReviews, addReview, updateReview, deleteReview, approveReview, fetchReviewStats } from './reviews';
-export { fetchMessages, sendMessage, markMessageRead, deleteMessage } from './messages';
-export { login, logout, isAuthenticated } from './auth';
-export { fetchVisitors, trackVisitor, fetchVisitorAnalytics } from './visitors';
+export { fetchMessages, sendMessage, markMessageRead, deleteMessage } from '../shared/api/messages';
+export { login, logout, isAuthenticated } from '../shared/api/auth';
+export { fetchVisitors, trackVisitor, fetchVisitorAnalytics } from '../shared/api/visitors';
 export { importData } from './import';
