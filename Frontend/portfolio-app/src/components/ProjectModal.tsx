@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Project } from '../types';
-import { getUploadUrl } from '../api/client';
 import Lightbox from './Lightbox';
 import ShareButtons from './ShareButtons';
 import LazyImage from './LazyImage';
@@ -88,7 +87,7 @@ export default function ProjectModal({ project, onClose }: Props) {
                   <LazyImage key={m.id} src={m.url} alt={m.fileName || ''} className="project-modal-media-img"
                     onClick={() => setLightboxImage(m.url)} />
                 ) : (
-                  <a key={m.id} href={getUploadUrl(m.url)} target="_blank" rel="noopener noreferrer"
+                  <a key={m.id} href={m.url} target="_blank" rel="noopener noreferrer"
                     className="project-modal-media-3d">
                     3D Model
                   </a>
