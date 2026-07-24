@@ -195,7 +195,7 @@ export default function App() {
     <ErrorBoundary>
       <ThemeProvider>
         <AuthProvider>
-          <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <BrowserRouter basename="/my-profile" future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <AppRoutes />
             <ToastContainer position="bottom-right" autoClose={3000} theme="colored" />
           </BrowserRouter>
