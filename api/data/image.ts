@@ -41,7 +41,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(404).json({ error: 'Image not found', detail: 'no downloadUrl', keys: Object.keys(blobMeta) });
     }
 
-    const resp = await fetch(downloadUrl);
+    const resp = await fetch(downloadUrl, { headers: { Authorization: `Bearer ${token}` } });
     if (!resp.ok) {
       return res.status(404).json({ error: 'Image not found', detail: `fetch ${resp.status}`, downloadUrl: downloadUrl.substring(0, 80) });
     }
