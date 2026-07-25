@@ -4,22 +4,22 @@ import { useTranslation } from 'react-i18next';
 import { login as apiLogin } from '../../../api/api';
 
 interface Props {
-  onSuccess: (token: string, username: string) => void;
+  onSuccess: (token: string, email: string) => void;
   onClose: () => void;
 }
 
 export default function LoginModal({ onSuccess, onClose }: Props) {
   const { t } = useTranslation();
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const usernameRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    usernameRef.current?.focus();
+    emailRef.current?.focus();
   }, []);
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -43,8 +43,8 @@ export default function LoginModal({ onSuccess, onClose }: Props) {
     setError('');
     setLoading(true);
     try {
-      const result = await apiLogin(username, password);
-      onSuccess(result.token, result.username);
+      const result = await apiLogin(email, password);
+      onSuccess(result.token, result.email);
     } catch {
       setError(t('admin.invalidCredentials'));
     } finally {
@@ -70,8 +70,8 @@ export default function LoginModal({ onSuccess, onClose }: Props) {
         {error && <p style={{ color: 'var(--danger)', fontSize: '0.85rem', marginBottom: '1rem' }}>{error}</p>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="login-username">{t('admin.username')}</label>
-            <input id="login-username" ref={usernameRef} type="text" value={username} onChange={(e) => setUsername(e.target.value)} required />
+            <label htmlFor="login-email">{t('admin.email')}</label>
+            <input id="login-email" ref={emailRef} type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
           </div>
           <div className="form-group">
             <label htmlFor="login-password">{t('admin.password')}</label>

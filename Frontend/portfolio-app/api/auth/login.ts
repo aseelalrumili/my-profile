@@ -2,7 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-const ADMIN_USERNAME = process.env.ADMIN_USERNAME;
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH;
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -19,25 +19,25 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  if (!ADMIN_USERNAME || !ADMIN_PASSWORD_HASH || !JWT_SECRET) {
+  if (!ADMIN_EMAIL || !ADMIN_PASSWORD_HASH || !JWT_SECRET) {
     return res.status(500).json({ error: 'Server configuration error' });
   }
 
-  const { username, password } = req.body || {};
+  const { email, password } = req.body || {};
 
-  if (!username || !password) {
+  if (!email || !password) {
     return res.status(400).json({ error: 'Invalid credentials' });
   }
 
-  const usernameMatch = username === ADMIN_USERNAME;
+  const emailMatch = email === ADMIN_EMAIL;
   const passwordMatch = bcrypt.compareSync(String(password), ADMIN_PASSWORD_HASH);
 
-  if (!usernameMatch || !passwordMatch) {
+  if (!emailMatch || !passwordMatch) {
     return res.status(401).json({ error: 'Invalid credentials' });
   }
 
-  const token = jwt.sign({ username: ADMIN_USERNAME }, JWT_SECRET, { expiresIn: '24h' });
+  const token = jwt.sign({ email: ADMIN_EMAIL }, JWT_SECRET, { expiresIn: '24h' });
   const expiration = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
 
-  return res.status(200).json({ token, username: ADMIN_USERNAME, expiration });
+  return res.status(200).json({ token, email: ADMIN_EMAIL, expiration });
 }

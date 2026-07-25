@@ -7,7 +7,7 @@ import type { Review } from './review';
 
 export interface LoginResponse {
   token: string;
-  username: string;
+  email: string;
   expiration: string;
 }
 

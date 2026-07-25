@@ -17,8 +17,8 @@ export function verifyToken(req: VercelRequest, res: VercelResponse): string | n
 
   const token = authHeader.split(' ')[1];
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { username: string };
-    return decoded.username;
+    const decoded = jwt.verify(token, JWT_SECRET) as { email: string };
+    return decoded.email;
   } catch {
     res.status(401).json({ error: 'Invalid or expired token' });
     return null;

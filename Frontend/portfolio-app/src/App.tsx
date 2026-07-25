@@ -87,8 +87,8 @@ function PageLayout({ children, data, onDataUpdate }: { children: React.ReactNod
           <BackToTop />
           {showLogin && (
             <LoginModal
-              onSuccess={(token, username) => {
-                login(token, username);
+              onSuccess={(token, email) => {
+                login(token, email);
                 setShowLogin(false);
                 setShowAdmin(true);
               }}
