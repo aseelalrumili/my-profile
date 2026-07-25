@@ -1,10 +1,22 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getBlobToken, getBlobOpts } from '../_lib';
 
 const BLOB_KEY = 'portfolio/visitors.json';
 
+function getToken(): string | null {
+  return process.env.PORTFOLIO_BLOB_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN || null;
+}
+
+function getOpts(): Record<string, string> {
+  const opts: Record<string, string> = {};
+  const token = getToken();
+  const storeId = process.env.PORTFOLIO_STORE_ID || null;
+  if (token) opts.token = token;
+  if (storeId) opts.storeId = storeId;
+  return opts;
+}
+
 async function loadVisitors() {
-  const opts = getBlobOpts();
+  const opts = getOpts();
   if (!opts.token) return [];
   try {
     const { get } = await import('@vercel/blob');
@@ -18,7 +30,7 @@ async function loadVisitors() {
 async function saveVisitors(visitors: { page: string; timestamp: string }[]) {
   const { put } = await import('@vercel/blob');
   await put(BLOB_KEY, JSON.stringify(visitors), {
-    ...getBlobOpts(),
+    ...getOpts(),
     contentType: 'application/json',
     access: 'public',
   });
@@ -31,7 +43,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  const token = getBlobToken();
+  const token = getToken();
 
   if (req.method === 'POST') {
     if (!token) return res.status(200).json({ ok: true });

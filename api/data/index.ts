@@ -1,7 +1,19 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getBlobToken, getBlobOpts } from '../_lib';
 
 const BLOB_KEY = 'portfolio/data.json';
+
+function getToken(): string | null {
+  return process.env.PORTFOLIO_BLOB_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN || null;
+}
+
+function getOpts(): Record<string, string> {
+  const opts: Record<string, string> = {};
+  const token = getToken();
+  const storeId = process.env.PORTFOLIO_STORE_ID || null;
+  if (token) opts.token = token;
+  if (storeId) opts.storeId = storeId;
+  return opts;
+}
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -10,13 +22,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  const token = getBlobToken();
+  const token = getToken();
 
   if (req.method === 'GET') {
     if (!token) return res.status(200).json(null);
     try {
       const { get } = await import('@vercel/blob');
-      const blob = await get(BLOB_KEY, getBlobOpts());
+      const blob = await get(BLOB_KEY, getOpts());
       const data = JSON.parse(await blob.text());
       return res.status(200).json(data);
     } catch {
@@ -46,7 +58,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     try {
       const { get, put } = await import('@vercel/blob');
-      const opts = getBlobOpts();
+      const opts = getOpts();
       let current: Record<string, unknown> = {};
       try {
         const blob = await get(BLOB_KEY, opts);

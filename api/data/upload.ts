@@ -1,5 +1,17 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getBlobToken, getBlobOpts } from '../_lib';
+
+function getToken(): string | null {
+  return process.env.PORTFOLIO_BLOB_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN || null;
+}
+
+function getOpts(): Record<string, string> {
+  const opts: Record<string, string> = {};
+  const token = getToken();
+  const storeId = process.env.PORTFOLIO_STORE_ID || null;
+  if (token) opts.token = token;
+  if (storeId) opts.storeId = storeId;
+  return opts;
+}
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -14,7 +26,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  const token = getBlobToken();
+  const token = getToken();
   if (!token) return res.status(500).json({ error: 'Blob storage not configured' });
 
   const jwtModule = await import('jsonwebtoken');
@@ -41,7 +53,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const uniqueName = `portfolio/images/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
 
     const blob = await put(uniqueName, buffer, {
-      ...getBlobOpts(),
+      ...getOpts(),
       contentType: contentType || 'image/webp',
       access: 'public',
     });
