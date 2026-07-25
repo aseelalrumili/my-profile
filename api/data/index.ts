@@ -28,11 +28,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (!token) return res.status(200).json(null);
     try {
       const { get } = await import('@vercel/blob');
-      const blob = await get(BLOB_KEY, getOpts());
+      const blob = await get(BLOB_KEY, { ...getOpts(), access: 'private' });
       const data = JSON.parse(await blob.text());
       return res.status(200).json(data);
-    } catch (err: any) {
-      return res.status(200).json({ _debug: err.message || String(err) });
+    } catch {
+      return res.status(200).json(null);
     }
   }
 
@@ -61,7 +61,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const opts = getOpts();
       let current: Record<string, unknown> = {};
       try {
-        const blob = await get(BLOB_KEY, opts);
+        const blob = await get(BLOB_KEY, { ...opts, access: 'private' });
         current = JSON.parse(await blob.text());
       } catch {}
 
