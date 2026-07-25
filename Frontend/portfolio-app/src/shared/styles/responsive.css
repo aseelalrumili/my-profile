@@ -19,30 +19,51 @@
 }
 
 @media (max-width: 768px) {
-  /* Navbar mobile */
+  /* ===== NAVBAR MOBILE ===== */
   .nav {
     left: 0;
     right: 0;
     border-radius: 0;
-    padding: var(--space-2) var(--space-3);
+    padding: clamp(8px, 2vw, 14px) clamp(10px, 3vw, 16px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-logo {
+    font-size: clamp(0.85rem, 3.5vw, 1.1rem);
+    flex-shrink: 0;
+    letter-spacing: 0.1em;
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .hamburger {
+    display: block;
+    font-size: clamp(1.2rem, 4vw, 1.6rem);
   }
 
   .nav-controls {
-    gap: 0.35rem;
+    display: flex;
+    align-items: center;
+    gap: clamp(4px, 1.5vw, 8px);
+    flex-shrink: 0;
   }
 
   .nav-lang-btn,
   .nav-toggle-btn,
   .nav-admin-btn {
-    width: 32px;
-    height: 32px;
-    font-size: 0.75rem;
+    width: clamp(30px, 9vw, 38px);
+    height: clamp(30px, 9vw, 38px);
+    font-size: clamp(0.65rem, 2vw, 0.8rem);
+    border-radius: 50%;
   }
 
-  .nav-cv-btn { display: none; }
-
-  .nav-links { display: none; }
-  .hamburger { display: block; }
+  .nav-cv-btn {
+    display: none;
+  }
 
   /* Hero mobile — photo above text */
   .hero-content {
@@ -80,10 +101,10 @@
 
   .projects-grid-masonry { columns: 2; }
 
-  /* Admin sidebar mobile — grid layout */
+  /* ===== ADMIN SIDEBAR MOBILE ===== */
   .admin-fullpage-body {
     flex-direction: column;
-    padding: var(--space-2);
+    padding: clamp(6px, 2vw, 10px);
   }
 
   .admin-sidebar {
@@ -92,8 +113,8 @@
     border-radius: var(--radius);
     overflow-x: auto;
     overflow-y: hidden;
-    padding: var(--space-2);
-    gap: var(--space-1);
+    padding: 0;
+    gap: 0;
   }
 
   .admin-sidebar:hover {
@@ -111,12 +132,12 @@
   .admin-sidebar-tab {
     border-left: none;
     border-bottom: 3px solid transparent;
-    padding: var(--space-2);
+    padding: clamp(6px, 2vw, 10px) clamp(6px, 2vw, 12px);
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
+    gap: clamp(2px, 0.8vw, 5px);
     min-width: 0;
     text-align: center;
     border-radius: var(--radius-sm);
@@ -128,18 +149,32 @@
 
   .admin-sidebar-tab.active {
     border-left-color: transparent;
+    border-right-color: transparent;
     border-bottom-color: var(--accent);
     background: var(--bg-primary);
   }
 
   .admin-sidebar-label {
     opacity: 1;
-    font-size: 0.6rem;
-    line-height: 1.2;
+    font-size: clamp(0.6rem, 2vw, 0.75rem);
+    line-height: 1.3;
   }
 
   .admin-sidebar-icon {
-    font-size: 1.1rem;
+    font-size: clamp(1rem, 3vw, 1.3rem);
+  }
+
+  /* RTL mobile sidebar */
+  [dir="rtl"] .admin-sidebar-tab {
+    border-left: none;
+    border-right: none;
+    border-bottom: 3px solid transparent;
+  }
+
+  [dir="rtl"] .admin-sidebar-tab.active {
+    border-left-color: transparent;
+    border-right-color: transparent;
+    border-bottom-color: var(--accent);
   }
 
   .form-row { grid-template-columns: 1fr !important; }
