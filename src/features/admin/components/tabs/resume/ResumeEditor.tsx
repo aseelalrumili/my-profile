@@ -7,11 +7,12 @@ import { FONT_OPTIONS } from './defaultSettings';
 interface Props {
   settings: ResumeSettings;
   onChange: (settings: ResumeSettings) => void;
+  isAts?: boolean;
 }
 
 type EditorTab = 'layout' | 'colors' | 'fonts' | 'sections' | 'photo';
 
-export default function ResumeEditor({ settings, onChange }: Props) {
+export default function ResumeEditor({ settings, onChange, isAts }: Props) {
   const { t, i18n } = useTranslation();
   const isAr = i18n.language === 'ar';
   const [tab, setTab] = useState<EditorTab>('layout');
@@ -269,13 +270,16 @@ export default function ResumeEditor({ settings, onChange }: Props) {
     </div>
   );
 
-  const tabs: { key: EditorTab; icon: React.ReactNode; label: string }[] = [
+  const allTabs: { key: EditorTab; icon: React.ReactNode; label: string }[] = [
     { key: 'layout', icon: <FiLayout />, label: t('resume.tab.layout') },
     { key: 'photo', icon: <FiImage />, label: t('resume.tab.photo') },
     { key: 'colors', icon: <FiDroplet />, label: t('resume.tab.colors') },
     { key: 'fonts', icon: <FiType />, label: t('resume.tab.fonts') },
     { key: 'sections', icon: <FiList />, label: t('resume.tab.sections') },
   ];
+  const tabs = isAts
+    ? allTabs.filter(t => t.key !== 'photo' && t.key !== 'colors')
+    : allTabs;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>

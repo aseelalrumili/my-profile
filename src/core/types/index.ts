@@ -6,3 +6,4 @@ export type { Testimonial } from './testimonial';
 export type { Review } from './review';
 export type { Message, Visitor } from './message';
 export type { LoginResponse, AppData } from './app';
+export type { ResumeSettings, ResumeLayout, ResumeColors, ResumeFonts, ResumeSection, ResumeSectionType, ResumeVersion } from './resume';

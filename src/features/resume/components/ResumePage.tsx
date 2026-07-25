@@ -1,133 +1,249 @@
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FiPrinter, FiDownload } from 'react-icons/fi';
 import type { AppData } from '../../../types';
+import type { ResumeSettings } from '../../../core/types/resume';
+import { defaultAtsSettings } from '../../admin/components/tabs/resume/defaultSettings';
 
-export default function ResumePage({ data }: { data: AppData | null }) {
+interface Props {
+  data: AppData | null;
+  type?: 'ats' | 'regular';
+}
+
+export default function ResumePage({ data, type = 'ats' }: Props) {
   const { t, i18n } = useTranslation();
   const isAr = i18n.language === 'ar';
+
+  const settings: ResumeSettings = useMemo(() => {
+    if (!data?.resumeVersions) return defaultAtsSettings;
+    const versions = data.resumeVersions;
+    const defaultVersion = versions.find(v => v.type === type && v.isDefault);
+    if (defaultVersion) return defaultVersion.settings;
+    const fallback = versions.find(v => v.type === type);
+    if (fallback) return fallback.settings;
+    return defaultAtsSettings;
+  }, [data?.resumeVersions, type]);
 
   if (!data) return <div className="section"><p>{t('loading')}</p></div>;
 
   const { profile, skills = [], experience = [], education = [], certifications = [] } = data;
+  const { layout, colors, fonts, sections } = settings;
 
-  const handlePrint = () => window.print();
+  const name = isAr && profile.fullNameAr ? profile.fullNameAr : profile.fullName;
+  const title = isAr && profile.jobTitleAr ? profile.jobTitleAr : profile.jobTitle;
+  const bio = isAr && profile.bioAr ? profile.bioAr : profile.bio;
+  const location = isAr && profile.locationAr ? profile.locationAr : profile.location;
 
-  const handleDownloadPdf = () => {
-    const printContent = document.getElementById('resume-content');
-    if (!printContent) return;
+  const visibleSections = sections.filter((s) => s.visible);
+  const photoRadius = layout.photoShape === 'circle' ? '50%' : layout.photoShape === 'rounded' ? '12px' : '0';
+
+  const getSectionTitle = (s: typeof sections[0]) => isAr ? s.titleAr : s.title;
+
+  const getSectionContent = (section: typeof sections[0]): string => {
+    switch (section.type) {
+      case 'summary': return bio || '';
+      case 'skills': return skills.map((s) => isAr && s.nameAr ? s.nameAr : s.name).join(' | ');
+      case 'experience':
+        return experience.map((exp) => {
+          const lines = [];
+          const expTitle = isAr && exp.titleAr ? exp.titleAr : exp.title;
+          const expCompany = isAr && exp.companyAr ? exp.companyAr : exp.company;
+          const expDesc = isAr && exp.descriptionAr ? exp.descriptionAr : exp.description;
+          lines.push(`${expTitle}${expCompany ? ` - ${expCompany}` : ''}`);
+          if (exp.period) lines.push(`  ${exp.period}`);
+          if (expDesc) lines.push(`  ${expDesc}`);
+          return lines.join('\n');
+        }).join('\n\n');
+      case 'education':
+        return education.map((edu) => {
+          const lines = [];
+          const eduDegree = isAr && edu.degreeAr ? edu.degreeAr : edu.degree;
+          const eduInst = isAr && edu.institutionAr ? edu.institutionAr : edu.institution;
+          lines.push(`${eduDegree}${eduInst ? ` - ${eduInst}` : ''}`);
+          if (edu.period) lines.push(`  ${edu.period}`);
+          if (edu.description) lines.push(`  ${edu.description}`);
+          return lines.join('\n');
+        }).join('\n\n');
+      case 'certifications':
+        return certifications.map((cert) => {
+          const certName = isAr && cert.nameAr ? cert.nameAr : cert.name;
+          const certIssuer = isAr && cert.issuerAr ? cert.issuerAr : cert.issuer;
+          return `${certName}${certIssuer ? ` - ${certIssuer}` : ''}${cert.issueDate ? ` (${cert.issueDate})` : ''}`;
+        }).join('\n');
+      case 'custom':
+        return isAr ? (section.customContentAr || '') : (section.customContent || '');
+      default:
+        return '';
+    }
+  };
+
+  const handlePrint = () => {
+    const el = document.getElementById('resume-content');
+    if (!el) return;
     const win = window.open('', '_blank');
     if (!win) return;
-    win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Resume - ${profile.fullName}</title>
+
+    const photoHtml = layout.showPhoto && profile.photoUrl
+      ? `<img src="${profile.photoUrl}" style="width:${layout.photoSize}px;height:${layout.photoSize}px;object-fit:cover;border-radius:${photoRadius};flex-shrink:0" />`
+      : '';
+
+    const sectionsHtml = visibleSections.map((section) => {
+      const content = getSectionContent(section);
+      if (!content) return '';
+      return `
+        <div style="background:${colors.sectionBg};padding:${layout.sectionPadding}px;border-radius:${layout.sectionBorderRadius}px;border:1px solid ${colors.borderColor}">
+          <h2 style="font-size:${fonts.headingSize}px;font-weight:${fonts.headingWeight};color:${colors.headingText};font-family:${fonts.fontFamily};border-bottom:2px solid ${colors.accent};padding-bottom:4px;margin:0 0 10px;text-transform:uppercase;letter-spacing:0.5px">${getSectionTitle(section)}</h2>
+          ${section.type === 'skills'
+            ? `<div style="display:flex;flex-wrap:wrap;gap:6px">${skills.map((s) => `<span style="background:${colors.skillBg};color:${colors.skillText};padding:3px 10px;border-radius:4px;font-size:${fonts.metaSize}px;font-family:${fonts.fontFamily}">${isAr && s.nameAr ? s.nameAr : s.name}</span>`).join('')}</div>`
+            : `<pre style="font-size:${fonts.bodySize}px;line-height:${fonts.bodyLineHeight};color:${colors.primaryText};font-family:${fonts.fontFamily};white-space:pre-wrap;margin:0;border:none;background:none;padding:0">${content}</pre>`
+          }
+        </div>
+      `;
+    }).join('');
+
+    win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Resume - ${name}</title>
     <style>
       *{margin:0;padding:0;box-sizing:border-box}
-      body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#1a1a1a;line-height:1.5;padding:40px 50px;max-width:800px;margin:0 auto}
-      h1{font-size:20pt;font-weight:700;margin-bottom:4px}
-      .job-title{font-size:12pt;color:#555;margin-bottom:8px}
-      .contact{font-size:10pt;color:#666;margin-bottom:20px;display:flex;flex-wrap:wrap;gap:8px}
-      .contact span{white-space:nowrap}
-      h2{font-size:13pt;font-weight:700;border-bottom:1.5px solid #333;padding-bottom:4px;margin:18px 0 8px;text-transform:uppercase;letter-spacing:0.5px}
-      .item{margin-bottom:12px}
-      .item h3{font-size:11pt;font-weight:600}
-      .item .meta{font-size:10pt;color:#555;font-style:italic}
-      .item p{font-size:10pt;margin-top:4px}
-      .skills-list{display:flex;flex-wrap:wrap;gap:6px}
-      .skill-tag{background:#f0f0f0;padding:2px 10px;border-radius:3px;font-size:10pt}
-      @media print{body{padding:20px 30px}}
-    </style></head><body>${printContent.innerHTML}</body></html>`);
+      body{font-family:${fonts.fontFamily};font-size:${fonts.bodySize}px;color:${colors.primaryText};line-height:${fonts.bodyLineHeight};padding:${layout.pageMargin}px;background:${colors.pageBg}}
+      @media print{body{padding:${layout.pageMargin / 2}px}}
+    </style></head><body>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:${layout.sectionGap}px">
+        ${photoHtml}
+        <div>
+          <h1 style="font-size:${fonts.titleSize}px;font-weight:${fonts.titleWeight};color:${colors.headingText};font-family:${fonts.fontFamily};margin-bottom:2px;line-height:1.2">${name}</h1>
+          <p style="font-size:${fonts.metaSize + 1}px;color:${colors.accent};font-family:${fonts.fontFamily};margin-bottom:6px">${title}</p>
+          <div style="font-size:${fonts.metaSize}px;color:${colors.secondaryText};font-family:${fonts.fontFamily};display:flex;flex-wrap:wrap;gap:10px">
+            ${profile.email ? `<span>${profile.email}</span>` : ''}
+            ${profile.phone ? `<span>${profile.phone}</span>` : ''}
+            ${location ? `<span>${location}</span>` : ''}
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:${layout.sectionGap}px">
+        ${sectionsHtml}
+      </div>
+    </body></html>`);
     win.document.close();
     win.print();
   };
 
+  const photoRadiusStyle = layout.photoShape === 'circle' ? '50%' : layout.photoShape === 'rounded' ? '12px' : '0';
+
+  const sectionBorder = `2px solid ${colors.accent}`;
+
   return (
-    <main className="resume-page">
+    <main className="resume-page" style={{ background: colors.pageBg }}>
       <div className="resume-actions no-print">
         <button className="btn btn-primary" onClick={handlePrint} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
           <FiPrinter /> {t('resume.print')}
         </button>
-        <button className="btn btn-outline" onClick={handleDownloadPdf} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
+        <button className="btn btn-outline" onClick={handlePrint} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
           <FiDownload /> PDF
         </button>
       </div>
 
-      <div id="resume-content" className="resume-content">
-        <header className="resume-header">
-          <h1>{isAr && profile.fullNameAr ? profile.fullNameAr : profile.fullName}</h1>
-          <p className="job-title">{isAr && profile.jobTitleAr ? profile.jobTitleAr : profile.jobTitle}</p>
-          <div className="resume-contact">
-            {profile.email && <span>{profile.email}</span>}
-            {profile.phone && <span>{profile.phone}</span>}
-            {profile.location && <span>{isAr && profile.locationAr ? profile.locationAr : profile.location}</span>}
+      <div
+        id="resume-content"
+        className="resume-content"
+        style={{
+          maxWidth: 800,
+          margin: '0 auto',
+          fontFamily: fonts.fontFamily,
+          fontSize: fonts.bodySize,
+          lineHeight: fonts.bodyLineHeight,
+          color: colors.primaryText,
+          background: colors.pageBg,
+          padding: layout.pageMargin,
+        }}
+      >
+        <header style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: layout.sectionGap }}>
+          {layout.showPhoto && profile.photoUrl && (
+            <img
+              src={profile.photoUrl}
+              alt={name}
+              style={{
+                width: layout.photoSize,
+                height: layout.photoSize,
+                objectFit: 'cover',
+                borderRadius: photoRadiusStyle,
+                flexShrink: 0,
+              }}
+            />
+          )}
+          <div>
+            <h1 style={{ fontSize: fonts.titleSize, fontWeight: fonts.titleWeight, color: colors.headingText, marginBottom: 2, lineHeight: 1.2 }}>{name}</h1>
+            <p style={{ fontSize: fonts.metaSize + 1, color: colors.accent, marginBottom: 6 }}>{title}</p>
+            <div style={{ fontSize: fonts.metaSize, color: colors.secondaryText, display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+              {profile.email && <span>{profile.email}</span>}
+              {profile.phone && <span>{profile.phone}</span>}
+              {location && <span>{location}</span>}
+            </div>
           </div>
         </header>
 
-        {profile.bio && (
-          <section className="resume-section">
-            <h2>{t('resume.summary')}</h2>
-            <p className="resume-text">
-              {isAr && profile.bioAr ? profile.bioAr : profile.bio}
-            </p>
-          </section>
-        )}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: layout.sectionGap }}>
+          {visibleSections.map((section) => {
+            const content = getSectionContent(section);
+            if (!content) return null;
 
-        {skills.length > 0 && (
-          <section className="resume-section">
-            <h2>{t('resume.skills')}</h2>
-            <div className="resume-skills-list">
-              {skills.map((skill) => (
-                <span key={skill.id} className="resume-skill-tag">
-                  {isAr && skill.nameAr ? skill.nameAr : skill.name}
-                </span>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {experience.length > 0 && (
-          <section className="resume-section">
-            <h2>{t('resume.experience')}</h2>
-            {experience.map((exp) => (
-              <article key={exp.id} className="resume-item">
-                <div className="resume-item-header">
-                  <h3>{isAr && exp.titleAr ? exp.titleAr : exp.title}</h3>
-                  {exp.period && <span className="resume-period">{exp.period}</span>}
-                </div>
-                {exp.company && <div className="resume-institution">{isAr && exp.companyAr ? exp.companyAr : exp.company}</div>}
-                {exp.description && <p className="resume-description">{isAr && exp.descriptionAr ? exp.descriptionAr : exp.description}</p>}
-              </article>
-            ))}
-          </section>
-        )}
-
-        {education.length > 0 && (
-          <section className="resume-section">
-            <h2>{t('resume.education')}</h2>
-            {education.map((edu) => (
-              <article key={edu.id} className="resume-item">
-                <div className="resume-item-header">
-                  <h3>{isAr && edu.degreeAr ? edu.degreeAr : edu.degree}</h3>
-                  {edu.period && <span className="resume-period">{edu.period}</span>}
-                </div>
-                {edu.institution && <div className="resume-institution">{isAr && edu.institutionAr ? edu.institutionAr : edu.institution}</div>}
-                {edu.description && <p className="resume-description">{edu.description}</p>}
-              </article>
-            ))}
-          </section>
-        )}
-
-        {certifications.length > 0 && (
-          <section className="resume-section">
-            <h2>{t('resume.certifications')}</h2>
-            {certifications.map((cert) => (
-              <article key={cert.id} className="resume-item">
-                <div className="resume-item-header">
-                  <h3>{isAr && cert.nameAr ? cert.nameAr : cert.name}</h3>
-                  {cert.issueDate && <span className="resume-period">{cert.issueDate}</span>}
-                </div>
-                <div className="resume-institution">{isAr && cert.issuerAr ? cert.issuerAr : cert.issuer}</div>
-              </article>
-            ))}
-          </section>
-        )}
+            return (
+              <div
+                key={section.id}
+                style={{
+                  background: colors.sectionBg,
+                  padding: layout.sectionPadding,
+                  borderRadius: layout.sectionBorderRadius,
+                  border: `1px solid ${colors.borderColor}`,
+                }}
+              >
+                <h2 style={{
+                  fontSize: fonts.headingSize,
+                  fontWeight: fonts.headingWeight,
+                  color: colors.headingText,
+                  borderBottom: sectionBorder,
+                  paddingBottom: 4,
+                  margin: '0 0 10px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px',
+                }}>
+                  {getSectionTitle(section)}
+                </h2>
+                {section.type === 'skills' ? (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                    {skills.map((s) => (
+                      <span
+                        key={s.id}
+                        style={{
+                          background: colors.skillBg,
+                          color: colors.skillText,
+                          padding: '3px 10px',
+                          borderRadius: 4,
+                          fontSize: fonts.metaSize,
+                        }}
+                      >
+                        {isAr && s.nameAr ? s.nameAr : s.name}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <pre style={{
+                    fontSize: fonts.bodySize,
+                    lineHeight: fonts.bodyLineHeight,
+                    color: colors.primaryText,
+                    whiteSpace: 'pre-wrap',
+                    margin: 0,
+                    border: 'none',
+                    background: 'none',
+                    padding: 0,
+                    fontFamily: fonts.fontFamily,
+                  }}>
+                    {content}
+                  </pre>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </main>
   );

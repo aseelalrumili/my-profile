@@ -50,3 +50,13 @@ export interface ResumeSettings {
   fonts: ResumeFonts;
   sections: ResumeSection[];
 }
+
+export interface ResumeVersion {
+  id: string;
+  name: string;
+  type: 'ats' | 'regular';
+  settings: ResumeSettings;
+  isDefault: boolean;
+  createdAt: string;
+  updatedAt: string;
+}

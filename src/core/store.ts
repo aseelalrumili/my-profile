@@ -28,6 +28,7 @@ export async function fetchAllData(): Promise<AppData | null> {
         testimonials: data.testimonials ?? fallbackData.testimonials,
         reviews: data.reviews ?? fallbackData.reviews,
         settings: data.settings ?? fallbackData.settings,
+        resumeVersions: data.resumeVersions ?? fallbackData.resumeVersions,
       } as AppData;
     }
   } catch {}

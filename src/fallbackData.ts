@@ -1,4 +1,5 @@
 import type { AppData } from './types';
+import { defaultAtsSettings, defaultResumeSettings } from './features/admin/components/tabs/resume/defaultSettings';
 
 export const fallbackData: AppData = {
   profile: {
@@ -36,4 +37,24 @@ export const fallbackData: AppData = {
   testimonials: [],
   reviews: [],
   settings: {},
+  resumeVersions: [
+    {
+      id: 'ats-default',
+      name: 'Default ATS Resume',
+      type: 'ats',
+      settings: { ...defaultAtsSettings, sections: [...defaultAtsSettings.sections] },
+      isDefault: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
+    {
+      id: 'regular-default',
+      name: 'Default Regular Resume',
+      type: 'regular',
+      settings: { ...defaultResumeSettings, sections: [...defaultResumeSettings.sections] },
+      isDefault: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
+  ],
 };
