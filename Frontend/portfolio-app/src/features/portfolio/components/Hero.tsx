@@ -234,20 +234,6 @@ export default function Hero({ data }: { data: AppData }) {
         </motion.div>
       </motion.div>
 
-      <motion.div
-        className="hero-scroll-indicator"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 0.6 }}
-      >
-        <motion.div
-          className="scroll-mouse"
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-        >
-          <div className="scroll-wheel" />
-        </motion.div>
-      </motion.div>
     </section>
   );
 }
