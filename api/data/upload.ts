@@ -58,7 +58,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       access: 'private',
     });
 
-    return res.status(200).json({ url: blob.url });
+    const proxyUrl = `/api/data/image/${uniqueName.replace('portfolio/images/', '')}`;
+    return res.status(200).json({ url: proxyUrl });
   } catch (err: any) {
     return res.status(500).json({ error: err.message || 'Upload failed' });
   }
