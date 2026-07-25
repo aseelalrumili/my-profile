@@ -16,7 +16,7 @@ interface Props {
 
 export default function ResumePreview({ data, settings, isAr }: Props) {
   const { layout, colors, fonts, sections } = settings;
-  const { profile, skills, experience, education, certifications } = data;
+  const { profile, skills = [], experience = [], education = [], certifications = [] } = data;
 
   const bio = isAr && profile.bioAr ? profile.bioAr : profile.bio;
 

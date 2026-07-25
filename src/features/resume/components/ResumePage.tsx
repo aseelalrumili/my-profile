@@ -8,7 +8,7 @@ export default function ResumePage({ data }: { data: AppData | null }) {
 
   if (!data) return <div className="section"><p>{t('loading')}</p></div>;
 
-  const { profile, skills, experience, education, certifications } = data;
+  const { profile, skills = [], experience = [], education = [], certifications = [] } = data;
 
   const handlePrint = () => window.print();
 

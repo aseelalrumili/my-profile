@@ -7,7 +7,7 @@ import { getErrorMessage, moveItem, SortArrows } from '../helpers';
 
 export default function SocialTab({ data, onDataUpdate }: { data: AppData; onDataUpdate: () => Promise<void> }) {
   const { t } = useTranslation();
-  const [items, setItems] = useState<SocialLink[]>(data.socialLinks);
+  const [items, setItems] = useState<SocialLink[]>(data.socialLinks || []);
   const [form, setForm] = useState({ platform: '', url: '', icon: '' });
   const [editingId, setEditingId] = useState<number | null>(null);
 

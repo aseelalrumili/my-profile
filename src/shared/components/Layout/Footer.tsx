@@ -28,7 +28,7 @@ export default function Footer({ data }: { data: AppData }) {
         <div className="footer-links-col">
           <h4>{isAr ? 'تواصل معي' : 'Connect'}</h4>
           <div className="footer-social">
-            {data.socialLinks.map((link) => (
+            {(data.socialLinks || []).map((link) => (
               <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer" title={link.platform} aria-label={link.platform}>
                 {allSocialIcons[link.platform.toLowerCase()] || link.platform.charAt(0)}
               </a>

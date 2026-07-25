@@ -13,11 +13,12 @@ export default function PortfolioPage({ data }: { data: AppData | null }) {
 
   if (!data) return <div className="section"><p>{t('loading')}</p></div>;
 
-  const hasDesign = data.projects.some(p => p.type === 'Design');
-  const hasCode = data.projects.some(p => p.type === 'Code');
-  const hasFullstack = data.projects.some(p => p.type === 'Full-stack');
+  const projects = data.projects || [];
+  const hasDesign = projects.some(p => p.type === 'Design');
+  const hasCode = projects.some(p => p.type === 'Code');
+  const hasFullstack = projects.some(p => p.type === 'Full-stack');
   const categories = ['All', ...([hasDesign && 'Design', hasCode && 'Code', hasFullstack && 'Full-stack'].filter(Boolean) as string[])];
-  const filtered = filter === 'All' ? data.projects : data.projects.filter((p) => p.type === filter);
+  const filtered = filter === 'All' ? projects : projects.filter((p) => p.type === filter);
 
   return (
     <main className="section">

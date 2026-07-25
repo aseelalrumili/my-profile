@@ -20,7 +20,7 @@ function AboutStatCard({ value, label }: { value: number; label: string }) {
 
 export default function About({ data }: { data: AppData }) {
   const { t, i18n } = useTranslation();
-  const { profile, education } = data;
+  const { profile, education = [] } = data;
   const isAr = i18n.language === 'ar';
   const getBio = () => isAr && profile.bioAr ? profile.bioAr : profile.bio;
 

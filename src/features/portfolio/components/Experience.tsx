@@ -28,7 +28,7 @@ export default function Experience({ data }: { data: AppData }) {
       </motion.p>
 
       <div className="timeline">
-        {data.experience.map((exp, idx) => (
+        {(data.experience || []).map((exp, idx) => (
           <motion.div
             key={exp.id}
             className="timeline-item"

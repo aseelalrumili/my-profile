@@ -7,7 +7,7 @@ import { getErrorMessage, moveItem, SortArrows } from '../helpers';
 
 export default function SkillsTab({ data, onDataUpdate }: { data: AppData; onDataUpdate: () => Promise<void> }) {
   const { t } = useTranslation();
-  const [items, setItems] = useState<Skill[]>(data.skills);
+  const [items, setItems] = useState<Skill[]>(data.skills || []);
   const [form, setForm] = useState({ name: '', nameAr: '', category: 'Technical', categoryAr: '', type: 'Design' as Skill['type'], percentage: 80 });
   const [editingId, setEditingId] = useState<number | null>(null);
 

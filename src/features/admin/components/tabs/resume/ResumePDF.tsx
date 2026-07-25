@@ -11,7 +11,7 @@ interface Props {
 export default function ResumePDF({ data, settings, isAr }: Props) {
   const { t } = useTranslation();
   const { layout, colors, fonts, sections } = settings;
-  const { profile, skills, experience, education, certifications } = data;
+  const { profile, skills = [], experience = [], education = [], certifications = [] } = data;
 
   const name = isAr && profile.fullNameAr ? profile.fullNameAr : profile.fullName;
   const title = isAr && profile.jobTitleAr ? profile.jobTitleAr : profile.jobTitle;

@@ -20,9 +20,10 @@ export default function Projects({ data }: Props) {
 
   if (!data) return null;
 
-  const hasDesign = data.projects.some(p => p.type === 'Design');
-  const hasCode = data.projects.some(p => p.type === 'Code');
-  const hasFullstack = data.projects.some(p => p.type === 'Full-stack');
+  const projects = data.projects || [];
+  const hasDesign = projects.some(p => p.type === 'Design');
+  const hasCode = projects.some(p => p.type === 'Code');
+  const hasFullstack = projects.some(p => p.type === 'Full-stack');
   const categories = ['All', ...([hasDesign && 'Design', hasCode && 'Code', hasFullstack && 'Full-stack'].filter(Boolean) as string[])];
 
   const categoryLabels: Record<string, string> = {
@@ -34,13 +35,13 @@ export default function Projects({ data }: Props) {
 
   const categoryCounts: Record<string, number> = {
     All: data.projects.length,
-    Design: data.projects.filter(p => p.type === 'Design').length,
-    Code: data.projects.filter(p => p.type === 'Code').length,
-    'Full-stack': data.projects.filter(p => p.type === 'Full-stack').length,
+    Design: projects.filter(p => p.type === 'Design').length,
+    Code: projects.filter(p => p.type === 'Code').length,
+    'Full-stack': projects.filter(p => p.type === 'Full-stack').length,
   };
 
   const filtered = useMemo(() => {
-    let result = filter === 'All' ? data.projects : data.projects.filter((p) => p.type === filter);
+    let result = filter === 'All' ? projects : projects.filter((p) => p.type === filter);
     if (search.trim()) {
       const q = search.toLowerCase();
       result = result.filter(p => {
@@ -51,9 +52,9 @@ export default function Projects({ data }: Props) {
       });
     }
     return result;
-  }, [data.projects, filter, search, isAr]);
+  }, [projects, filter, search, isAr]);
 
-  const featured = data.projects.slice(0, 2);
+  const featured = projects.slice(0, 2);
 
   return (
     <section className="section">

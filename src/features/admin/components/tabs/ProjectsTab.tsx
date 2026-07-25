@@ -83,7 +83,7 @@ function ProjectForm({ project, onSave, onClose, onDeleteMedia }: {
 
 export default function ProjectsTab({ data, onDataUpdate }: { data: AppData; onDataUpdate: () => Promise<void> }) {
   const { t } = useTranslation();
-  const [items, setItems] = useState<Project[]>(data.projects);
+  const [items, setItems] = useState<Project[]>(data.projects || []);
   const [showForm, setShowForm] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
 

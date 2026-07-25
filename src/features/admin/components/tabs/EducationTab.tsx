@@ -7,7 +7,7 @@ import { getErrorMessage, moveItem, SortArrows } from '../helpers';
 
 export default function EducationTab({ data, onDataUpdate }: { data: AppData; onDataUpdate: () => Promise<void> }) {
   const { t } = useTranslation();
-  const [items, setItems] = useState<Education[]>(data.education);
+  const [items, setItems] = useState<Education[]>(data.education || []);
   const [form, setForm] = useState({ degree: '', degreeAr: '', institution: '', institutionAr: '', period: '', description: '' });
   const [editingId, setEditingId] = useState<number | null>(null);
 

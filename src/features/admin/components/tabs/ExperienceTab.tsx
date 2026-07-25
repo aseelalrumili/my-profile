@@ -7,7 +7,7 @@ import { getErrorMessage, moveItem, SortArrows } from '../helpers';
 
 export default function ExperienceTab({ data, onDataUpdate }: { data: AppData; onDataUpdate: () => Promise<void> }) {
   const { t } = useTranslation();
-  const [items, setItems] = useState<Experience[]>(data.experience);
+  const [items, setItems] = useState<Experience[]>(data.experience || []);
   const [form, setForm] = useState({ title: '', titleAr: '', company: '', companyAr: '', period: '', description: '', descriptionAr: '' });
   const [editingId, setEditingId] = useState<number | null>(null);
 

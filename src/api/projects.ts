@@ -32,7 +32,7 @@ export const deleteProject = (id: number) => removeItem<Project>('projects', id)
 export const deleteMedia = async (id: number) => {
   const data = await fetchAllData();
   if (!data) return;
-  for (const p of data.projects) {
+  for (const p of (data.projects || [])) {
     const filtered = p.media.filter((m) => m.id !== id);
     if (filtered.length !== p.media.length) {
       await updateItem<Project>('projects', p.id, { media: filtered });

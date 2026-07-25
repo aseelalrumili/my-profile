@@ -13,7 +13,23 @@ API.interceptors.request.use((config) => {
 export async function fetchAllData(): Promise<AppData | null> {
   try {
     const { data } = await API.get('/data');
-    if (data && data.profile) return data as AppData;
+    if (data && data.profile) {
+      return {
+        ...fallbackData,
+        ...data,
+        profile: { ...fallbackData.profile, ...data.profile },
+        socialLinks: data.socialLinks ?? fallbackData.socialLinks,
+        skills: data.skills ?? fallbackData.skills,
+        experience: data.experience ?? fallbackData.experience,
+        education: data.education ?? fallbackData.education,
+        projects: data.projects ?? fallbackData.projects,
+        certifications: data.certifications ?? fallbackData.certifications,
+        blogPosts: data.blogPosts ?? fallbackData.blogPosts,
+        testimonials: data.testimonials ?? fallbackData.testimonials,
+        reviews: data.reviews ?? fallbackData.reviews,
+        settings: data.settings ?? fallbackData.settings,
+      } as AppData;
+    }
   } catch {}
   return null;
 }

@@ -57,11 +57,11 @@ export default function Skills({ data }: { data: AppData }) {
   const isAr = i18n.language === 'ar';
 
   const designSkills = useMemo(() =>
-    data.skills.filter(s => s.type === 'Development' ? false : true),
+    (data.skills || []).filter(s => s.type === 'Development' ? false : true),
     [data.skills]
   );
   const devSkills = useMemo(() =>
-    data.skills.filter(s => s.type === 'Development'),
+    (data.skills || []).filter(s => s.type === 'Development'),
     [data.skills]
   );
 
