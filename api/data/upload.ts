@@ -50,16 +50,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const buffer = Buffer.from(fileData, 'base64');
     const ext = filename.split('.').pop() || 'webp';
-    const uniqueName = `portfolio/images/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const justName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const blobPath = `portfolio/images/${justName}`;
 
-    const blob = await put(uniqueName, buffer, {
+    const blob = await put(blobPath, buffer, {
       ...getOpts(),
       contentType: contentType || 'image/webp',
       access: 'private',
     });
 
-    const proxyUrl = `/api/data/image/${uniqueName.replace('portfolio/images/', '')}`;
-    return res.status(200).json({ url: proxyUrl });
+    return res.status(200).json({ url: `/api/data/image?file=${justName}` });
   } catch (err: any) {
     return res.status(500).json({ error: err.message || 'Upload failed' });
   }

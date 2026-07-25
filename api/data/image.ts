@@ -24,12 +24,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const token = getToken();
   if (!token) return res.status(500).json({ error: 'Blob storage not configured' });
 
-  const filePath = req.query.path;
-  if (!filePath || !Array.isArray(filePath) || filePath.length === 0) {
-    return res.status(400).json({ error: 'File path required' });
+  const { file } = req.query;
+  if (!file || typeof file !== 'string') {
+    return res.status(400).json({ error: 'file query parameter required' });
   }
 
-  const blobPath = `portfolio/images/${filePath.join('/')}`;
+  const blobPath = `portfolio/images/${file}`;
 
   try {
     const { get } = await import('@vercel/blob');
@@ -46,7 +46,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(404).json({ error: 'Image not found' });
     }
 
-    const contentType = resp.headers.get('content-type') || blobMeta.contentType || 'image/webp';
+    const ext = file.split('.').pop()?.toLowerCase() || 'webp';
+    const mimeMap: Record<string, string> = {
+      png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg',
+      webp: 'image/webp', gif: 'image/gif', svg: 'image/svg+xml',
+    };
+    const contentType = resp.headers.get('content-type') || mimeMap[ext] || 'application/octet-stream';
     res.setHeader('Content-Type', contentType);
     res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
 
