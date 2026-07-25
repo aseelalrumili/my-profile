@@ -1,23 +1,26 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { getBlobToken, getBlobOpts } from '../_lib';
 
 const BLOB_KEY = 'portfolio/visitors.json';
 
-async function loadVisitors(token: string) {
+async function loadVisitors() {
+  const opts = getBlobOpts();
+  if (!opts.token) return [];
   try {
     const { get } = await import('@vercel/blob');
-    const blob = await get(BLOB_KEY, { token });
+    const blob = await get(BLOB_KEY, opts);
     return JSON.parse(await blob.text()) as { page: string; timestamp: string }[];
   } catch {
     return [];
   }
 }
 
-async function saveVisitors(visitors: { page: string; timestamp: string }[], token: string) {
+async function saveVisitors(visitors: { page: string; timestamp: string }[]) {
   const { put } = await import('@vercel/blob');
   await put(BLOB_KEY, JSON.stringify(visitors), {
+    ...getBlobOpts(),
     contentType: 'application/json',
     access: 'public',
-    token,
   });
 }
 
@@ -28,16 +31,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  const token = process.env.BLOB_READ_WRITE_TOKEN;
+  const token = getBlobToken();
 
   if (req.method === 'POST') {
     if (!token) return res.status(200).json({ ok: true });
     const { page } = req.body || {};
     if (!page) return res.status(400).json({ error: 'page required' });
-    const visitors = await loadVisitors(token);
+    const visitors = await loadVisitors();
     visitors.push({ page, timestamp: new Date().toISOString() });
     if (visitors.length > 1000) visitors.splice(0, visitors.length - 1000);
-    await saveVisitors(visitors, token);
+    await saveVisitors(visitors);
     return res.status(200).json({ ok: true });
   }
 
@@ -52,7 +55,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         dailyVisits: [],
       });
     }
-    const visitors = await loadVisitors(token);
+    const visitors = await loadVisitors();
     const now = new Date();
     const today = now.toISOString().slice(0, 10);
     const weekAgo = new Date(now.getTime() - 7 * 86400000).toISOString().slice(0, 10);

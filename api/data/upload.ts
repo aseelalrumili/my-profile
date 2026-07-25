@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { verifyToken } from '../auth/verify';
+import { getBlobToken, getBlobOpts } from '../_lib';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -9,11 +9,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const email = verifyToken(req, res);
-  if (!email) return;
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
 
-  const token = process.env.BLOB_READ_WRITE_TOKEN;
+  const token = getBlobToken();
   if (!token) return res.status(500).json({ error: 'Blob storage not configured' });
+
+  const jwtModule = await import('jsonwebtoken');
+  const jwt = jwtModule.default;
+  const JWT_SECRET = process.env.JWT_SECRET;
+  if (!JWT_SECRET) return res.status(500).json({ error: 'Server configuration error' });
+
+  const tokenStr = authHeader.split(' ')[1];
+  try {
+    jwt.verify(tokenStr, JWT_SECRET);
+  } catch {
+    return res.status(401).json({ error: 'Invalid or expired token' });
+  }
 
   try {
     const { put } = await import('@vercel/blob');
@@ -27,9 +41,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const uniqueName = `portfolio/images/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
 
     const blob = await put(uniqueName, buffer, {
+      ...getBlobOpts(),
       contentType: contentType || 'image/webp',
       access: 'public',
-      token,
     });
 
     return res.status(200).json({ url: blob.url });
