@@ -167,12 +167,9 @@ export default function ResumeTab({ data, onDataUpdate }: Props) {
 
   if (editing) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-        <div style={{
-          display: 'flex', gap: '0.5rem', marginBottom: '1rem',
-          alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+      <div className="admin-flex-col" style={{ height: '100%' }}>
+        <div className="admin-flex-between" style={{ flexWrap: 'wrap', marginBottom: '1rem' }}>
+          <div className="admin-flex-center">
             <button className="btn btn-secondary btn-sm" onClick={() => setEditingId(null)}>
               &larr; {t('resume.backToList')}
             </button>
@@ -182,7 +179,7 @@ export default function ResumeTab({ data, onDataUpdate }: Props) {
               isAr={isAr}
             />
           </div>
-          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+          <div className="admin-flex-center">
             <ResumePDF data={data} settings={editing.settings} />
             {editing.type === 'ats' && (
               <button className="btn btn-secondary btn-sm" onClick={() => {
@@ -204,28 +201,13 @@ export default function ResumeTab({ data, onDataUpdate }: Props) {
               👁 {t('resume.preview')}
             </button>
             {editing.type === 'ats' && (
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', padding: '4px 8px', background: 'var(--bg-primary)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
-                ATS Mode
-              </span>
+              <span className="admin-btn-sm">ATS Mode</span>
             )}
           </div>
         </div>
 
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: isPreviewVisible ? '320px 1fr' : '1fr',
-          gap: '1rem',
-          flex: 1,
-          minHeight: 0,
-        }}>
-          <div style={{
-            background: 'var(--bg-secondary)',
-            border: '1px solid var(--border)',
-            borderRadius: 'var(--radius)',
-            overflow: 'hidden',
-            display: 'flex',
-            flexDirection: 'column',
-          }}>
+        <div className={`admin-editor-layout ${isPreviewVisible ? 'side-by-side' : 'full'}`}>
+          <div className="admin-editor-panel">
             <ResumeEditor
               settings={editing.settings}
               onChange={(s) => handleSaveSettings(s)}
@@ -234,13 +216,7 @@ export default function ResumeTab({ data, onDataUpdate }: Props) {
           </div>
 
           {isPreviewVisible && (
-            <div style={{
-              background: 'var(--bg-secondary)',
-              border: '1px solid var(--border)',
-              borderRadius: 'var(--radius)',
-              overflow: 'auto',
-              padding: 'var(--space-4)',
-            }}>
+            <div className="admin-preview-container">
               <ResumePreview key={previewKey} data={data} settings={editing.settings} />
             </div>
           )}
@@ -250,12 +226,12 @@ export default function ResumeTab({ data, onDataUpdate }: Props) {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <h3 style={{ fontFamily: 'var(--font-heading)', margin: '0 0 1rem', fontSize: 'var(--fs-lg)' }}>
+    <div className="admin-flex-col" style={{ height: '100%' }}>
+      <h3 className="admin-section-title" style={{ marginBottom: '1rem' }}>
         {t('resume.builder')}
       </h3>
 
-      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
+      <div className="admin-tab-bar">
         {(['regular', 'ats'] as const).map(tab => (
           <button
             key={tab}
@@ -268,8 +244,8 @@ export default function ResumeTab({ data, onDataUpdate }: Props) {
         ))}
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-        <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+      <div className="admin-flex-between" style={{ marginBottom: '1rem' }}>
+        <span className="admin-section-count">
           {filtered.length} {isAr ? 'نسخة' : 'versions'}
         </span>
         <button className="btn btn-primary btn-sm" onClick={handleCreate}>
@@ -280,12 +256,8 @@ export default function ResumeTab({ data, onDataUpdate }: Props) {
       {isLoading ? (
         <p style={{ color: 'var(--text-muted)' }}>{t('loading')}</p>
       ) : filtered.length === 0 ? (
-        <div style={{
-          textAlign: 'center', padding: '3rem 1rem',
-          background: 'var(--bg-secondary)', borderRadius: 'var(--radius)',
-          border: '1px dashed var(--border)',
-        }}>
-          <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>
+        <div className="admin-empty-state">
+          <p>
             {isAr ? 'لا توجد نسخ بعد' : 'No versions yet'}
           </p>
           <button className="btn btn-primary btn-sm" onClick={handleCreate}>

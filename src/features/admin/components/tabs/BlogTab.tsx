@@ -61,7 +61,7 @@ export default function BlogTab({ data, onDataUpdate }: { data: AppData; onDataU
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+      <div className="admin-section-header">
         <button
           className="btn btn-secondary btn-sm"
           onClick={() => { setAreCommentsVisible(!areCommentsVisible); if (!areCommentsVisible) loadComments(); }}
@@ -73,11 +73,11 @@ export default function BlogTab({ data, onDataUpdate }: { data: AppData; onDataU
       {areCommentsVisible && (
         <div style={{ marginBottom: '1.5rem' }}>
           {comments.length === 0 ? (
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{t('comments.noComments')}</p>
+            <p className="admin-comment-body" style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{t('comments.noComments')}</p>
           ) : (
             comments.map((comment) => (
-              <div key={comment.id} className="list-item" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '0.5rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+              <div key={comment.id} className="list-item admin-comment-card">
+                <div className="admin-comment-header">
                   <div className="list-item-info">
                     <h4>{comment.authorName} {!comment.isApproved && <span style={{ color: 'var(--accent)', fontSize: '0.7rem' }}>({t('comments.pending')})</span>}</h4>
                     <p>{comment.authorEmail} - {new Date(comment.createdAt).toLocaleDateString()}</p>
@@ -89,7 +89,7 @@ export default function BlogTab({ data, onDataUpdate }: { data: AppData; onDataU
                     <button className="btn btn-danger btn-sm" onClick={() => handleDeleteComment(comment.id)}>{t('admin.delete')}</button>
                   </div>
                 </div>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: 0 }}>{comment.content}</p>
+                <p className="admin-comment-body">{comment.content}</p>
               </div>
             ))
           )}
@@ -108,22 +108,22 @@ export default function BlogTab({ data, onDataUpdate }: { data: AppData; onDataU
           </div>
         </div>
       ))}
-      <div style={{ marginTop: '1rem', padding: '1rem', background: 'var(--bg-secondary)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
-        <h4 style={{ fontSize: '0.85rem', marginBottom: '0.75rem' }}>{editingId ? t('admin.edit') : t('admin.add')}</h4>
-        <div className="form-row">
-          <div className="form-group"><label>{t('admin.title')}</label><input type="text" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} /></div>
-          <div className="form-group"><label>{t('admin.slug')}</label><input type="text" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} /></div>
+      <div className="admin-card" style={{ marginTop: '1rem' }}>
+        <h4 className="admin-section-heading">{editingId ? t('admin.edit') : t('admin.add')}</h4>
+        <div className="admin-form-row">
+          <div className="admin-form-group"><label>{t('admin.title')}</label><input type="text" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} /></div>
+          <div className="admin-form-group"><label>{t('admin.slug')}</label><input type="text" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} /></div>
         </div>
-        <div className="form-row">
-          <div className="form-group"><label>{t('admin.excerpt')}</label><textarea value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} /></div>
-          <div className="form-group"><label>{t('admin.excerpt')} ({t('admin.arSuffix')})</label><textarea value={form.excerptAr} onChange={(e) => setForm({ ...form, excerptAr: e.target.value })} /></div>
+        <div className="admin-form-row">
+          <div className="admin-form-group"><label>{t('admin.excerpt')}</label><textarea value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} /></div>
+          <div className="admin-form-group"><label>{t('admin.excerpt')} ({t('admin.arSuffix')})</label><textarea value={form.excerptAr} onChange={(e) => setForm({ ...form, excerptAr: e.target.value })} /></div>
         </div>
-        <div className="form-group"><label>{t('admin.content')}</label><textarea value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} style={{ minHeight: '120px' }} /></div>
-        <div className="form-group"><label>{t('admin.content')} ({t('admin.arSuffix')})</label><textarea value={form.contentAr} onChange={(e) => setForm({ ...form, contentAr: e.target.value })} style={{ minHeight: '120px' }} /></div>
-        <div className="form-row">
-          <div className="form-group">
+        <div className="admin-form-group"><label>{t('admin.content')}</label><textarea value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} style={{ minHeight: '120px' }} /></div>
+        <div className="admin-form-group"><label>{t('admin.content')} ({t('admin.arSuffix')})</label><textarea value={form.contentAr} onChange={(e) => setForm({ ...form, contentAr: e.target.value })} style={{ minHeight: '120px' }} /></div>
+        <div className="admin-form-row">
+          <div className="admin-form-group">
             <label>{t('admin.coverImage')}</label>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+            <div className="admin-flex-center" style={{ gap: '0.75rem', marginBottom: '0.5rem' }}>
               {(coverPreview || form.coverImageUrl) && (
                 <img src={coverPreview || form.coverImageUrl} alt="Cover" style={{ width: '80px', height: '60px', objectFit: 'cover', borderRadius: '8px', border: '1px solid var(--border)' }} />
               )}
@@ -144,11 +144,11 @@ export default function BlogTab({ data, onDataUpdate }: { data: AppData; onDataU
             </div>
             <input type="url" placeholder="Or paste image URL" value={form.coverImageUrl} onChange={(e) => setForm({ ...form, coverImageUrl: e.target.value })} />
           </div>
-          <div className="form-group"><label>{t('admin.author')}</label><input type="text" value={form.author} onChange={(e) => setForm({ ...form, author: e.target.value })} /></div>
+          <div className="admin-form-group"><label>{t('admin.author')}</label><input type="text" value={form.author} onChange={(e) => setForm({ ...form, author: e.target.value })} /></div>
         </div>
-        <div className="form-row">
-          <div className="form-group"><label>{t('admin.tags')}</label><input type="text" value={form.tags} onChange={(e) => setForm({ ...form, tags: e.target.value })} /></div>
-          <div className="form-group"><label>{t('admin.published')}</label><select value={String(form.published)} onChange={(e) => setForm({ ...form, published: e.target.value === 'true' })}><option value="true">{t('admin.yes')}</option><option value="false">{t('admin.no')}</option></select></div>
+        <div className="admin-form-row">
+          <div className="admin-form-group"><label>{t('admin.tags')}</label><input type="text" value={form.tags} onChange={(e) => setForm({ ...form, tags: e.target.value })} /></div>
+          <div className="admin-form-group"><label>{t('admin.published')}</label><select value={String(form.published)} onChange={(e) => setForm({ ...form, published: e.target.value === 'true' })}><option value="true">{t('admin.yes')}</option><option value="false">{t('admin.no')}</option></select></div>
         </div>
         <button className="btn btn-primary" onClick={handleAdd}>{editingId ? t('admin.update') : t('admin.add')}</button>
       </div>

@@ -80,8 +80,8 @@ export default function CertificationsTab({ data, onDataUpdate }: { data: AppDat
           </div>
         </div>
       ))}
-      <div style={{ marginTop: '1rem', padding: '1rem', background: 'var(--bg-secondary)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
-        <h4 style={{ fontSize: '0.85rem', marginBottom: '0.75rem' }}>{editingId ? t('admin.edit') : t('admin.add')}</h4>
+      <div className="admin-card" style={{ marginTop: '1rem' }}>
+        <h4 className="admin-section-heading" style={{ marginBottom: '0.75rem' }}>{editingId ? t('admin.edit') : t('admin.add')}</h4>
         <div className="form-row">
           <div className="form-group"><label>{t('admin.name')}</label><input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
           <div className="form-group"><label>{t('admin.name')} ({t('admin.arSuffix')})</label><input type="text" value={form.nameAr} onChange={(e) => setForm({ ...form, nameAr: e.target.value })} /></div>
@@ -104,15 +104,15 @@ export default function CertificationsTab({ data, onDataUpdate }: { data: AppDat
         </div>
         <div className="form-group">
           <label>{t('admin.imageUpload')}</label>
-          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginTop: '0.5rem' }}>
+          <div className="admin-image-grid" style={{ marginTop: '0.5rem' }}>
             {[0, 1].map((i) => (
-              <div key={i} style={{ textAlign: 'center' }}>
+              <div key={i} className="admin-image-thumb">
                 {existingImages[i]?.url && !imageFiles[i] ? (
-                  <img src={existingImages[i].url!} alt={`${t('admin.image')} ${i + 1}`} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', border: '1px solid var(--border)', display: 'block', marginBottom: '0.25rem' }} />
+                  <img src={existingImages[i].url!} alt={`${t('admin.image')} ${i + 1}`} />
                 ) : imageFiles[i] ? (
-                  <img src={imagePreviews[i] || ''} alt={`${t('admin.preview')} ${i + 1}`} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', border: '1px solid var(--accent)', display: 'block', marginBottom: '0.25rem' }} />
+                  <img src={imagePreviews[i] || ''} alt={`${t('admin.preview')} ${i + 1}`} className="accent-border" />
                 ) : (
-                  <div style={{ width: '80px', height: '80px', borderRadius: '8px', border: '2px dashed var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: '0.7rem', marginBottom: '0.25rem' }}>{t('admin.image')} {i + 1}</div>
+                  <div className="admin-image-upload">{t('admin.image')} {i + 1}</div>
                 )}
                 <label style={{ fontSize: '0.7rem', color: 'var(--accent)', cursor: 'pointer', textDecoration: 'underline' }}>
                   <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => {
