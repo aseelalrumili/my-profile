@@ -115,7 +115,7 @@ export default function AdminPanel({ data, onClose, onDataUpdate, onLogout }: Pr
       transition={{ duration: 0.3 }}
     >
       <div className="admin-fullpage-header">
-        <h2 style={{ fontFamily: 'var(--font-heading)', margin: 0 }}>{t('admin.title')}</h2>
+        <h2 style={{ fontFamily: 'var(--font-heading)', margin: 0 }}>{t('admin.dashboardTitle')}</h2>
         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
           <button className="btn btn-secondary btn-sm" onClick={handleExport}>{t('admin.exportData')}</button>
           <button className="btn btn-secondary btn-sm" onClick={handleImportClick} disabled={importing}>{importing ? t('admin.importing') : t('admin.importData')}</button>

@@ -216,7 +216,7 @@
     "noComments": "No comments yet."
   },
   "admin": {
-    "title": "لوحة التحكم",
+    "dashboardTitle": "لوحة التحكم",
     "login": "Admin Login",
     "username": "Username",
     "password": "Password",
