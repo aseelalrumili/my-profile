@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
 import { logout as apiLogout } from '../../api/api';
+import { safeStorage } from '../utils/safeStorage';
 
 interface AuthContextType {
   isAdmin: boolean;
@@ -21,19 +22,19 @@ export const useAuth = () => useContext(AuthContext);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAdmin, setIsAdmin] = useState(() => {
-    const token = localStorage.getItem('token');
-    const expiry = localStorage.getItem('tokenExpiry');
+    const token = safeStorage.getItem('token');
+    const expiry = safeStorage.getItem('tokenExpiry');
     if (!token) return false;
     if (expiry && new Date(expiry) < new Date()) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('email');
-      localStorage.removeItem('tokenExpiry');
+      safeStorage.removeItem('token');
+      safeStorage.removeItem('email');
+      safeStorage.removeItem('tokenExpiry');
       return false;
     }
     return true;
   });
-  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
-  const [email, setEmail] = useState<string | null>(localStorage.getItem('email'));
+  const [token, setToken] = useState<string | null>(safeStorage.getItem('token'));
+  const [email, setEmail] = useState<string | null>(safeStorage.getItem('email'));
 
   const login = useCallback((t: string, e: string) => {
     setToken(t);

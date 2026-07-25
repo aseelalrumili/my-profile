@@ -5,6 +5,7 @@ import { FiEye, FiEyeOff, FiTrash2 } from 'react-icons/fi';
 import type { AppData, Review } from '../../../../types';
 import { fetchAllReviews, updateReview, deleteReview, approveReview } from '../../../../api/api';
 import { getErrorMessage } from '../helpers';
+import { useConfirmDelete } from '@/shared/hooks/useConfirmDelete';
 
 interface Props {
   data: AppData;
@@ -19,6 +20,7 @@ const iconBtnBase: React.CSSProperties = {
 
 export default function ReviewsTab({ data, onDataUpdate }: Props) {
   const { t } = useTranslation();
+  const confirmDelete = useConfirmDelete();
   const [items, setItems] = useState<Review[]>([]);
   const [isSectionVisible, setIsSectionVisible] = useState(
     data.settings?.reviewsSectionVisible !== 'false'
@@ -65,7 +67,7 @@ export default function ReviewsTab({ data, onDataUpdate }: Props) {
   };
 
   const handleDelete = async (id: number) => {
-    if (!window.confirm(t('admin.confirmDelete'))) return;
+    if (!confirmDelete()) return;
     try {
       await deleteReview(id);
       toast.success(t('admin.deleted'));

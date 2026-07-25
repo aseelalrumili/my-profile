@@ -58,7 +58,7 @@ export default function BlogPage() {
               <Link to={`/blog/${post.slug}`} style={{ textDecoration: 'none' }}>
                 <article className="blog-card">
                   {post.coverImageUrl && (
-                    <img className="blog-card-image" src={post.coverImageUrl} alt={local(post, 'title') || post.title} />
+                    <img className="blog-card-image" src={post.coverImageUrl} alt={local(post, 'title') || post.title} loading="lazy" />
                   )}
                   <div className="blog-card-body">
                     <h3>{local(post, 'title')}</h3>

@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { FiExternalLink } from 'react-icons/fi';
@@ -12,7 +13,7 @@ interface Props {
   onKeyDown?: (e: React.KeyboardEvent) => void;
 }
 
-export default function ProjectCard({ project, index = 0, onSelect, onKeyDown }: Props) {
+function ProjectCard({ project, index = 0, onSelect, onKeyDown }: Props) {
   const { t } = useTranslation();
   const { isAr, local } = useLocale();
   const getTitle = () => local(project, 'title') || project.title;
@@ -71,3 +72,5 @@ export default function ProjectCard({ project, index = 0, onSelect, onKeyDown }:
     </motion.div>
   );
 }
+
+export default memo(ProjectCard);

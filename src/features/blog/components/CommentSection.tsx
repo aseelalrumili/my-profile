@@ -18,9 +18,9 @@ export default function CommentSection({ postId }: Props) {
   useEffect(() => {
     fetchBlogComments(postId)
       .then(setComments)
-      .catch(() => {})
+      .catch(() => toast.error(t('contact.error')))
       .finally(() => setIsLoading(false));
-  }, [postId]);
+  }, [postId, t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

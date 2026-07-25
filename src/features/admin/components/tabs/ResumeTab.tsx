@@ -14,6 +14,8 @@ import {
   fetchResumeVersions, createResumeVersion, updateResumeVersion,
   deleteResumeVersion, cloneResumeVersion, setDefaultResume,
 } from '@/api/resume';
+import { useConfirmDelete } from '@/shared/hooks/useConfirmDelete';
+import { getErrorMessage } from '../helpers';
 
 interface Props { data: AppData; onDataUpdate?: () => Promise<void> }
 
@@ -29,6 +31,7 @@ function dedupVersions(arr: ResumeVersion[]): ResumeVersion[] {
 export default function ResumeTab({ data, onDataUpdate }: Props) {
   const { t, i18n } = useTranslation();
   const isAr = i18n.language === 'ar';
+  const confirmDelete = useConfirmDelete();
   const [versions, setVersions] = useState<ResumeVersion[]>([]);
   const [activeTab, setActiveTab] = useState<'ats' | 'regular'>('regular');
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -43,8 +46,12 @@ export default function ResumeTab({ data, onDataUpdate }: Props) {
     const pending = pendingSettingsRef.current;
     if (!pending) return;
     pendingSettingsRef.current = null;
-    await updateResumeVersion(pending.id, { settings: pending.settings });
-  }, []);
+    try {
+      await updateResumeVersion(pending.id, { settings: pending.settings });
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err, t('admin.failed')));
+    }
+  }, [t]);
 
   useEffect(() => {
     return () => {
@@ -54,10 +61,15 @@ export default function ResumeTab({ data, onDataUpdate }: Props) {
   }, [flushSave]);
 
   const loadVersions = useCallback(async () => {
-    const v = await fetchResumeVersions();
-    setVersions(dedupVersions(v));
-    setIsLoading(false);
-  }, []);
+    try {
+      const v = await fetchResumeVersions();
+      setVersions(dedupVersions(v));
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err, t('admin.failed')));
+    } finally {
+      setIsLoading(false);
+    }
+  }, [t]);
 
   useEffect(() => { loadVersions(); }, [loadVersions]);
 
@@ -121,23 +133,31 @@ export default function ResumeTab({ data, onDataUpdate }: Props) {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm(isAr ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?')) return;
-    await deleteResumeVersion(id);
-    setVersions(prev => prev.filter(v => v.id !== id));
-    if (editingId === id) setEditingId(null);
-    toast.success(t('resume.versionDeleted'));
-    onDataUpdate?.();
+    if (!confirmDelete()) return;
+    try {
+      await deleteResumeVersion(id);
+      setVersions(prev => prev.filter(v => v.id !== id));
+      if (editingId === id) setEditingId(null);
+      toast.success(t('resume.versionDeleted'));
+      onDataUpdate?.();
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err, t('admin.failed')));
+    }
   };
 
   const handleSetDefault = async (id: string) => {
-    await setDefaultResume(id);
-    setVersions(prev => prev.map(v =>
-      v.type === (versions.find(x => x.id === id)?.type)
-        ? { ...v, isDefault: v.id === id }
-        : v
-    ));
-    toast.success(t('resume.defaultSet'));
-    onDataUpdate?.();
+    try {
+      await setDefaultResume(id);
+      setVersions(prev => prev.map(v =>
+        v.type === (versions.find(x => x.id === id)?.type)
+          ? { ...v, isDefault: v.id === id }
+          : v
+      ));
+      toast.success(t('resume.defaultSet'));
+      onDataUpdate?.();
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err, t('admin.failed')));
+    }
   };
 
   const handleRefreshPreview = () => {

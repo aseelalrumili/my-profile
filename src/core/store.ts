@@ -1,11 +1,12 @@
 import axios from 'axios';
 import type { AppData } from '../types';
 import { fallbackData } from '../fallbackData';
+import { safeStorage } from '@/shared/utils/safeStorage';
 
 const API = axios.create({ baseURL: '/api' });
 
 API.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = safeStorage.getItem('token');
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });

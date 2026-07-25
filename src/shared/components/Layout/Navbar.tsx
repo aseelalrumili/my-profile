@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../context/ThemeContext';
+import { safeStorage } from '../../utils/safeStorage';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiSun, FiMoon, FiMenu, FiX, FiDownload, FiLock, FiHome, FiUser, FiBriefcase, FiMail } from 'react-icons/fi';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
@@ -40,7 +41,7 @@ export default function Navbar({ isAdmin, onAdminClick, onLogout, resumeUrl, pro
   const toggleLang = useCallback(() => {
     const newLang = i18n.language === 'en' ? 'ar' : 'en';
     i18n.changeLanguage(newLang);
-    localStorage.setItem('lang', newLang);
+    safeStorage.setItem('lang', newLang);
     document.documentElement.dir = newLang === 'ar' ? 'rtl' : 'ltr';
     document.documentElement.lang = newLang;
   }, [i18n]);

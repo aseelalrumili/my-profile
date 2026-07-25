@@ -5,6 +5,7 @@ import { createProject, updateProject, deleteProject, deleteMedia, fetchProjects
 import { uploadImage } from '../../../../api/client';
 import type { AppData, Project, MediaItem } from '../../../../types';
 import { getErrorMessage } from '../helpers';
+import { useConfirmDelete } from '@/shared/hooks/useConfirmDelete';
 
 function ProjectForm({ project, onSave, onClose, onDeleteMedia }: {
   project: Project | null; onSave: (payload: Omit<Project, 'id'>) => Promise<void>; onClose: () => void; onDeleteMedia: (id: number) => Promise<void>;
@@ -27,18 +28,24 @@ function ProjectForm({ project, onSave, onClose, onDeleteMedia }: {
         media.push(m);
       }
     }
-    for (const f of files) {
-      const url = await uploadImage(f);
-      media.push({
-        id: Math.floor(Date.now() + Math.random()),
-        mediaType: 'Image',
-        url,
-        fileName: f.name,
-        isPrimary: media.length === 0,
-      });
+    try {
+      for (const f of files) {
+        const url = await uploadImage(f);
+        media.push({
+          id: Math.floor(Date.now() + Math.random()),
+          mediaType: 'Image',
+          url,
+          fileName: f.name,
+          isPrimary: media.length === 0,
+        });
+      }
+      const payload: Omit<Project, 'id'> = { title, description, type, category, techStack, liveUrl, sortOrder: 0, media };
+      await onSave(payload);
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err, t('admin.failed')));
+    } finally {
+      setIsSaving(false);
     }
-    const payload: Omit<Project, 'id'> = { title, description, type, category, techStack, liveUrl, sortOrder: 0, media };
-    await onSave(payload); setIsSaving(false);
   };
 
   return (
@@ -83,12 +90,13 @@ function ProjectForm({ project, onSave, onClose, onDeleteMedia }: {
 
 export default function ProjectsTab({ data, onDataUpdate }: { data: AppData; onDataUpdate: () => Promise<void> }) {
   const { t } = useTranslation();
+  const confirmDelete = useConfirmDelete();
   const [items, setItems] = useState<Project[]>(data.projects || []);
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
 
   const handleDelete = async (id: number) => {
-    if (!confirm(t('admin.confirmDelete'))) return;
+    if (!confirmDelete()) return;
     try { await deleteProject(id); setItems(items.filter(i => i.id !== id)); toast.success(t('admin.deleted')); onDataUpdate?.(); }
     catch (err: unknown) { toast.error(getErrorMessage(err, t('admin.failed'))); }
   };
@@ -119,7 +127,7 @@ export default function ProjectsTab({ data, onDataUpdate }: { data: AppData; onD
             } catch (err: unknown) { toast.error(getErrorMessage(err, t('admin.failed'))); }
           }}
           onClose={() => { setIsFormVisible(false); setEditingProject(null); }}
-          onDeleteMedia={async (id) => { await deleteMedia(id); setItems(items.filter(i => !i.media.some(m => m.id === id))); onDataUpdate?.(); }}
+          onDeleteMedia={async (id) => { try { await deleteMedia(id); setItems(items.filter(i => !i.media.some(m => m.id === id))); onDataUpdate?.(); } catch (err: unknown) { toast.error(getErrorMessage(err, t('admin.failed'))); } }}
         />
       )}
     </div>
