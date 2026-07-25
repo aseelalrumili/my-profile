@@ -52,13 +52,20 @@
     "filterAll": "All",
     "filterDesign": "Design",
     "filterCode": "Code",
+    "filterFullstack": "Full-stack",
+    "fullstack": "Full-stack",
+    "problem": "Problem",
+    "solution": "Solution",
+    "role": "My Role",
+    "impact": "Impact / Results",
+    "techStack": "Tech Stack",
     "viewLive": "View Live",
     "viewAll": "View All Projects",
+    "model3d": "3D Model",
     "share": "Share",
     "copyLink": "Copy Link",
     "copied": "Link copied!",
     "close": "Close",
-    "techStack": "Tech Stack",
     "noImage": "No Image"
   },
   "certifications": {
@@ -190,6 +197,10 @@
     "loadError": "Failed to load certifications."
   },
   "loading": "Loading...",
+  "common": {
+    "backHome": "← Home",
+    "skipToContent": "Skip to content"
+  },
   "backToTop": "Back to Top",
   "share": "Share",
   "comments": {
@@ -312,6 +323,7 @@
     "3dPlane": "3D Plane",
     "design": "Design",
     "code": "Code",
+    "fullstack": "Full-stack",
     "yes": "Yes",
     "no": "No",
     "projectsCount": "projects",

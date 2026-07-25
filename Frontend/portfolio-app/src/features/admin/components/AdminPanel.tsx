@@ -15,6 +15,7 @@ import ProjectsTab from './tabs/ProjectsTab';
 import CertificationsTab from './tabs/CertificationsTab';
 import BlogTab from './tabs/BlogTab';
 import ReviewsTab from './tabs/ReviewsTab';
+import TestimonialsTab from './tabs/TestimonialsTab';
 import MessagesTab from './tabs/MessagesTab';
 import SettingsTab from './tabs/SettingsTab';
 import ResumeTab from './tabs/ResumeTab';
@@ -22,7 +23,7 @@ import ResumeTab from './tabs/ResumeTab';
 import {
   FiUser, FiShare2, FiTool, FiBriefcase, FiBookOpen,
   FiGrid, FiAward, FiFileText, FiStar, FiMessageSquare,
-  FiSettings, FiClipboard
+  FiSettings, FiClipboard, FiUsers
 } from 'react-icons/fi';
 
 interface Props {
@@ -32,7 +33,7 @@ interface Props {
   onLogout: () => void;
 }
 
-type Tab = 'profile' | 'social' | 'skills' | 'experience' | 'education' | 'projects' | 'certifications' | 'blog' | 'reviews' | 'messages' | 'resume' | 'settings';
+type Tab = 'profile' | 'social' | 'skills' | 'experience' | 'education' | 'projects' | 'certifications' | 'blog' | 'testimonials' | 'reviews' | 'messages' | 'resume' | 'settings';
 
 const tabIcons: Record<Tab, React.ReactNode> = {
   profile: <FiUser />,
@@ -43,6 +44,7 @@ const tabIcons: Record<Tab, React.ReactNode> = {
   projects: <FiGrid />,
   certifications: <FiAward />,
   blog: <FiFileText />,
+  testimonials: <FiUsers />,
   reviews: <FiStar />,
   messages: <FiMessageSquare />,
   resume: <FiClipboard />,
@@ -98,6 +100,7 @@ export default function AdminPanel({ data, onClose, onDataUpdate, onLogout }: Pr
     { key: 'projects', label: t('admin.projects') },
     { key: 'certifications', label: t('admin.certifications') },
     { key: 'blog', label: t('admin.blog') },
+    { key: 'testimonials', label: t('admin.testimonials') },
     { key: 'reviews', label: t('admin.reviews') },
     { key: 'messages', label: t('admin.messages') },
     { key: 'resume', label: t('resume.title') },
@@ -153,6 +156,7 @@ export default function AdminPanel({ data, onClose, onDataUpdate, onLogout }: Pr
           {tab === 'projects' && <ProjectsTab data={data} onDataUpdate={onDataUpdate} />}
           {tab === 'certifications' && <CertificationsTab data={data} onDataUpdate={onDataUpdate} />}
           {tab === 'blog' && <BlogTab data={data} onDataUpdate={onDataUpdate} />}
+          {tab === 'testimonials' && <TestimonialsTab data={data} onDataUpdate={onDataUpdate} />}
           {tab === 'reviews' && <ReviewsTab data={data} onDataUpdate={onDataUpdate} />}
           {tab === 'messages' && <MessagesTab />}
           {tab === 'resume' && <ResumeTab data={data} />}

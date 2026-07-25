@@ -11,7 +11,7 @@ interface Props {
 }
 
 export default function ProjectModal({ project, onClose }: Props) {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isAr = i18n.language === 'ar';
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
@@ -40,33 +40,33 @@ export default function ProjectModal({ project, onClose }: Props) {
           </span>
           <h2 className="project-modal-title">{getTitle}</h2>
           <p className="project-modal-desc">{getDesc}</p>
-          {(project as any).problem && (
+          {project.problem && (
             <div className="project-modal-casestudy">
-              <h4>{isAr ? 'المشكلة' : 'Problem'}</h4>
-              <p>{(project as any).problemAr && isAr ? (project as any).problemAr : (project as any).problem}</p>
+              <h4>{t('projects.problem')}</h4>
+              <p>{isAr && project.problemAr ? project.problemAr : project.problem}</p>
             </div>
           )}
-          {(project as any).solution && (
+          {project.solution && (
             <div className="project-modal-casestudy">
-              <h4>{isAr ? 'الحل' : 'Solution'}</h4>
-              <p>{(project as any).solutionAr && isAr ? (project as any).solutionAr : (project as any).solution}</p>
+              <h4>{t('projects.solution')}</h4>
+              <p>{isAr && project.solutionAr ? project.solutionAr : project.solution}</p>
             </div>
           )}
-          {(project as any).role && (
+          {project.role && (
             <div className="project-modal-casestudy">
-              <h4>{isAr ? 'دوري في المشروع' : 'My Role'}</h4>
-              <p>{(project as any).roleAr && isAr ? (project as any).roleAr : (project as any).role}</p>
+              <h4>{t('projects.role')}</h4>
+              <p>{isAr && project.roleAr ? project.roleAr : project.role}</p>
             </div>
           )}
-          {(project as any).impact && (
+          {project.impact && (
             <div className="project-modal-casestudy">
-              <h4>{isAr ? 'الأثر / النتيجة' : 'Impact / Results'}</h4>
-              <p>{(project as any).impactAr && isAr ? (project as any).impactAr : (project as any).impact}</p>
+              <h4>{t('projects.impact')}</h4>
+              <p>{isAr && project.impactAr ? project.impactAr : project.impact}</p>
             </div>
           )}
           {project.techStack && (
             <div className="project-modal-tech">
-              <span className="project-modal-tech-label">Tech Stack</span>
+              <span className="project-modal-tech-label">{t('projects.techStack')}</span>
               <div className="tech-stack" style={{ marginTop: '0.5rem' }}>
                 {project.techStack.split(',').map((tech, i) => (
                   <span key={i} className="tech-tag">{tech.trim()}</span>
@@ -77,7 +77,7 @@ export default function ProjectModal({ project, onClose }: Props) {
           {project.liveUrl && (
             <a href={project.liveUrl} target="_blank" rel="noopener noreferrer"
               className="btn btn-primary project-modal-live-link">
-              View Live
+              {t('projects.viewLive')}
             </a>
           )}
           {project.media.length > 0 && (
@@ -89,7 +89,7 @@ export default function ProjectModal({ project, onClose }: Props) {
                 ) : (
                   <a key={m.id} href={m.url} target="_blank" rel="noopener noreferrer"
                     className="project-modal-media-3d">
-                    3D Model
+                    {t('projects.model3d')}
                   </a>
                 )
               ))}

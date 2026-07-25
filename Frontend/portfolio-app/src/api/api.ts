@@ -1,5 +1,6 @@
 export { API_BASE, API } from './client';
 export { fetchAll, updateProfile, fetchSocialLinks, addSocialLink, updateSocialLink, deleteSocialLink, fetchSkills, addSkill, updateSkill, deleteSkill, fetchExperience, addExperience, updateExperience, deleteExperience, fetchEducation, addEducation, updateEducation, deleteEducation } from './profile';
+export { getSettings, updateSettings } from '../core/store';
 export { fetchProjects, createProject, updateProject, deleteProject, deleteMedia } from './projects';
 export { fetchCertifications, addCertification, updateCertification, deleteCertification } from './certifications';
 export { fetchBlogPosts, fetchBlogPost, createBlogPost, updateBlogPost, deleteBlogPost, fetchBlogComments, fetchAllBlogComments, addBlogComment, approveBlogComment, deleteBlogComment } from './blog';

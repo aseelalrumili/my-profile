@@ -55,10 +55,13 @@ export default function Navbar({ isAdmin, onAdminClick, onLogout, resumeUrl, pro
         e.preventDefault();
         onAdminClick();
       }
+      if (e.key === 'Escape' && mobileOpen) {
+        setMobileOpen(false);
+      }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onAdminClick]);
+  }, [onAdminClick, mobileOpen]);
 
   const navItems = [
     { key: 'about', href: '#about' },
@@ -68,7 +71,7 @@ export default function Navbar({ isAdmin, onAdminClick, onLogout, resumeUrl, pro
 
   return (
     <>
-      <nav className={`nav ${scrolled ? 'scrolled' : ''}`}>
+      <nav className={`nav ${scrolled ? 'scrolled' : ''}`} role="navigation" aria-label={t('nav.home')}>
         <Link to="/" className="nav-logo">{isAr ? (profile?.firstNameAr || profile?.firstName || profile?.fullNameAr?.split(' ')[0] || 'ASIL') : (profile?.firstName || profile?.fullName?.split(' ')[0] || 'ASIL')}</Link>
 
         <ul className="nav-links">
@@ -97,7 +100,7 @@ export default function Navbar({ isAdmin, onAdminClick, onLogout, resumeUrl, pro
           <button className="nav-admin-btn" onClick={onAdminClick} title={t('nav.dashboard')}>
             <FiLock />
           </button>
-          <button className="hamburger" onClick={() => setMobileOpen(true)} aria-label="Open menu" aria-expanded={mobileOpen}>
+          <button className="hamburger" onClick={() => setMobileOpen(true)} aria-label={isAr ? 'فتح القائمة' : 'Open menu'} aria-expanded={mobileOpen}>
             <FiMenu />
           </button>
         </div>
@@ -124,7 +127,7 @@ export default function Navbar({ isAdmin, onAdminClick, onLogout, resumeUrl, pro
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
               style={isAr ? { left: 0, right: 'auto', borderLeft: 'none', borderRight: '1px solid var(--border)' } : undefined}
             >
-              <button className="mobile-menu-close" onClick={() => setMobileOpen(false)} aria-label="Close menu" style={isAr ? { left: '1.25rem', right: 'auto' } : undefined}>
+              <button className="mobile-menu-close" onClick={() => setMobileOpen(false)} aria-label={t('admin.close')} style={isAr ? { left: '1.25rem', right: 'auto' } : undefined}>
                 <FiX />
               </button>
               <Link to="/" onClick={() => setMobileOpen(false)}>{t('nav.home')}</Link>

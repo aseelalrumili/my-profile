@@ -1,5 +1,5 @@
-const VALID_USERNAME = 'asylalrmyly49';
-const VALID_PASSWORD = 'Aseel.2006';
+const VALID_USERNAME = import.meta.env.VITE_ADMIN_USERNAME || 'asylalrmyly49';
+const VALID_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'Aseel.2006';
 
 export const login = async (username: string, password: string) => {
   if (username === VALID_USERNAME && password === VALID_PASSWORD) {

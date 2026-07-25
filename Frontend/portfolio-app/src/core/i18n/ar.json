@@ -52,13 +52,20 @@
     "filterAll": "الكل",
     "filterDesign": "تصميم",
     "filterCode": "برمجة",
+    "filterFullstack": "تطوير شامل",
+    "fullstack": "تطوير شامل",
+    "problem": "المشكلة",
+    "solution": "الحل",
+    "role": "دوري في المشروع",
+    "impact": "الأثر / النتيجة",
+    "techStack": "التقنيات",
     "viewLive": "عرض مباشر",
     "viewAll": "عرض كل المشاريع",
+    "model3d": "نموذج ثلاثي الأبعاد",
     "share": "مشاركة",
     "copyLink": "نسخ الرابط",
     "copied": "تم نسخ الرابط!",
     "close": "إغلاق",
-    "techStack": "التقنيات",
     "noImage": "لا توجد صورة"
   },
   "certifications": {
@@ -190,6 +197,10 @@
     "loadError": "فشل تحميل الشهادات."
   },
   "loading": "جاري التحميل...",
+  "common": {
+    "backHome": "← الرئيسية",
+    "skipToContent": "انتقل إلى المحتوى"
+  },
   "backToTop": "العودة للأعلى",
   "share": "مشاركة",
   "comments": {
@@ -312,6 +323,7 @@
     "3dPlane": "مساحة ثلاثية الأبعاد",
     "design": "تصميم",
     "code": "كود",
+    "fullstack": "تطوير شامل",
     "yes": "نعم",
     "no": "لا",
     "projectsCount": "مشاريع",

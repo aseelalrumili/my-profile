@@ -27,7 +27,7 @@ export default function CommentSection({ postId }: Props) {
     if (!form.authorName || !form.authorEmail || !form.content) return;
     setSubmitting(true);
     try {
-      await addBlogComment(postId, form);
+      await addBlogComment({ blogPostId: postId, ...form });
       setForm({ authorName: '', authorEmail: '', content: '' });
       toast.success(t('comments.pending'));
     } catch {
@@ -43,11 +43,12 @@ export default function CommentSection({ postId }: Props) {
         {t('comments.title')} ({comments.length})
       </h3>
 
-      <form className="comment-form" onSubmit={handleSubmit}>
+      <form className="comment-form" onSubmit={handleSubmit} aria-label={t('comments.leaveComment')}>
         <div className="form-row">
           <div className="form-group">
-            <label>{t('comments.name')}</label>
+            <label htmlFor="comment-name">{t('comments.name')}</label>
             <input
+              id="comment-name"
               type="text"
               value={form.authorName}
               onChange={(e) => setForm({ ...form, authorName: e.target.value })}
@@ -55,8 +56,9 @@ export default function CommentSection({ postId }: Props) {
             />
           </div>
           <div className="form-group">
-            <label>{t('comments.email')}</label>
+            <label htmlFor="comment-email">{t('comments.email')}</label>
             <input
+              id="comment-email"
               type="email"
               value={form.authorEmail}
               onChange={(e) => setForm({ ...form, authorEmail: e.target.value })}
@@ -65,8 +67,9 @@ export default function CommentSection({ postId }: Props) {
           </div>
         </div>
         <div className="form-group">
-          <label>{t('comments.content')}</label>
+          <label htmlFor="comment-content">{t('comments.content')}</label>
           <textarea
+            id="comment-content"
             value={form.content}
             onChange={(e) => setForm({ ...form, content: e.target.value })}
             required

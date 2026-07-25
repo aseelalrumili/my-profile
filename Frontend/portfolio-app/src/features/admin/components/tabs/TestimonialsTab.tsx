@@ -54,9 +54,14 @@ export default function TestimonialsTab({ data, onDataUpdate }: { data: AppData;
         <h4 style={{ fontSize: '0.85rem', marginBottom: '0.75rem' }}>{editingId ? t('admin.edit') : t('admin.add')}</h4>
         <div className="form-row">
           <div className="form-group"><label>{t('admin.clientName')}</label><input type="text" value={form.clientName} onChange={(e) => setForm({ ...form, clientName: e.target.value })} /></div>
+          <div className="form-group"><label>{t('admin.clientName')} {t('admin.arSuffix')}</label><input type="text" value={form.clientNameAr} onChange={(e) => setForm({ ...form, clientNameAr: e.target.value })} /></div>
+        </div>
+        <div className="form-row">
           <div className="form-group"><label>{t('admin.clientTitle')}</label><input type="text" value={form.clientTitle} onChange={(e) => setForm({ ...form, clientTitle: e.target.value })} /></div>
+          <div className="form-group"><label>{t('admin.clientTitle')} {t('admin.arSuffix')}</label><input type="text" value={form.clientTitleAr} onChange={(e) => setForm({ ...form, clientTitleAr: e.target.value })} /></div>
         </div>
         <div className="form-group"><label>{t('admin.content')}</label><textarea value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} /></div>
+        <div className="form-group"><label>{t('admin.content')} {t('admin.arSuffix')}</label><textarea value={form.contentAr} onChange={(e) => setForm({ ...form, contentAr: e.target.value })} /></div>
         <div className="form-row">
           <div className="form-group"><label>{t('admin.rating')} (1-5)</label><input type="number" min="1" max="5" value={form.rating} onChange={(e) => setForm({ ...form, rating: parseInt(e.target.value) || 5 })} /></div>
           <div className="form-group"><label>{t('admin.avatarUrl')}</label><input type="url" value={form.avatarUrl} onChange={(e) => setForm({ ...form, avatarUrl: e.target.value })} /></div>

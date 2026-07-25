@@ -20,7 +20,7 @@ const AuthContext = createContext<AuthContextType>({
 export const useAuth = () => useContext(AuthContext);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [isAdmin, setIsAdmin] = useState(checkAuth());
+  const [isAdmin, setIsAdmin] = useState(() => { const token = localStorage.getItem('token'); const expiry = localStorage.getItem('tokenExpiry'); if (!token) return false; if (expiry && new Date(expiry) < new Date()) { localStorage.removeItem('token'); localStorage.removeItem('username'); localStorage.removeItem('tokenExpiry'); return false; } return true; });
   const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
   const [username, setUsername] = useState<string | null>(localStorage.getItem('username'));
 

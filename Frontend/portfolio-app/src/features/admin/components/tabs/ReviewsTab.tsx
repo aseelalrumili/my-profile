@@ -81,11 +81,8 @@ export default function ReviewsTab({ data, onDataUpdate }: Props) {
     try {
       const newVal = !sectionVisible;
       setSectionVisible(newVal);
-      const { API } = await import('../../../../api/client');
-      await API.put('/settings', {
-        ...data.settings,
-        reviewsSectionVisible: String(newVal),
-      });
+      const { updateSettings } = await import('../../../../api/api');
+      updateSettings({ reviewsSectionVisible: String(newVal) });
       toast.success(newVal ? t('admin.reviewApproved') : t('admin.hide'));
       await onDataUpdate();
     } catch {

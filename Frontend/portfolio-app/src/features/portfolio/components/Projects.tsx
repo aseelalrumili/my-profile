@@ -52,7 +52,7 @@ export default function Projects({ data }: Props) {
             className={`filter-btn ${filter === cat ? 'active' : ''}`}
             onClick={() => setFilter(cat)}
           >
-            {cat === 'All' ? t('projects.filterAll') : cat === 'Design' ? t('projects.filterDesign') : cat === 'Code' ? t('projects.filterCode') : 'Full-stack'}
+            {cat === 'All' ? t('projects.filterAll') : cat === 'Design' ? t('projects.filterDesign') : cat === 'Code' ? t('projects.filterCode') : t('projects.filterFullstack')}
           </button>
         ))}
       </div>

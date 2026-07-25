@@ -29,7 +29,7 @@ export default function CertificationsPage() {
   return (
     <main className="section">
       <Link to="/" style={{ color: 'var(--accent)', fontSize: '0.9rem', fontWeight: 500, marginBottom: '2rem', display: 'inline-block' }}>
-        &larr; Home
+        {t('common.backHome')}
       </Link>
 
       <motion.h2

@@ -47,7 +47,7 @@ function ProjectForm({ project, onSave, onClose, onDeleteMedia }: {
       <form onSubmit={handleSubmit}>
         <div className="form-row">
           <div className="form-group"><label>{t('admin.title')}</label><input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required /></div>
-          <div className="form-group"><label>{t('admin.type')}</label><select value={type} onChange={(e) => setType(e.target.value as Project['type'])}><option value="Design">{t('admin.design')}</option><option value="Code">{t('admin.code')}</option></select></div>
+          <div className="form-group"><label>{t('admin.type')}</label><select value={type} onChange={(e) => setType(e.target.value as Project['type'])}><option value="Design">{t('admin.design')}</option><option value="Code">{t('admin.code')}</option><option value="Full-stack">{t('admin.fullstack')}</option></select></div>
         </div>
         <div className="form-group"><label>{t('admin.description')}</label><textarea value={description} onChange={(e) => setDescription(e.target.value)} /></div>
         <div className="form-row">

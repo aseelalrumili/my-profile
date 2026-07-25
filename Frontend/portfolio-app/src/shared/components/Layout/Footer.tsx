@@ -29,7 +29,7 @@ export default function Footer({ data }: { data: AppData }) {
           <h4>{isAr ? 'تواصل معي' : 'Connect'}</h4>
           <div className="footer-social">
             {data.socialLinks.map((link) => (
-              <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer" title={link.platform}>
+              <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer" title={link.platform} aria-label={link.platform}>
                 {allSocialIcons[link.platform.toLowerCase()] || link.platform.charAt(0)}
               </a>
             ))}
@@ -40,6 +40,7 @@ export default function Footer({ data }: { data: AppData }) {
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-outline btn-sm"
+              aria-label="WhatsApp"
               style={{ marginTop: 'var(--space-3)', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontSize: 'var(--fs-xs)' }}
             >
               WhatsApp

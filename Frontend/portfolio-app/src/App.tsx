@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import PageTransition from './shared/components/Effects/PageTransition';
@@ -17,21 +17,36 @@ import Skills from './features/portfolio/components/Skills';
 import Projects from './features/portfolio/components/Projects';
 import Certifications from './features/certifications/components/Certifications';
 import Reviews from './features/reviews/components/Reviews';
+import Testimonials from './features/testimonials/components/Testimonials';
 import Footer from './shared/components/Layout/Footer';
 import Contact from './features/portfolio/components/Contact';
 import BackToTop from './shared/components/Layout/BackToTop';
 import Particles from './shared/components/Effects/Particles';
-import Page404 from './shared/components/UI/Page404';
-import LoginModal from './features/admin/components/LoginModal';
-import AdminPanel from './features/admin/components/AdminPanel';
-import ReadingProgress from './shared/components/UI/ReadingProgress';
-import ResumePage from './features/resume/components/ResumePage';
-import CertificationsPage from './features/certifications/components/CertificationsPage';
-import PortfolioPage from './features/portfolio/components/PortfolioPage';
-import BlogPage from './features/blog/components/BlogPage';
-import BlogPost from './features/blog/components/BlogPost';
 import ErrorBoundary from './shared/components/Effects/ErrorBoundary';
+import LoginModal from './features/admin/components/LoginModal';
+import ReadingProgress from './shared/components/UI/ReadingProgress';
 import { fallbackData } from './fallbackData';
+import { useTranslation } from 'react-i18next';
+
+const AdminPanel = lazy(() => import('./features/admin/components/AdminPanel'));
+const ResumePage = lazy(() => import('./features/resume/components/ResumePage'));
+const CertificationsPage = lazy(() => import('./features/certifications/components/CertificationsPage'));
+const PortfolioPage = lazy(() => import('./features/portfolio/components/PortfolioPage'));
+const BlogPage = lazy(() => import('./features/blog/components/BlogPage'));
+const BlogPost = lazy(() => import('./features/blog/components/BlogPost'));
+const Page404 = lazy(() => import('./shared/components/UI/Page404'));
+
+function SkipToContent() {
+  const { t } = useTranslation();
+  return (
+    <a href="#main-content" style={{ position: 'absolute', top: '-100%', left: 0, zIndex: 10000, background: 'var(--accent)', color: '#fff', padding: '0.5rem 1rem', textDecoration: 'none', fontWeight: 600 }}
+      onFocus={(e) => { e.currentTarget.style.top = '0'; }}
+      onBlur={(e) => { e.currentTarget.style.top = '-100%'; }}
+    >
+      {t('common.skipToContent')}
+    </a>
+  );
+}
 
 function PageLayout({ children, data }: { children: React.ReactNode; data?: AppData }) {
   const { isAdmin, login, logout } = useAuth();
@@ -51,12 +66,14 @@ function PageLayout({ children, data }: { children: React.ReactNode; data?: AppD
   return (
     <>
       {showAdmin && isAdmin && data ? (
-        <AdminPanel
-          data={data}
-          onClose={() => setShowAdmin(false)}
-          onDataUpdate={() => fetchAll().then(() => {})}
-          onLogout={() => { logout(); setShowAdmin(false); }}
-        />
+        <Suspense fallback={<LoadingScreen />}>
+          <AdminPanel
+            data={data}
+            onClose={() => setShowAdmin(false)}
+            onDataUpdate={() => fetchAll().then(() => {})}
+            onLogout={() => { logout(); setShowAdmin(false); }}
+          />
+        </Suspense>
       ) : (
         <>
           <ReadingProgress />
@@ -67,7 +84,7 @@ function PageLayout({ children, data }: { children: React.ReactNode; data?: AppD
             resumeUrl={data?.profile?.resumeUrl}
             profile={data?.profile}
           />
-          {children}
+          <div id="main-content">{children}</div>
           {data && <Footer data={data} />}
           <BackToTop />
           {showLogin && (
@@ -99,6 +116,7 @@ function HomePage({ data, onLoadData }: { data: AppData; onLoadData: () => Promi
       <div id="experience"><Experience data={data} /></div>
       <div id="certifications"><Certifications data={data} limit={3} /></div>
       <Reviews settings={data.settings} />
+      <Testimonials data={data} />
       <div id="contact"><Contact data={data} /></div>
     </PageLayout>
   );
@@ -136,6 +154,7 @@ function AppRoutes() {
           Backend unavailable — showing demo data
         </div>
       )}
+      <Suspense fallback={<LoadingScreen />}>
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={data ? <HomePage data={data} onLoadData={loadData} /> : <LoadingScreen />} />
         <Route path="/resume" element={
@@ -190,6 +209,7 @@ function AppRoutes() {
           </PageLayout>
         } />
       </Routes>
+      </Suspense>
     </AnimatePresence>
   );
 }
@@ -200,6 +220,7 @@ export default function App() {
       <ThemeProvider>
         <AuthProvider>
           <BrowserRouter basename="/my-profile" future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+            <SkipToContent />
             <AppRoutes />
             <ToastContainer position="bottom-right" autoClose={3000} theme="colored" />
           </BrowserRouter>

@@ -47,7 +47,7 @@ export default function BlogTab({ data, onDataUpdate }: { data: AppData; onDataU
   };
 
   const handleApproveComment = async (id: number) => {
-    try { await approveBlogComment(id); toast.success(t('admin.deleted')); await loadComments(); }
+    try { await approveBlogComment(id); toast.success(t('admin.reviewApproved')); await loadComments(); }
     catch (err: any) { toast.error(getErrorMessage(err, t('admin.failed'))); }
   };
 
