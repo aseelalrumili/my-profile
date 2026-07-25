@@ -3,7 +3,6 @@ import { get, put } from '@vercel/blob';
 import { verifyToken } from '../auth/verify';
 
 const BLOB_KEY = 'portfolio/data.json';
-const BLOB_TOKEN = process.env.BLOB_READ_WRITE_TOKEN;
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -13,8 +12,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   if (req.method === 'GET') {
+    const token = process.env.BLOB_READ_WRITE_TOKEN;
+    if (!token) {
+      return res.status(200).json(null);
+    }
     try {
-      const blob = await get(BLOB_KEY, { token: BLOB_TOKEN });
+      const blob = await get(BLOB_KEY, { token });
       const data = JSON.parse(await blob.text());
       return res.status(200).json(data);
     } catch {
@@ -26,10 +29,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const email = verifyToken(req, res);
     if (!email) return;
 
+    const token = process.env.BLOB_READ_WRITE_TOKEN;
+    if (!token) {
+      return res.status(500).json({ error: 'Blob storage not configured' });
+    }
+
     try {
       let current: Record<string, unknown> = {};
       try {
-        const blob = await get(BLOB_KEY, { token: BLOB_TOKEN });
+        const blob = await get(BLOB_KEY, { token });
         current = JSON.parse(await blob.text());
       } catch {}
 
@@ -39,7 +47,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       await put(BLOB_KEY, JSON.stringify(merged), {
         contentType: 'application/json',
         access: 'public',
-        token: BLOB_TOKEN,
+        token,
       });
 
       return res.status(200).json(merged);

@@ -2,8 +2,6 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { put } from '@vercel/blob';
 import { verifyToken } from '../auth/verify';
 
-const BLOB_TOKEN = process.env.BLOB_READ_WRITE_TOKEN;
-
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -14,6 +12,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const email = verifyToken(req, res);
   if (!email) return;
+
+  const token = process.env.BLOB_READ_WRITE_TOKEN;
+  if (!token) {
+    return res.status(500).json({ error: 'Blob storage not configured' });
+  }
 
   try {
     const { filename, data: fileData, contentType } = req.body;
@@ -28,7 +31,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const blob = await put(uniqueName, buffer, {
       contentType: contentType || 'image/webp',
       access: 'public',
-      token: BLOB_TOKEN,
+      token,
     });
 
     return res.status(200).json({ url: blob.url });
