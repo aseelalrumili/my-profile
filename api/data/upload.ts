@@ -55,6 +55,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const blob = await put(uniqueName, buffer, {
       ...getOpts(),
       contentType: contentType || 'image/webp',
+      access: 'private',
     });
 
     return res.status(200).json({ url: blob.url });

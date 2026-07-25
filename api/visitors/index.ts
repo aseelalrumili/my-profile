@@ -32,6 +32,7 @@ async function saveVisitors(visitors: { page: string; timestamp: string }[]) {
   await put(BLOB_KEY, JSON.stringify(visitors), {
     ...getOpts(),
     contentType: 'application/json',
+    access: 'private',
   });
 }
 
