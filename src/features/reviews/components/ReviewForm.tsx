@@ -32,7 +32,7 @@ export default function ReviewForm({ onSubmit, onCancel }: { onSubmit: () => voi
   const [name, setName] = useState('');
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
-  const [submitting, setSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -41,7 +41,7 @@ export default function ReviewForm({ onSubmit, onCancel }: { onSubmit: () => voi
       toast.warning(isAr ? 'اكمل جميع الحقول' : 'Please fill all fields');
       return;
     }
-    setSubmitting(true);
+    setIsSubmitting(true);
     try {
       await addReview({ name: name.trim(), rating, comment: comment.trim(), avatarUrl: avatarUrl.trim() || undefined });
       toast.success(isAr ? 'تم إضافة تقييمك!' : 'Review submitted!');
@@ -53,7 +53,7 @@ export default function ReviewForm({ onSubmit, onCancel }: { onSubmit: () => voi
     } catch {
       toast.error(isAr ? 'فشل إرسال التقييم' : 'Failed to submit review');
     } finally {
-      setSubmitting(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -97,8 +97,8 @@ export default function ReviewForm({ onSubmit, onCancel }: { onSubmit: () => voi
         maxLength={500}
       />
       <div className="review-form-actions">
-        <button type="submit" className="btn btn-primary" disabled={submitting}>
-          {submitting ? t('reviews.submitting') : t('reviews.submit')}
+        <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+          {isSubmitting ? t('reviews.submitting') : t('reviews.submit')}
         </button>
         <button type="button" className="btn btn-secondary" onClick={onCancel}>
           {t('reviews.cancel')}

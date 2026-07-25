@@ -12,7 +12,7 @@ export default function BlogTab({ data, onDataUpdate }: { data: AppData; onDataU
   const [form, setForm] = useState({ title: '', titleAr: '', slug: '', excerpt: '', excerptAr: '', content: '', contentAr: '', coverImageUrl: '', author: '', tags: '', published: true });
   const [editingId, setEditingId] = useState<number | null>(null);
   const [comments, setComments] = useState<BlogComment[]>([]);
-  const [showComments, setShowComments] = useState(false);
+  const [areCommentsVisible, setAreCommentsVisible] = useState(false);
   const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -23,7 +23,7 @@ export default function BlogTab({ data, onDataUpdate }: { data: AppData; onDataU
     try { setComments(await fetchAllBlogComments()); } catch { }
   };
 
-  useEffect(() => { if (showComments) loadComments(); }, [showComments]);
+  useEffect(() => { if (areCommentsVisible) loadComments(); }, [areCommentsVisible]);
 
   const handleAdd = async () => {
     if (!form.title || !form.slug) return;
@@ -64,13 +64,13 @@ export default function BlogTab({ data, onDataUpdate }: { data: AppData; onDataU
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
         <button
           className="btn btn-secondary btn-sm"
-          onClick={() => { setShowComments(!showComments); if (!showComments) loadComments(); }}
+          onClick={() => { setAreCommentsVisible(!areCommentsVisible); if (!areCommentsVisible) loadComments(); }}
         >
           {t('comments.title')} ({pendingCount} {t('comments.pending').toLowerCase()})
         </button>
       </div>
 
-      {showComments && (
+      {areCommentsVisible && (
         <div style={{ marginBottom: '1.5rem' }}>
           {comments.length === 0 ? (
             <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{t('comments.noComments')}</p>

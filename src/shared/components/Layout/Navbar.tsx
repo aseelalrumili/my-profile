@@ -18,13 +18,13 @@ export default function Navbar({ isAdmin, onAdminClick, onLogout, resumeUrl, pro
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [dir, setDir] = useState(() => document.documentElement.dir || 'ltr');
   const isAr = dir === 'rtl';
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -64,13 +64,13 @@ export default function Navbar({ isAdmin, onAdminClick, onLogout, resumeUrl, pro
         e.preventDefault();
         onAdminClick();
       }
-      if (e.key === 'Escape' && mobileOpen) {
-        setMobileOpen(false);
+      if (e.key === 'Escape' && isMobileMenuOpen) {
+        setIsMobileMenuOpen(false);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onAdminClick, mobileOpen]);
+  }, [onAdminClick, isMobileMenuOpen]);
 
   const navItems = [
     { key: 'about', href: '#about' },
@@ -80,7 +80,7 @@ export default function Navbar({ isAdmin, onAdminClick, onLogout, resumeUrl, pro
 
   return (
     <>
-      <nav className={`nav ${scrolled ? 'scrolled' : ''}`} role="navigation" aria-label={t('nav.home')}>
+      <nav className={`nav ${isScrolled ? 'scrolled' : ''}`} role="navigation" aria-label={t('nav.home')}>
         <Link to="/" className="nav-logo">{isAr ? (profile?.firstNameAr || profile?.firstName || profile?.fullNameAr?.split(' ')[0] || 'ASIL') : (profile?.firstName || profile?.fullName?.split(' ')[0] || 'ASIL')}</Link>
 
         <ul className="nav-links">
@@ -109,21 +109,21 @@ export default function Navbar({ isAdmin, onAdminClick, onLogout, resumeUrl, pro
           <button className="nav-admin-btn" onClick={onAdminClick} title={t('nav.dashboard')}>
             <FiLock />
           </button>
-          <button className="hamburger" onClick={() => setMobileOpen(true)} aria-label={isAr ? 'فتح القائمة' : 'Open menu'} aria-expanded={mobileOpen}>
+          <button className="hamburger" onClick={() => setIsMobileMenuOpen(true)} aria-label={isAr ? 'فتح القائمة' : 'Open menu'} aria-expanded={isMobileMenuOpen}>
             <FiMenu />
           </button>
         </div>
       </nav>
 
       <AnimatePresence>
-        {mobileOpen && (
+        {isMobileMenuOpen && (
           <>
             <motion.div
               className="mobile-menu-overlay"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setMobileOpen(false)}
+              onClick={() => setIsMobileMenuOpen(false)}
             />
             <motion.div
               className="mobile-menu"
@@ -135,17 +135,17 @@ export default function Navbar({ isAdmin, onAdminClick, onLogout, resumeUrl, pro
               exit={{ x: dir === 'rtl' ? '-100%' : '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             >
-              <button className="mobile-menu-close" onClick={() => setMobileOpen(false)} aria-label={t('admin.close')}>
+              <button className="mobile-menu-close" onClick={() => setIsMobileMenuOpen(false)} aria-label={t('admin.close')}>
                 <FiX />
               </button>
-              <Link to="/" onClick={() => setMobileOpen(false)}>{t('nav.home')}</Link>
+              <Link to="/" onClick={() => setIsMobileMenuOpen(false)}>{t('nav.home')}</Link>
               {navItems.map((item) => (
-                <a key={item.key} href={item.href} onClick={(e) => { e.preventDefault(); setMobileOpen(false); handleHashLink(item.href); }}>
+                <a key={item.key} href={item.href} onClick={(e) => { e.preventDefault(); setIsMobileMenuOpen(false); handleHashLink(item.href); }}>
                   {t(`nav.${item.key}`)}
                 </a>
               ))}
-              <Link to="/blog" onClick={() => setMobileOpen(false)}>{t('nav.blog')}</Link>
-              <Link to="/resume" onClick={() => setMobileOpen(false)}>{t('resume.title')}</Link>
+              <Link to="/blog" onClick={() => setIsMobileMenuOpen(false)}>{t('nav.blog')}</Link>
+              <Link to="/resume" onClick={() => setIsMobileMenuOpen(false)}>{t('resume.title')}</Link>
               <div className="mobile-menu-controls">
                 <button className="nav-lang-btn" onClick={toggleLang}>
                   {i18n.language === 'en' ? 'العربية' : 'English'}

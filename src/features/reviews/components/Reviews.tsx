@@ -15,7 +15,7 @@ function Reviews({ settings }: { settings?: Record<string, string> }) {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [stats, setStats] = useState({ total: 0, average: 0 });
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-  const [showForm, setShowForm] = useState(false);
+  const [isFormVisible, setIsFormVisible] = useState(false);
 
   const load = async () => {
     try {
@@ -31,7 +31,7 @@ function Reviews({ settings }: { settings?: Record<string, string> }) {
   useEffect(() => { load(); }, []);
 
   const handleReviewSubmitted = async () => {
-    setShowForm(false);
+    setIsFormVisible(false);
     await load();
     setVisibleCount(PAGE_SIZE);
   };
@@ -50,7 +50,7 @@ function Reviews({ settings }: { settings?: Record<string, string> }) {
     return <div className="review-avatar">{r.name.charAt(0)}</div>;
   };
 
-  const visible = reviews.slice(0, visibleCount);
+  const visibleReviews = reviews.slice(0, visibleCount);
   const hasMore = visibleCount < reviews.length;
 
   if (settings?.reviewsSectionVisible === 'false') return null;
@@ -79,7 +79,7 @@ function Reviews({ settings }: { settings?: Record<string, string> }) {
 
       <div className="reviews-list">
         <AnimatePresence>
-          {visible.map((r, idx) => (
+          {visibleReviews.map((r, idx) => (
             <motion.div
               key={r.id}
               className="review-card"
@@ -115,10 +115,10 @@ function Reviews({ settings }: { settings?: Record<string, string> }) {
         </motion.button>
       )}
 
-      {!showForm && (
+      {!isFormVisible && (
         <motion.button
           className="btn btn-primary review-add-btn"
-          onClick={() => setShowForm(true)}
+          onClick={() => setIsFormVisible(true)}
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
           initial={{ opacity: 0, y: 10 }}
@@ -130,7 +130,7 @@ function Reviews({ settings }: { settings?: Record<string, string> }) {
       )}
 
       <AnimatePresence>
-        {showForm && (
+        {isFormVisible && (
           <ReviewForm onSubmit={handleReviewSubmitted} onCancel={() => setShowForm(false)} />
         )}
       </AnimatePresence>

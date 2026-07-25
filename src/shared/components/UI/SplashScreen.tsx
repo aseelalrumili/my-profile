@@ -8,25 +8,25 @@ interface Props {
 const SPLASH_KEY = 'splash_seen';
 
 export default function SplashScreen({ onComplete }: Props) {
-  const [visible, setVisible] = useState(() => !sessionStorage.getItem(SPLASH_KEY));
+  const [isVisible, setIsVisible] = useState(() => !sessionStorage.getItem(SPLASH_KEY));
   const isAr = document.documentElement.lang === 'ar';
   const name = isAr ? 'أصيل' : 'ASIL';
 
   useEffect(() => {
-    if (!visible) { onComplete(); return; }
+    if (!isVisible) { onComplete(); return; }
     const timer = setTimeout(() => {
       sessionStorage.setItem(SPLASH_KEY, '1');
-      setVisible(false);
+      setIsVisible(false);
       setTimeout(onComplete, 800);
     }, 2200);
     return () => clearTimeout(timer);
-  }, [visible, onComplete]);
+  }, [isVisible, onComplete]);
 
   const letters = name.split('');
 
   return (
     <AnimatePresence>
-      {visible && (
+      {isVisible && (
         <motion.div
           className="splash-screen"
           initial={{ opacity: 1 }}

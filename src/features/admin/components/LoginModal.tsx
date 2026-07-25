@@ -12,8 +12,8 @@ export default function LoginModal({ onSuccess, onClose }: Props) {
   const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const emailRef = useRef<HTMLInputElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -40,15 +40,15 @@ export default function LoginModal({ onSuccess, onClose }: Props) {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setError('');
-    setLoading(true);
+    setErrorMessage('');
+    setIsLoading(true);
     try {
       const result = await apiLogin(email, password);
       onSuccess(result.token, result.email);
     } catch {
-      setError(t('admin.invalidCredentials'));
+      setErrorMessage(t('admin.invalidCredentials'));
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -67,7 +67,7 @@ export default function LoginModal({ onSuccess, onClose }: Props) {
         transition={{ duration: 0.3 }}
       >
         <h2 style={{ fontFamily: 'var(--font-heading)' }}>{t('admin.login')}</h2>
-        {error && <p style={{ color: 'var(--danger)', fontSize: '0.85rem', marginBottom: '1rem' }}>{error}</p>}
+        {errorMessage && <p style={{ color: 'var(--danger)', fontSize: '0.85rem', marginBottom: '1rem' }}>{errorMessage}</p>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="login-email">{t('admin.email')}</label>
@@ -77,8 +77,8 @@ export default function LoginModal({ onSuccess, onClose }: Props) {
             <label htmlFor="login-password">{t('admin.password')}</label>
             <input id="login-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
           </div>
-          <button type="submit" className="btn btn-primary" disabled={loading}>
-            {loading ? t('admin.signingIn') : t('admin.signIn')}
+          <button type="submit" className="btn btn-primary" disabled={isLoading}>
+            {isLoading ? t('admin.signingIn') : t('admin.signIn')}
           </button>
           <button type="button" className="btn btn-secondary" style={{ width: '100%', marginTop: '0.5rem' }} onClick={onClose}>
             {t('admin.cancel')}

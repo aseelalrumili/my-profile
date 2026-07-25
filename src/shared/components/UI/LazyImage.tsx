@@ -9,15 +9,15 @@ interface Props {
 }
 
 export default function LazyImage({ src, alt, className, style, onClick }: Props) {
-  const [loaded, setLoaded] = useState(false);
-  const [inView, setInView] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isInView, setIsInView] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const resolvedSrc = src;
 
   useEffect(() => {
     if (!ref.current) return;
     const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setInView(true); observer.disconnect(); } },
+      ([entry]) => { if (entry.isIntersecting) { setIsInView(true); observer.disconnect(); } },
       { rootMargin: '200px' }
     );
     observer.observe(ref.current);
@@ -26,13 +26,13 @@ export default function LazyImage({ src, alt, className, style, onClick }: Props
 
   return (
     <div ref={ref} className={`lazy-image-wrapper ${className || ''}`} style={style} onClick={onClick}>
-      {inView ? (
+      {isInView ? (
         <img
           src={resolvedSrc}
           alt={alt}
           loading="lazy"
-          onLoad={() => setLoaded(true)}
-          className={`lazy-image ${loaded ? 'loaded' : ''}`}
+          onLoad={() => setIsLoaded(true)}
+          className={`lazy-image ${isLoaded ? 'loaded' : ''}`}
         />
       ) : (
         <div className="lazy-image-placeholder" />

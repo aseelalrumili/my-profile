@@ -13,11 +13,11 @@ export default function Contact({ data }: { data: AppData }) {
   const { profile } = data;
   const { isAr, local } = useLocale();
   const [form, setForm] = useState({ name: '', phone: '', subject: '', messageText: '' });
-  const [sending, setSending] = useState(false);
+  const [isSending, setIsSending] = useState(false);
 
   const handleSubmit = useCallback(async (e: FormEvent) => {
     e.preventDefault();
-    setSending(true);
+    setIsSending(true);
     try {
       await sendMessage(form);
       toast.success(t('contact.success'));
@@ -25,7 +25,7 @@ export default function Contact({ data }: { data: AppData }) {
     } catch {
       toast.error(t('contact.error'));
     } finally {
-      setSending(false);
+      setIsSending(false);
     }
   }, [form, t]);
 
@@ -83,8 +83,8 @@ export default function Contact({ data }: { data: AppData }) {
                 required
               />
             </div>
-            <button type="submit" className="contact-btn primary" disabled={sending}>
-              {sending ? t('contact.sending') : t('contact.send')}
+            <button type="submit" className="contact-btn primary" disabled={isSending}>
+              {isSending ? t('contact.sending') : t('contact.send')}
             </button>
           </motion.form>
         </motion.div>

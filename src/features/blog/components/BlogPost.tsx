@@ -13,15 +13,15 @@ export default function BlogPost() {
   const { t } = useTranslation();
   const { isAr, local } = useLocale();
   const [post, setPost] = useState<BlogPostType | null>(null);
-  const [notFound, setNotFound] = useState(false);
+  const [isNotFound, setIsNotFound] = useState(false);
 
   useEffect(() => {
     if (slug) {
-      fetchBlogPost(slug).then(setPost).catch(() => setNotFound(true));
+      fetchBlogPost(slug).then(setPost).catch(() => setIsNotFound(true));
     }
   }, [slug]);
 
-  if (notFound) {
+  if (isNotFound) {
     return (
       <div className="section" style={{ textAlign: 'center', padding: '4rem 1rem' }}>
         <h2 style={{ color: 'var(--text-primary)', marginBottom: '1rem' }}>404</h2>

@@ -32,9 +32,9 @@ export default function ResumeTab({ data, onDataUpdate }: Props) {
   const [versions, setVersions] = useState<ResumeVersion[]>([]);
   const [activeTab, setActiveTab] = useState<'ats' | 'regular'>('regular');
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [showPreview, setShowPreview] = useState(false);
+  const [isPreviewVisible, setIsPreviewVisible] = useState(false);
   const [previewKey, setPreviewKey] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const creatingRef = useRef(false);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingSettingsRef = useRef<{ id: string; settings: ResumeSettings } | null>(null);
@@ -56,7 +56,7 @@ export default function ResumeTab({ data, onDataUpdate }: Props) {
   const loadVersions = useCallback(async () => {
     const v = await fetchResumeVersions();
     setVersions(dedupVersions(v));
-    setLoading(false);
+    setIsLoading(false);
   }, []);
 
   useEffect(() => { loadVersions(); }, [loadVersions]);
@@ -142,7 +142,7 @@ export default function ResumeTab({ data, onDataUpdate }: Props) {
 
   const handleRefreshPreview = () => {
     setPreviewKey(k => k + 1);
-    setShowPreview(true);
+    setIsPreviewVisible(true);
   };
 
   if (editing) {
@@ -193,7 +193,7 @@ export default function ResumeTab({ data, onDataUpdate }: Props) {
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: showPreview ? '320px 1fr' : '1fr',
+          gridTemplateColumns: isPreviewVisible ? '320px 1fr' : '1fr',
           gap: '1rem',
           flex: 1,
           minHeight: 0,
@@ -213,7 +213,7 @@ export default function ResumeTab({ data, onDataUpdate }: Props) {
             />
           </div>
 
-          {showPreview && (
+          {isPreviewVisible && (
             <div style={{
               background: 'var(--bg-secondary)',
               border: '1px solid var(--border)',
@@ -257,7 +257,7 @@ export default function ResumeTab({ data, onDataUpdate }: Props) {
         </button>
       </div>
 
-      {loading ? (
+      {isLoading ? (
         <p style={{ color: 'var(--text-muted)' }}>{t('loading')}</p>
       ) : filtered.length === 0 ? (
         <div style={{
@@ -282,7 +282,7 @@ export default function ResumeTab({ data, onDataUpdate }: Props) {
           onClone={handleClone}
           onDelete={handleDelete}
           onSetDefault={handleSetDefault}
-          loading={loading}
+          isLoading={isLoading}
         />
       )}
     </div>

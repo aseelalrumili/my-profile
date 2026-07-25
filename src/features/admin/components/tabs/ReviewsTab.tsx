@@ -20,10 +20,10 @@ const iconBtnBase: React.CSSProperties = {
 export default function ReviewsTab({ data, onDataUpdate }: Props) {
   const { t } = useTranslation();
   const [items, setItems] = useState<Review[]>([]);
-  const [sectionVisible, setSectionVisible] = useState(
+  const [isSectionVisible, setIsSectionVisible] = useState(
     data.settings?.reviewsSectionVisible !== 'false'
   );
-  const [savingToggle, setSavingToggle] = useState(false);
+  const [isSavingToggle, setIsSavingToggle] = useState(false);
 
   const load = async () => {
     try {
@@ -36,7 +36,7 @@ export default function ReviewsTab({ data, onDataUpdate }: Props) {
 
   useEffect(() => { load(); }, []);
   useEffect(() => {
-    setSectionVisible(data.settings?.reviewsSectionVisible !== 'false');
+    setIsSectionVisible(data.settings?.reviewsSectionVisible !== 'false');
   }, [data.settings]);
 
   const pending = items.filter((r) => !r.isApproved);
@@ -77,19 +77,19 @@ export default function ReviewsTab({ data, onDataUpdate }: Props) {
   };
 
   const handleSectionToggle = async () => {
-    setSavingToggle(true);
+    setIsSavingToggle(true);
     try {
-      const newVal = !sectionVisible;
-      setSectionVisible(newVal);
+      const newVal = !isSectionVisible;
+      setIsSectionVisible(newVal);
       const { updateSettings } = await import('../../../../api/api');
       updateSettings({ reviewsSectionVisible: String(newVal) });
       toast.success(newVal ? t('admin.reviewApproved') : t('admin.hide'));
       await onDataUpdate();
     } catch {
-      setSectionVisible(!sectionVisible);
+      setIsSectionVisible(!isSectionVisible);
       toast.error(t('admin.failed'));
     } finally {
-      setSavingToggle(false);
+      setIsSavingToggle(false);
     }
   };
 
@@ -177,9 +177,9 @@ export default function ReviewsTab({ data, onDataUpdate }: Props) {
         <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.85rem' }}>
           <input
             type="checkbox"
-            checked={sectionVisible}
+            checked={isSectionVisible}
             onChange={handleSectionToggle}
-            disabled={savingToggle}
+            disabled={isSavingToggle}
             style={{ accentColor: 'var(--accent)' }}
           />
           {t('admin.reviewsSection')}

@@ -57,8 +57,8 @@ function HomePage({ data, onDataUpdate }: { data: AppData; onDataUpdate?: () => 
 
 export default function AppRoutes() {
   const [data, setData] = useState<AppData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
   const [splashDone, setSplashDone] = useState(false);
   const location = useLocation();
 
@@ -66,27 +66,27 @@ export default function AppRoutes() {
 
   const loadData = async () => {
     try {
-      setError(false);
-      const d = await fetchAll();
-      setData(d);
+      setHasError(false);
+      const fetchedData = await fetchAll();
+      setData(fetchedData);
     } catch (e) {
       console.error('Failed to load data', e);
       if (!data) setData(fallbackData);
-      setError(true);
+      setHasError(true);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   useEffect(() => { loadData(); }, []);
 
   if (!splashDone) return <SplashScreen onComplete={handleSplashComplete} />;
-  if (loading) return <LoadingScreen />;
+  if (isLoading) return <LoadingScreen />;
   if (!data) return <LoadingScreen />;
 
   return (
     <AnimatePresence mode="wait">
-      {error && (
+      {hasError && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 9999, background: 'var(--warning)', color: '#000', textAlign: 'center', padding: '0.5rem', fontSize: '0.8rem', fontWeight: 500 }}>
           Backend unavailable — showing demo data
         </div>

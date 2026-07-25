@@ -15,14 +15,14 @@ export default function CertificationsPage() {
   const [certs, setCerts] = useState<Certification[]>([]);
   const [filter, setFilter] = useState('All');
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     fetchCertifications()
       .then(setCerts)
-      .catch(() => setError(t('certsPage.loadError') || 'Failed to load certifications.'))
-      .finally(() => setLoading(false));
+      .catch(() => setErrorMessage(t('certsPage.loadError') || 'Failed to load certifications.'))
+      .finally(() => setIsLoading(false));
   }, [t]);
 
   const categories = ['All', ...new Set(certs.map((c) => c.category).filter(Boolean))];
@@ -36,7 +36,7 @@ export default function CertificationsPage() {
 
       <SectionHeader title={t('certsPage.title')} subtitle={t('certsPage.subtitle')} animate />
 
-      {loading ? (
+      {isLoading ? (
         <div className="certs-grid">
           {[1, 2, 3].map((i) => (
             <div key={i} className="cert-card" style={{ pointerEvents: 'none' }}>
@@ -47,8 +47,8 @@ export default function CertificationsPage() {
             </div>
           ))}
         </div>
-      ) : error ? (
-        <p style={{ color: 'var(--danger)', textAlign: 'center', padding: '2rem' }}>{error}</p>
+      ) : errorMessage ? (
+        <p style={{ color: 'var(--danger)', textAlign: 'center', padding: '2rem' }}>{errorMessage}</p>
       ) : (
         <>
           {categories.length > 1 && (

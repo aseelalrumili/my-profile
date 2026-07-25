@@ -11,14 +11,14 @@ export default function BlogPage() {
   const { t } = useTranslation();
   const { isAr, local } = useLocale();
   const [posts, setPosts] = useState<BlogPostType[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     fetchBlogPosts()
       .then((data) => setPosts(data.filter((p) => p.published)))
-      .catch(() => setError(t('blog.loadError') || 'Failed to load blog posts.'))
-      .finally(() => setLoading(false));
+      .catch(() => setErrorMessage(t('blog.loadError') || 'Failed to load blog posts.'))
+      .finally(() => setIsLoading(false));
   }, [t]);
 
   return (
@@ -29,7 +29,7 @@ export default function BlogPage() {
 
       <SectionHeader title={t('blogPage.title')} subtitle={t('blogPage.subtitle')} animate />
 
-      {loading ? (
+      {isLoading ? (
         <div className="blog-grid">
           {[1, 2, 3].map((i) => (
             <div key={i} className="blog-card" style={{ pointerEvents: 'none' }}>
@@ -42,8 +42,8 @@ export default function BlogPage() {
             </div>
           ))}
         </div>
-      ) : error ? (
-        <p style={{ color: 'var(--danger)', textAlign: 'center', padding: '2rem' }}>{error}</p>
+      ) : errorMessage ? (
+        <p style={{ color: 'var(--danger)', textAlign: 'center', padding: '2rem' }}>{errorMessage}</p>
       ) : posts.length === 0 ? (
         <p style={{ color: 'var(--text-secondary)' }}>{t('blog.noPosts')}</p>
       ) : (

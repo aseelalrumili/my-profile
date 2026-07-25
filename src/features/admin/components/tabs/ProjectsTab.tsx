@@ -17,10 +17,10 @@ function ProjectForm({ project, onSave, onClose, onDeleteMedia }: {
   const [techStack, setTechStack] = useState(project?.techStack || '');
   const [liveUrl, setLiveUrl] = useState(project?.liveUrl || '');
   const [files, setFiles] = useState<File[]>([]);
-  const [saving, setSaving] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault(); setSaving(true);
+    e.preventDefault(); setIsSaving(true);
     const media: MediaItem[] = [];
     if (project) {
       for (const m of project.media) {
@@ -38,7 +38,7 @@ function ProjectForm({ project, onSave, onClose, onDeleteMedia }: {
       });
     }
     const payload: Omit<Project, 'id'> = { title, description, type, category, techStack, liveUrl, sortOrder: 0, media };
-    await onSave(payload); setSaving(false);
+    await onSave(payload); setIsSaving(false);
   };
 
   return (
@@ -73,7 +73,7 @@ function ProjectForm({ project, onSave, onClose, onDeleteMedia }: {
           </div>
         )}
         <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <button type="submit" className="btn btn-primary" style={{ width: 'auto' }} disabled={saving}>{saving ? t('admin.saving') : project ? t('admin.update') : t('admin.create')}</button>
+          <button type="submit" className="btn btn-primary" style={{ width: 'auto' }} disabled={isSaving}>{isSaving ? t('admin.saving') : project ? t('admin.update') : t('admin.create')}</button>
           <button type="button" className="btn btn-secondary" onClick={onClose}>{t('admin.cancel')}</button>
         </div>
       </form>
@@ -84,7 +84,7 @@ function ProjectForm({ project, onSave, onClose, onDeleteMedia }: {
 export default function ProjectsTab({ data, onDataUpdate }: { data: AppData; onDataUpdate: () => Promise<void> }) {
   const { t } = useTranslation();
   const [items, setItems] = useState<Project[]>(data.projects || []);
-  const [showForm, setShowForm] = useState(false);
+  const [isFormVisible, setIsFormVisible] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
 
   const handleDelete = async (id: number) => {
@@ -95,30 +95,30 @@ export default function ProjectsTab({ data, onDataUpdate }: { data: AppData; onD
 
   return (
     <div>
-      <button className="btn btn-primary" style={{ width: 'auto', marginBottom: '1rem' }} onClick={() => { setEditingProject(null); setShowForm(true); }}>+ {t('admin.newProject')}</button>
+      <button className="btn btn-primary" style={{ width: 'auto', marginBottom: '1rem' }} onClick={() => { setEditingProject(null); setIsFormVisible(true); }}>+ {t('admin.newProject')}</button>
       {items.map((item) => (
         <div key={item.id} className="list-item">
           <div className="list-item-info"><h4>{item.title}</h4><p>{item.type} {item.category && `- ${item.category}`} {item.media.length > 0 && `- ${item.media.length} ${t('admin.filesCount')}`}</p></div>
           <div className="list-item-actions">
-            <button className="btn btn-secondary btn-sm" onClick={() => { setEditingProject(item); setShowForm(true); }}>{t('admin.edit')}</button>
+            <button className="btn btn-secondary btn-sm" onClick={() => { setEditingProject(item); setIsFormVisible(true); }}>{t('admin.edit')}</button>
             <button className="btn btn-danger btn-sm" onClick={() => handleDelete(item.id)}>{t('admin.delete')}</button>
           </div>
         </div>
       ))}
-      {showForm && (
+      {isFormVisible && (
         <ProjectForm
           project={editingProject}
           onSave={async (payload) => {
             try {
               if (editingProject) await updateProject(editingProject.id, payload);
               else await createProject(payload);
-              setShowForm(false); setEditingProject(null);
+              setIsFormVisible(false); setEditingProject(null);
               setItems(await fetchProjects());
               toast.success(t('admin.projectSaved'));
               onDataUpdate?.();
             } catch (err: unknown) { toast.error(getErrorMessage(err, t('admin.failed'))); }
           }}
-          onClose={() => { setShowForm(false); setEditingProject(null); }}
+          onClose={() => { setIsFormVisible(false); setEditingProject(null); }}
           onDeleteMedia={async (id) => { await deleteMedia(id); setItems(items.filter(i => !i.media.some(m => m.id === id))); onDataUpdate?.(); }}
         />
       )}

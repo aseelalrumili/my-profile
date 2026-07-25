@@ -11,7 +11,7 @@ interface Props {
   onClone: (id: string) => void;
   onDelete: (id: string) => void;
   onSetDefault: (id: string) => void;
-  loading: boolean;
+  isLoading: boolean;
 }
 
 export default function ResumeVersionList({
@@ -23,7 +23,7 @@ export default function ResumeVersionList({
   onClone,
   onDelete,
   onSetDefault,
-  loading,
+  isLoading,
 }: Props) {
   const { t } = useTranslation();
 

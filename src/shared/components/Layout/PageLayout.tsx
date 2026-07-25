@@ -12,8 +12,8 @@ const AdminPanel = lazy(() => import('../../../features/admin/components/AdminPa
 
 export default function PageLayout({ children, data, onDataUpdate }: { children: React.ReactNode; data?: AppData; onDataUpdate?: () => Promise<void> }) {
   const { isAdmin, login, logout } = useAuth();
-  const [showLogin, setShowLogin] = useState(false);
-  const [showAdmin, setShowAdmin] = useState(false);
+  const [isLoginVisible, setIsLoginVisible] = useState(false);
+  const [isAdminPanelVisible, setIsAdminPanelVisible] = useState(false);
 
   useEffect(() => {
     if (data?.profile?.themeColor) {
@@ -27,13 +27,13 @@ export default function PageLayout({ children, data, onDataUpdate }: { children:
 
   return (
     <>
-      {showAdmin && isAdmin && data ? (
+      {isAdminPanelVisible && isAdmin && data ? (
         <Suspense fallback={<LoadingScreen />}>
           <AdminPanel
             data={data}
-            onClose={() => setShowAdmin(false)}
+            onClose={() => setIsAdminPanelVisible(false)}
             onDataUpdate={async () => { await onDataUpdate?.(); }}
-            onLogout={() => { logout(); setShowAdmin(false); }}
+            onLogout={() => { logout(); setIsAdminPanelVisible(false); }}
           />
         </Suspense>
       ) : (
@@ -41,7 +41,7 @@ export default function PageLayout({ children, data, onDataUpdate }: { children:
           <ReadingProgress />
           <Navbar
             isAdmin={isAdmin}
-            onAdminClick={() => isAdmin ? setShowAdmin(true) : setShowLogin(true)}
+            onAdminClick={() => isAdmin ? setIsAdminPanelVisible(true) : setIsLoginVisible(true)}
             onLogout={logout}
             resumeUrl={data?.profile?.resumeUrl}
             profile={data?.profile}
@@ -49,14 +49,14 @@ export default function PageLayout({ children, data, onDataUpdate }: { children:
           <div id="main-content">{children}</div>
           {data && <Footer data={data} />}
           <BackToTop />
-          {showLogin && (
+          {isLoginVisible && (
             <LoginModal
               onSuccess={(token, email) => {
                 login(token, email);
-                setShowLogin(false);
-                setShowAdmin(true);
+                setIsLoginVisible(false);
+                setIsAdminPanelVisible(true);
               }}
-              onClose={() => setShowLogin(false)}
+              onClose={() => setIsLoginVisible(false)}
             />
           )}
         </>
