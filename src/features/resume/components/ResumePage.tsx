@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FiPrinter, FiDownload } from 'react-icons/fi';
+import { FiPrinter, FiDownload, FiFileText } from 'react-icons/fi';
 import type { AppData } from '../../../types';
 import type { ResumeSettings } from '../../../core/types/resume';
 import { defaultAtsSettings } from '../../admin/components/tabs/resume/defaultSettings';
@@ -77,6 +77,52 @@ export default function ResumePage({ data, type = 'ats' }: Props) {
     }
   };
 
+  const buildPlainText = (): string => {
+    const lines: string[] = [];
+    const sep = '='.repeat(50);
+    const sepShort = '-'.repeat(40);
+
+    lines.push(name.toUpperCase());
+    lines.push(title);
+    const contactParts: string[] = [];
+    if (profile.email) contactParts.push(profile.email);
+    if (profile.phone) contactParts.push(profile.phone);
+    if (location) contactParts.push(location);
+    if (contactParts.length) lines.push(contactParts.join(' | '));
+    lines.push('');
+
+    for (const section of visibleSections) {
+      const content = getSectionContent(section);
+      if (!content) continue;
+
+      lines.push(sep);
+      lines.push(getSectionTitle(section).toUpperCase());
+      lines.push(sepShort);
+
+      if (section.type === 'skills') {
+        lines.push(skills.map((s) => isAr && s.nameAr ? s.nameAr : s.name).join(', '));
+      } else {
+        lines.push(content);
+      }
+      lines.push('');
+    }
+
+    return lines.join('\n');
+  };
+
+  const handleDownloadTxt = () => {
+    const text = buildPlainText();
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `resume-ats-${isAr ? 'ar' : 'en'}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   const handlePrint = () => {
     const el = document.getElementById('resume-content');
     if (!el) return;
@@ -140,6 +186,11 @@ export default function ResumePage({ data, type = 'ats' }: Props) {
         <button className="btn btn-outline" onClick={handlePrint} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
           <FiDownload /> PDF
         </button>
+        {type === 'ats' && (
+          <button className="btn btn-outline" onClick={handleDownloadTxt} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
+            <FiFileText /> TXT
+          </button>
+        )}
       </div>
 
       <div
