@@ -131,9 +131,9 @@ export default function Navbar({ isAdmin, onAdminClick, onLogout, resumeUrl, pro
               role="dialog"
               aria-modal="true"
               aria-label="Navigation menu"
-              initial={{ x: dir === 'rtl' ? '-100%' : '100%' }}
+              initial={{ x: dir === 'rtl' ? '100%' : '-100%' }}
               animate={{ x: 0 }}
-              exit={{ x: dir === 'rtl' ? '-100%' : '100%' }}
+              exit={{ x: dir === 'rtl' ? '100%' : '-100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             >
               <button className="mobile-menu-close" onClick={() => setIsMobileMenuOpen(false)} aria-label={t('admin.close')}>
