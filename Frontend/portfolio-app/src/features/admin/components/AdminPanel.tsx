@@ -17,6 +17,13 @@ import BlogTab from './tabs/BlogTab';
 import ReviewsTab from './tabs/ReviewsTab';
 import MessagesTab from './tabs/MessagesTab';
 import SettingsTab from './tabs/SettingsTab';
+import ResumeTab from './tabs/ResumeTab';
+
+import {
+  FiUser, FiShare2, FiTool, FiBriefcase, FiBookOpen,
+  FiGrid, FiAward, FiFileText, FiStar, FiMessageSquare,
+  FiSettings, FiClipboard
+} from 'react-icons/fi';
 
 interface Props {
   data: AppData;
@@ -25,11 +32,27 @@ interface Props {
   onLogout: () => void;
 }
 
-type Tab = 'profile' | 'social' | 'skills' | 'experience' | 'education' | 'projects' | 'certifications' | 'blog' | 'reviews' | 'messages' | 'settings';
+type Tab = 'profile' | 'social' | 'skills' | 'experience' | 'education' | 'projects' | 'certifications' | 'blog' | 'reviews' | 'messages' | 'resume' | 'settings';
+
+const tabIcons: Record<Tab, React.ReactNode> = {
+  profile: <FiUser />,
+  social: <FiShare2 />,
+  skills: <FiTool />,
+  experience: <FiBriefcase />,
+  education: <FiBookOpen />,
+  projects: <FiGrid />,
+  certifications: <FiAward />,
+  blog: <FiFileText />,
+  reviews: <FiStar />,
+  messages: <FiMessageSquare />,
+  resume: <FiClipboard />,
+  settings: <FiSettings />,
+};
 
 export default function AdminPanel({ data, onClose, onDataUpdate, onLogout }: Props) {
   const { t } = useTranslation();
   const [tab, setTab] = useState<Tab>('profile');
+  const [isPinned, setIsPinned] = useState(false);
 
   const handleLogout = () => { logout(); onLogout(); toast.info(t('admin.logout')); };
 
@@ -77,6 +100,7 @@ export default function AdminPanel({ data, onClose, onDataUpdate, onLogout }: Pr
     { key: 'blog', label: t('admin.blog') },
     { key: 'reviews', label: t('admin.reviews') },
     { key: 'messages', label: t('admin.messages') },
+    { key: 'resume', label: t('resume.title') },
     { key: 'settings', label: t('admin.settings') },
   ];
 
@@ -99,10 +123,23 @@ export default function AdminPanel({ data, onClose, onDataUpdate, onLogout }: Pr
       </div>
 
       <div className="admin-fullpage-body">
-        <div className="admin-sidebar">
+        <div className={`admin-sidebar ${isPinned ? 'pinned' : ''}`}>
+          <button
+            className="admin-sidebar-pin"
+            onClick={() => setIsPinned(!isPinned)}
+            title={isPinned ? 'Unpin sidebar' : 'Pin sidebar'}
+          >
+            {isPinned ? '📌' : '📍'}
+          </button>
           {tabs.map((t_tab) => (
-            <button key={t_tab.key} className={`admin-sidebar-tab ${tab === t_tab.key ? 'active' : ''}`} onClick={() => setTab(t_tab.key)}>
-              {t_tab.label}
+            <button
+              key={t_tab.key}
+              className={`admin-sidebar-tab ${tab === t_tab.key ? 'active' : ''}`}
+              onClick={() => setTab(t_tab.key)}
+              title={t_tab.label}
+            >
+              <span className="admin-sidebar-icon">{tabIcons[t_tab.key]}</span>
+              <span className="admin-sidebar-label">{t_tab.label}</span>
             </button>
           ))}
         </div>
@@ -118,6 +155,7 @@ export default function AdminPanel({ data, onClose, onDataUpdate, onLogout }: Pr
           {tab === 'blog' && <BlogTab data={data} onDataUpdate={onDataUpdate} />}
           {tab === 'reviews' && <ReviewsTab data={data} onDataUpdate={onDataUpdate} />}
           {tab === 'messages' && <MessagesTab />}
+          {tab === 'resume' && <ResumeTab data={data} />}
           {tab === 'settings' && <SettingsTab />}
         </div>
       </div>

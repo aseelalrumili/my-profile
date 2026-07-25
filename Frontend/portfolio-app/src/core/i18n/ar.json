@@ -121,7 +121,11 @@
     "experience": "الخبرة",
     "education": "التعليم",
     "certifications": "الشهادات",
-    "contact": "معلومات التواصل"
+    "contact": "معلومات التواصل",
+    "ats": "نظام ATS",
+    "standard": "النظام العادي",
+    "preview": "معاينة السيرة الذاتية",
+    "downloadPdf": "تحميل PDF"
   },
   "blogPage": {
     "title": "المدونة",

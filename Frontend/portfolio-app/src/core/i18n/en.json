@@ -121,7 +121,11 @@
     "experience": "Experience",
     "education": "Education",
     "certifications": "Certifications",
-    "contact": "Contact Information"
+    "contact": "Contact Information",
+    "ats": "ATS Format",
+    "standard": "Standard Format",
+    "preview": "Resume Preview",
+    "downloadPdf": "Download PDF"
   },
   "blogPage": {
     "title": "Blog",
