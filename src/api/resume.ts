@@ -45,22 +45,22 @@ export async function updateResumeVersion(
   patch: Partial<Pick<ResumeVersion, 'name' | 'settings' | 'isDefault'>>
 ): Promise<ResumeVersion> {
   const versions = await fetchResumeVersions();
-  const idx = versions.findIndex(v => v.id === id);
-  if (idx === -1) throw new Error('Resume version not found');
+  const index = versions.findIndex(v => v.id === id);
+  if (index === -1) throw new Error('Resume version not found');
 
   if (patch.isDefault) {
     for (const v of versions) {
-      if (v.type === versions[idx].type) v.isDefault = false;
+      if (v.type === versions[index].type) v.isDefault = false;
     }
   }
 
-  versions[idx] = {
-    ...versions[idx],
+  versions[index] = {
+    ...versions[index],
     ...patch,
     updatedAt: new Date().toISOString(),
   };
   await updateData({ resumeVersions: versions });
-  return versions[idx];
+  return versions[index];
 }
 
 export async function deleteResumeVersion(id: string): Promise<void> {

@@ -57,11 +57,11 @@ export async function addItem<T extends { id: number }>(key: string, item: Omit<
 export async function updateItem<T extends { id: number }>(key: string, id: number, patch: Partial<T>): Promise<T> {
   const data = await fetchAllData();
   const items = (data?.[key as keyof AppData] as unknown as T[]) || [];
-  const idx = items.findIndex((i) => i.id === id);
-  if (idx === -1) throw new Error('Not found');
-  items[idx] = { ...items[idx], ...patch };
+  const index = items.findIndex((item) => item.id === id);
+  if (index === -1) throw new Error('Not found');
+  items[index] = { ...items[index], ...patch };
   await updateData({ [key]: items });
-  return items[idx];
+  return items[index];
 }
 
 export async function removeItem<T extends { id: number }>(key: string, id: number): Promise<void> {

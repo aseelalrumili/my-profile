@@ -47,24 +47,24 @@ export default function Navbar({ isAdmin, onAdminClick, onLogout, resumeUrl, pro
 
   const handleHashLink = useCallback((href: string) => {
     if (location.pathname === '/') {
-      const el = document.querySelector(href);
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
+      const targetElement = document.querySelector(href);
+      if (targetElement) targetElement.scrollIntoView({ behavior: 'smooth' });
     } else {
       navigate('/');
       setTimeout(() => {
-        const el = document.querySelector(href);
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
+        const targetElement = document.querySelector(href);
+        if (targetElement) targetElement.scrollIntoView({ behavior: 'smooth' });
       }, 500);
     }
   }, [location.pathname, navigate]);
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.shiftKey && e.key === 'A') {
-        e.preventDefault();
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.shiftKey && event.key === 'A') {
+        event.preventDefault();
         onAdminClick();
       }
-      if (e.key === 'Escape' && isMobileMenuOpen) {
+      if (event.key === 'Escape' && isMobileMenuOpen) {
         setIsMobileMenuOpen(false);
       }
     };

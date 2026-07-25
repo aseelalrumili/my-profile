@@ -11,21 +11,21 @@ interface Props {
 export default function LazyImage({ src, alt, className, style, onClick }: Props) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isInView, setIsInView] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const resolvedSrc = src;
 
   useEffect(() => {
-    if (!ref.current) return;
+    if (!wrapperRef.current) return;
     const observer = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) { setIsInView(true); observer.disconnect(); } },
       { rootMargin: '200px' }
     );
-    observer.observe(ref.current);
+    observer.observe(wrapperRef.current);
     return () => observer.disconnect();
   }, []);
 
   return (
-    <div ref={ref} className={`lazy-image-wrapper ${className || ''}`} style={style} onClick={onClick}>
+    <div ref={wrapperRef} className={`lazy-image-wrapper ${className || ''}`} style={style} onClick={onClick}>
       {isInView ? (
         <img
           src={resolvedSrc}

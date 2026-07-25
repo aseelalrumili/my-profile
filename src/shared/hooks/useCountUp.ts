@@ -3,15 +3,15 @@ import { useState, useEffect, useRef } from 'react';
 export function useCountUp(target: number, duration = 2000) {
   const [count, setCount] = useState(0);
   const [started, setStarted] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+  const elementRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!ref.current || started) return;
+    if (!elementRef.current || started) return;
     const observer = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) setStarted(true); },
       { threshold: 0.3 }
     );
-    observer.observe(ref.current);
+    observer.observe(elementRef.current);
     return () => observer.disconnect();
   }, [started]);
 
@@ -27,5 +27,5 @@ export function useCountUp(target: number, duration = 2000) {
     return () => clearInterval(timer);
   }, [started, target, duration]);
 
-  return { count, ref };
+  return { count, ref: elementRef };
 }

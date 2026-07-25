@@ -67,8 +67,8 @@ export default function ResumePDF({ data, settings }: Props) {
   };
 
   const handlePrint = () => {
-    const el = document.getElementById('resume-admin-preview');
-    if (!el) return;
+    const previewElement = document.getElementById('resume-admin-preview');
+    if (!previewElement) return;
     const win = window.open('', '_blank');
     if (!win) return;
 

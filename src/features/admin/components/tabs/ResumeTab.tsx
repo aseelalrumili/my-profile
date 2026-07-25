@@ -166,15 +166,15 @@ export default function ResumeTab({ data, onDataUpdate }: Props) {
             <ResumePDF data={data} settings={editing.settings} />
             {editing.type === 'ats' && (
               <button className="btn btn-secondary btn-sm" onClick={() => {
-                const el = document.getElementById('resume-admin-preview');
-                if (!el) return;
-                const text = el.innerText;
+                const previewElement = document.getElementById('resume-admin-preview');
+                if (!previewElement) return;
+                const text = previewElement.innerText;
                 const blob = new Blob([text], { type: 'text/plain' });
                 const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `${editing.name}.txt`;
-                a.click();
+                const anchorElement = document.createElement('a');
+                anchorElement.href = url;
+                anchorElement.download = `${editing.name}.txt`;
+                anchorElement.click();
                 URL.revokeObjectURL(url);
               }}>
                 <FiFileText style={{ marginRight: 4 }} /> {t('resume.exportText')}

@@ -69,8 +69,8 @@ export default function AppRoutes() {
       setHasError(false);
       const fetchedData = await fetchAll();
       setData(fetchedData);
-    } catch (e) {
-      console.error('Failed to load data', e);
+    } catch (error) {
+      console.error('Failed to load data', error);
       if (!data) setData(fallbackData);
       setHasError(true);
     } finally {
