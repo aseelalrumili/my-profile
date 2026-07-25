@@ -1,39 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { getToken, getOpts, readBlob, getErrorMessage } from '../lib/blobUtils';
 
 const BLOB_KEY = 'portfolio/data.json';
-
-function getToken(): string | null {
-  return process.env.PORTFOLIO_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN || null;
-}
-
-function getOpts(): Record<string, string> {
-  const opts: Record<string, string> = {};
-  const token = getToken();
-  const storeId = process.env.PORTFOLIO_STORE_ID || null;
-  if (token) opts.token = token;
-  if (storeId) opts.storeId = storeId;
-  return opts;
-}
-
-async function readBlob<T = any>(key: string, opts: Record<string, string>): Promise<T | null> {
-  const { get } = await import('@vercel/blob');
-  const result = await get(key, { ...opts, access: 'private' });
-  const blobMeta = (result as any).blob || result;
-
-  if (blobMeta.downloadUrl) {
-    const resp = await fetch(blobMeta.downloadUrl);
-    if (resp.ok) return await resp.json();
-  }
-  if (blobMeta.url) {
-    const resp = await fetch(blobMeta.url);
-    if (resp.ok) return await resp.json();
-  }
-  if (result.stream) {
-    const text = await new Response(result.stream).text();
-    return JSON.parse(text);
-  }
-  return null;
-}
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -80,7 +48,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const reviews = Array.isArray(current.reviews) ? current.reviews : [];
-    const maxId = reviews.length ? Math.max(...reviews.map((r: any) => r.id || 0)) : 0;
+    const maxId = reviews.length ? Math.max(...reviews.map((r: { id?: number }) => r.id || 0)) : 0;
 
     const newReview = {
       id: maxId + 1,
@@ -104,7 +72,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
     return res.status(200).json({ success: true, review: newReview });
-  } catch (err: any) {
-    return res.status(500).json({ error: err.message || 'Failed to submit review' });
+  } catch (err: unknown) {
+    return res.status(500).json({ error: getErrorMessage(err) || 'Failed to submit review' });
   }
 }

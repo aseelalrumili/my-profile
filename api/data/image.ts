@@ -1,17 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-
-function getToken(): string | null {
-  return process.env.PORTFOLIO_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN || null;
-}
-
-function getOpts(): Record<string, string> {
-  const opts: Record<string, string> = {};
-  const token = getToken();
-  const storeId = process.env.PORTFOLIO_STORE_ID || null;
-  if (token) opts.token = token;
-  if (storeId) opts.storeId = storeId;
-  return opts;
-}
+import { getToken, getOpts } from '../lib/blobUtils';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -34,7 +22,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const { get } = await import('@vercel/blob');
     const result = await get(blobPath, { ...getOpts(), access: 'private' });
-    const blobMeta = (result as any).blob || result;
+    const blobMeta = (result as unknown as { blob?: { downloadUrl?: string; url?: string } }).blob || result;
 
     const downloadUrl = blobMeta.downloadUrl || blobMeta.url;
     if (!downloadUrl) {

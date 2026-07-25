@@ -1,42 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { getToken, getOpts, readBlob } from '../lib/blobUtils';
 
 const BLOB_KEY = 'portfolio/visitors.json';
-
-function getToken(): string | null {
-  return process.env.PORTFOLIO_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN || null;
-}
-
-function getOpts(): Record<string, string> {
-  const opts: Record<string, string> = {};
-  const token = getToken();
-  const storeId = process.env.PORTFOLIO_STORE_ID || null;
-  if (token) opts.token = token;
-  if (storeId) opts.storeId = storeId;
-  return opts;
-}
-
-async function readBlob<T = any>(key: string, opts: Record<string, string>): Promise<T | null> {
-  try {
-    const { get } = await import('@vercel/blob');
-    const result = await get(key, { ...opts, access: 'private' });
-    const blobMeta = (result as any).blob || result;
-    if (blobMeta.downloadUrl) {
-      const resp = await fetch(blobMeta.downloadUrl);
-      if (resp.ok) return await resp.json();
-    }
-    if (blobMeta.url) {
-      const resp = await fetch(blobMeta.url);
-      if (resp.ok) return await resp.json();
-    }
-    if (result.stream) {
-      const text = await new Response(result.stream).text();
-      return JSON.parse(text);
-    }
-    return null;
-  } catch {
-    return null;
-  }
-}
 
 async function loadVisitors() {
   const opts = getOpts();
