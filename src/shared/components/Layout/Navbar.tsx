@@ -82,7 +82,12 @@ export default function Navbar({ isAdmin, onAdminClick, onLogout, resumeUrl, pro
   return (
     <>
       <nav className={`nav ${isScrolled ? 'scrolled' : ''}`} role="navigation" aria-label={t('nav.home')}>
-        <Link to="/" className="nav-logo">{isAr ? (profile?.firstNameAr || profile?.firstName || profile?.fullNameAr?.split(' ')[0] || 'ASIL') : (profile?.firstName || profile?.fullName?.split(' ')[0] || 'ASIL')}</Link>
+        <div className="nav-brand">
+          <button className="hamburger" onClick={() => setIsMobileMenuOpen(true)} aria-label={isAr ? 'فتح القائمة' : 'Open menu'} aria-expanded={isMobileMenuOpen}>
+            <FiMenu />
+          </button>
+          <Link to="/" className="nav-logo">{isAr ? (profile?.firstNameAr || profile?.firstName || profile?.fullNameAr?.split(' ')[0] || 'ASIL') : (profile?.firstName || profile?.fullName?.split(' ')[0] || 'ASIL')}</Link>
+        </div>
 
         <ul className="nav-links">
           {navItems.map((item) => (
@@ -109,9 +114,6 @@ export default function Navbar({ isAdmin, onAdminClick, onLogout, resumeUrl, pro
           )}
           <button className="nav-admin-btn" onClick={onAdminClick} title={t('nav.dashboard')}>
             <FiLock />
-          </button>
-          <button className="hamburger" onClick={() => setIsMobileMenuOpen(true)} aria-label={isAr ? 'فتح القائمة' : 'Open menu'} aria-expanded={isMobileMenuOpen}>
-            <FiMenu />
           </button>
         </div>
       </nav>

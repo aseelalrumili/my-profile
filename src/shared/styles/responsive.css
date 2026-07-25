@@ -41,12 +41,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    flex-direction: row-reverse;
     top: var(--safe-top);
-  }
-
-  [dir="rtl"] .nav {
-    flex-direction: row;
   }
 
   .nav-logo {

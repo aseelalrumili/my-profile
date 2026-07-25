@@ -84,6 +84,13 @@
   color: var(--accent);
 }
 
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
 .nav-links {
   display: flex;
   align-items: center;
