@@ -16,12 +16,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (!email) return;
 
   try {
-    const { filename, data, contentType } = req.body;
-    if (!filename || !data) {
+    const { filename, data: fileData, contentType } = req.body;
+    if (!filename || !fileData) {
       return res.status(400).json({ error: 'filename and data required' });
     }
 
-    const buffer = Buffer.from(data, 'base64');
+    const buffer = Buffer.from(fileData, 'base64');
     const ext = filename.split('.').pop() || 'webp';
     const uniqueName = `portfolio/images/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
 
