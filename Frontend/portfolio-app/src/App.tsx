@@ -38,6 +38,14 @@ const BlogPage = lazy(() => import('./features/blog/components/BlogPage'));
 const BlogPost = lazy(() => import('./features/blog/components/BlogPost'));
 const Page404 = lazy(() => import('./shared/components/UI/Page404'));
 
+function SkipToContent() {
+  return (
+    <a href="#main-content" className="sr-only">
+      Skip to content
+    </a>
+  );
+}
+
 function PageLayout({ children, data }: { children: React.ReactNode; data?: AppData }) {
   const { isAdmin, login, logout } = useAuth();
   const [showLogin, setShowLogin] = useState(false);
@@ -221,6 +229,7 @@ export default function App() {
       <ThemeProvider>
         <AuthProvider>
           <BrowserRouter basename="/my-profile" future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+            <SkipToContent />
             <AppRoutes />
             <ToastContainer position="bottom-right" autoClose={3000} theme="colored" />
           </BrowserRouter>
