@@ -6,12 +6,15 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "hash-password": "npx tsx scripts/hash-password.ts"
   },
   "dependencies": {
     "axios": "^1.7.0",
+    "bcryptjs": "^2.4.3",
     "framer-motion": "^11.0.0",
     "i18next": "^23.11.0",
+    "jsonwebtoken": "^9.0.3",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
     "react-i18next": "^14.1.0",
@@ -20,20 +23,16 @@
     "react-toastify": "^10.0.0"
   },
   "devDependencies": {
-    "@netlify/blobs": "^10.7.9",
-    "@netlify/functions": "^2.8.2",
+    "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20.19.43",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
     "@types/uuid": "^10.0.0",
     "@vitejs/plugin-react": "^4.2.0",
-    "jsonwebtoken": "^9.0.3",
+    "tsx": "^4.19.0",
     "typescript": "^5.4.0",
     "uuid": "^14.0.1",
     "vite": "^5.2.0"
-  },
-  "netlify": {
-    "functions": "netlify/functions"
   }
 }

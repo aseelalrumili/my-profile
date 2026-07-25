@@ -1,16 +1,11 @@
-const VALID_USERNAME = import.meta.env.VITE_ADMIN_USERNAME || 'asylalrmyly49';
-const VALID_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'Aseel.2006';
+import axios from 'axios';
 
 export const login = async (username: string, password: string) => {
-  if (username === VALID_USERNAME && password === VALID_PASSWORD) {
-    const token = btoa(`${username}:${Date.now()}`);
-    const expiration = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-    localStorage.setItem('token', token);
-    localStorage.setItem('username', username);
-    localStorage.setItem('tokenExpiry', expiration);
-    return { token, username, expiration };
-  }
-  throw new Error('Invalid credentials');
+  const { data } = await axios.post('/api/auth/login', { username, password });
+  localStorage.setItem('token', data.token);
+  localStorage.setItem('username', data.username);
+  localStorage.setItem('tokenExpiry', data.expiration);
+  return data;
 };
 
 export const logout = async () => {
