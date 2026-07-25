@@ -38,21 +38,22 @@ export default function BlogTab({ data, onDataUpdate }: { data: AppData; onDataU
       setCoverImageFile(null);
       setCoverPreview(null);
       toast.success(t('admin.blogPostSaved'));
+      onDataUpdate?.();
     } catch (err: any) { toast.error(getErrorMessage(err, t('admin.failed'))); }
   };
 
   const handleDelete = async (id: number) => {
-    try { await deleteBlogPost(id); setItems(items.filter(i => i.id !== id)); toast.success(t('admin.deleted')); }
+    try { await deleteBlogPost(id); setItems(items.filter(i => i.id !== id)); toast.success(t('admin.deleted')); onDataUpdate?.(); }
     catch (err: any) { toast.error(getErrorMessage(err, t('admin.failed'))); }
   };
 
   const handleApproveComment = async (id: number) => {
-    try { await approveBlogComment(id); toast.success(t('admin.reviewApproved')); await loadComments(); }
+    try { await approveBlogComment(id); toast.success(t('admin.reviewApproved')); await loadComments(); onDataUpdate?.(); }
     catch (err: any) { toast.error(getErrorMessage(err, t('admin.failed'))); }
   };
 
   const handleDeleteComment = async (id: number) => {
-    try { await deleteBlogComment(id); toast.success(t('admin.deleted')); await loadComments(); }
+    try { await deleteBlogComment(id); toast.success(t('admin.deleted')); await loadComments(); onDataUpdate?.(); }
     catch (err: any) { toast.error(getErrorMessage(err, t('admin.failed'))); }
   };
 

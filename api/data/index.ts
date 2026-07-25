@@ -77,16 +77,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     try {
       const { put } = await import('@vercel/blob');
       const opts = getOpts();
-      let current: Record<string, unknown> = {};
+      let current: Record<string, unknown> | null = null;
+      let readFailed = false;
       try {
-        const existing = await readBlob(BLOB_KEY, opts);
-        if (existing && typeof existing === 'object') {
-          current = existing as Record<string, unknown>;
-        }
-      } catch {}
+        current = await readBlob(BLOB_KEY, opts);
+      } catch (e: any) {
+        readFailed = true;
+      }
+
+      if (current === null && readFailed) {
+        return res.status(500).json({ error: 'Failed to read current data. Write aborted to prevent data loss.' });
+      }
 
       const update = req.body;
-      const merged = { ...current, ...update };
+      const merged = current ? { ...current, ...update } : update;
 
       await put(BLOB_KEY, JSON.stringify(merged), {
         ...opts,

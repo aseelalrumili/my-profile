@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { fetchReviews, fetchReviewStats, addReview } from '../../../api/reviews';
-import { uploadImage } from '../../../api/client';
 import type { Review } from '../../../types';
 
 const PAGE_SIZE = 3;
@@ -40,13 +39,7 @@ export default function Reviews({ settings }: { settings?: Record<string, string
   const [comment, setComment] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    return () => { if (avatarPreview) URL.revokeObjectURL(avatarPreview); };
-  }, [avatarPreview]);
+  const [avatarUrl, setAvatarUrl] = useState('');
 
   const load = async () => {
     try {
@@ -61,25 +54,6 @@ export default function Reviews({ settings }: { settings?: Record<string, string
 
   useEffect(() => { load(); }, []);
 
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    if (avatarPreview) URL.revokeObjectURL(avatarPreview);
-    if (file) {
-      setAvatarFile(file);
-      setAvatarPreview(URL.createObjectURL(file));
-    } else {
-      setAvatarFile(null);
-      setAvatarPreview(null);
-    }
-  };
-
-  const removeAvatar = () => {
-    if (avatarPreview) URL.revokeObjectURL(avatarPreview);
-    setAvatarFile(null);
-    setAvatarPreview(null);
-    if (fileInputRef.current) fileInputRef.current.value = '';
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !comment.trim() || rating === 0) {
@@ -88,13 +62,12 @@ export default function Reviews({ settings }: { settings?: Record<string, string
     }
     setSubmitting(true);
     try {
-      const avatarUrl = avatarFile ? await uploadImage(avatarFile) : undefined;
-      await addReview({ name: name.trim(), rating, comment: comment.trim(), avatarUrl });
+      await addReview({ name: name.trim(), rating, comment: comment.trim(), avatarUrl: avatarUrl.trim() || undefined });
       toast.success(isAr ? 'تم إضافة تقييمك!' : 'Review submitted!');
       setName('');
       setRating(0);
       setComment('');
-      removeAvatar();
+      setAvatarUrl('');
       setShowForm(false);
       await load();
       setVisibleCount(PAGE_SIZE);
@@ -228,26 +201,13 @@ export default function Reviews({ settings }: { settings?: Record<string, string
           >
             <h3 className="review-form-title">{t('reviews.yourReview')}</h3>
 
-            <div className="review-avatar-upload">
-              {avatarPreview ? (
-                <div className="review-avatar-preview-wrap">
-                  <img className="review-avatar-preview" src={avatarPreview} alt="Preview" />
-                  <button type="button" className="review-avatar-remove" onClick={removeAvatar}>×</button>
-                </div>
-              ) : (
-                <button type="button" className="review-avatar-add-btn" onClick={() => fileInputRef.current?.click()}>
-                  <span className="review-avatar-add-icon">📷</span>
-                  <span>{t('reviews.addPhoto')}</span>
-                </button>
-              )}
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                style={{ display: 'none' }}
-                onChange={handleAvatarChange}
-              />
-            </div>
+            <input
+              type="url"
+              className="review-input"
+              placeholder={isAr ? 'رابط الصورة (اختياري)' : 'Avatar URL (optional)'}
+              value={avatarUrl}
+              onChange={(e) => setAvatarUrl(e.target.value)}
+            />
 
             <input
               type="text"
@@ -273,7 +233,7 @@ export default function Reviews({ settings }: { settings?: Record<string, string
               <button type="submit" className="btn btn-primary" disabled={submitting}>
                 {submitting ? t('reviews.submitting') : t('reviews.submit')}
               </button>
-              <button type="button" className="btn btn-secondary" onClick={() => { setShowForm(false); removeAvatar(); }}>
+              <button type="button" className="btn btn-secondary" onClick={() => { setShowForm(false); setAvatarUrl(''); }}>
                 {t('reviews.cancel')}
               </button>
             </div>

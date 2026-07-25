@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FiPrinter, FiDownload, FiFileText } from 'react-icons/fi';
 import type { AppData } from '../../../types';
@@ -7,22 +7,22 @@ import { defaultAtsSettings } from '../../admin/components/tabs/resume/defaultSe
 
 interface Props {
   data: AppData | null;
-  type?: 'ats' | 'regular';
 }
 
-export default function ResumePage({ data, type = 'ats' }: Props) {
+export default function ResumePage({ data }: Props) {
   const { t, i18n } = useTranslation();
   const isAr = i18n.language === 'ar';
+  const [activeTab, setActiveTab] = useState<'ats' | 'regular'>('ats');
 
   const settings: ResumeSettings = useMemo(() => {
     if (!data?.resumeVersions) return defaultAtsSettings;
     const versions = data.resumeVersions;
-    const defaultVersion = versions.find(v => v.type === type && v.isDefault);
+    const defaultVersion = versions.find(v => v.type === activeTab && v.isDefault);
     if (defaultVersion) return defaultVersion.settings;
-    const fallback = versions.find(v => v.type === type);
+    const fallback = versions.find(v => v.type === activeTab);
     if (fallback) return fallback.settings;
     return defaultAtsSettings;
-  }, [data?.resumeVersions, type]);
+  }, [data?.resumeVersions, activeTab]);
 
   if (!data) return <div className="section"><p>{t('loading')}</p></div>;
 
@@ -179,18 +179,31 @@ export default function ResumePage({ data, type = 'ats' }: Props) {
 
   return (
     <main className="resume-page" style={{ background: colors.pageBg }}>
-      <div className="resume-actions no-print">
-        <button className="btn btn-primary" onClick={handlePrint} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
-          <FiPrinter /> {t('resume.print')}
-        </button>
-        <button className="btn btn-outline" onClick={handlePrint} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
-          <FiDownload /> PDF
-        </button>
-        {type === 'ats' && (
-          <button className="btn btn-outline" onClick={handleDownloadTxt} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
-            <FiFileText /> TXT
+      <div className="resume-actions no-print" style={{ justifyContent: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          {(['ats', 'regular'] as const).map(tab => (
+            <button
+              key={tab}
+              className={`btn ${activeTab === tab ? 'btn-primary' : 'btn-secondary'} btn-sm`}
+              onClick={() => setActiveTab(tab)}
+            >
+              {tab === 'ats' ? t('resume.ats') : t('resume.standard')}
+            </button>
+          ))}
+        </div>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <button className="btn btn-outline btn-sm" onClick={handlePrint} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+            <FiPrinter /> {t('resume.print')}
           </button>
-        )}
+          <button className="btn btn-outline btn-sm" onClick={handlePrint} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+            <FiDownload /> PDF
+          </button>
+          {activeTab === 'ats' && (
+            <button className="btn btn-outline btn-sm" onClick={handleDownloadTxt} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+              <FiFileText /> TXT
+            </button>
+          )}
+        </div>
       </div>
 
       <div

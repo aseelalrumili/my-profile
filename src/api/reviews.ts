@@ -1,5 +1,6 @@
 import type { Review } from '../types';
-import { getCollection, addItem, updateItem, removeItem } from '../core/store';
+import { getCollection, updateItem, removeItem } from '../core/store';
+import axios from 'axios';
 
 export const fetchReviews = async (): Promise<Review[]> => {
   const all = await getCollection<Review>('reviews');
@@ -9,11 +10,8 @@ export const fetchReviews = async (): Promise<Review[]> => {
 export const fetchAllReviews = (): Promise<Review[]> => getCollection<Review>('reviews');
 
 export const addReview = async (data: Omit<Review, 'id' | 'isApproved' | 'createdAt'>): Promise<Review> => {
-  return addItem<Review>('reviews', {
-    ...data,
-    isApproved: false,
-    createdAt: new Date().toISOString(),
-  });
+  const { data: result } = await axios.post('/api/reviews', data);
+  return result.review;
 };
 
 export const updateReview = (id: number, data: Partial<Review>) => updateItem<Review>('reviews', id, data);

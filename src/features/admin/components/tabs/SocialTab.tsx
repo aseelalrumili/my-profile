@@ -18,11 +18,12 @@ export default function SocialTab({ data, onDataUpdate }: { data: AppData; onDat
       else { const newItem = await addSocialLink({ ...form, sortOrder: items.length }); setItems([...items, newItem]); }
       setForm({ platform: '', url: '', icon: '' });
       toast.success(t('admin.socialLinkUpdated'));
+      onDataUpdate?.();
     } catch (err: any) { toast.error(getErrorMessage(err, t('admin.failed'))); }
   };
 
   const handleDelete = async (id: number) => {
-    try { await deleteSocialLink(id); setItems(items.filter(i => i.id !== id)); toast.success(t('admin.deleted')); }
+    try { await deleteSocialLink(id); setItems(items.filter(i => i.id !== id)); toast.success(t('admin.deleted')); onDataUpdate?.(); }
     catch (err: any) { toast.error(getErrorMessage(err, t('admin.failed'))); }
   };
 
@@ -32,6 +33,7 @@ export default function SocialTab({ data, onDataUpdate }: { data: AppData; onDat
     for (const item of newItems) {
       try { await updateSocialLink(item.id, { sortOrder: item.sortOrder }); } catch {}
     }
+    onDataUpdate?.();
   };
 
   return (

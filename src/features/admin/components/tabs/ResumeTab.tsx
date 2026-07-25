@@ -13,7 +13,7 @@ import {
   deleteResumeVersion, cloneResumeVersion, setDefaultResume,
 } from '@/api/resume';
 
-interface Props { data: AppData }
+interface Props { data: AppData; onDataUpdate?: () => Promise<void> }
 
 function dedupVersions(arr: ResumeVersion[]): ResumeVersion[] {
   const seen = new Set<string>();
@@ -24,7 +24,7 @@ function dedupVersions(arr: ResumeVersion[]): ResumeVersion[] {
   });
 }
 
-export default function ResumeTab({ data }: Props) {
+export default function ResumeTab({ data, onDataUpdate }: Props) {
   const { t, i18n } = useTranslation();
   const isAr = i18n.language === 'ar';
   const [versions, setVersions] = useState<ResumeVersion[]>([]);
@@ -86,6 +86,7 @@ export default function ResumeTab({ data }: Props) {
       setVersions(prev => dedupVersions([...prev, v]));
       setEditingId(v.id);
       toast.success(t('resume.versionCreated'));
+      onDataUpdate?.();
     } finally {
       creatingRef.current = false;
     }
@@ -123,6 +124,7 @@ export default function ResumeTab({ data }: Props) {
     setVersions(prev => prev.filter(v => v.id !== id));
     if (editingId === id) setEditingId(null);
     toast.success(t('resume.versionDeleted'));
+    onDataUpdate?.();
   };
 
   const handleSetDefault = async (id: string) => {
@@ -133,6 +135,7 @@ export default function ResumeTab({ data }: Props) {
         : v
     ));
     toast.success(t('resume.defaultSet'));
+    onDataUpdate?.();
   };
 
   const handleRefreshPreview = () => {

@@ -89,7 +89,7 @@ export default function ProjectsTab({ data, onDataUpdate }: { data: AppData; onD
 
   const handleDelete = async (id: number) => {
     if (!confirm(t('admin.confirmDelete'))) return;
-    try { await deleteProject(id); setItems(items.filter(i => i.id !== id)); toast.success(t('admin.deleted')); }
+    try { await deleteProject(id); setItems(items.filter(i => i.id !== id)); toast.success(t('admin.deleted')); onDataUpdate?.(); }
     catch (err: any) { toast.error(getErrorMessage(err, t('admin.failed'))); }
   };
 
@@ -115,10 +115,11 @@ export default function ProjectsTab({ data, onDataUpdate }: { data: AppData; onD
               setShowForm(false); setEditingProject(null);
               setItems(await fetchProjects());
               toast.success(t('admin.projectSaved'));
+              onDataUpdate?.();
             } catch (err: any) { toast.error(getErrorMessage(err, t('admin.failed'))); }
           }}
           onClose={() => { setShowForm(false); setEditingProject(null); }}
-          onDeleteMedia={async (id) => { await deleteMedia(id); setItems(items.filter(i => !i.media.some(m => m.id === id))); }}
+          onDeleteMedia={async (id) => { await deleteMedia(id); setItems(items.filter(i => !i.media.some(m => m.id === id))); onDataUpdate?.(); }}
         />
       )}
     </div>

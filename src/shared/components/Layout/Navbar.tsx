@@ -90,8 +90,7 @@ export default function Navbar({ isAdmin, onAdminClick, onLogout, resumeUrl, pro
             </li>
           ))}
           <li><Link to="/blog" style={{ fontSize: 'var(--fs-small)', color: 'var(--accent-secondary)' }}>{t('nav.blog')}</Link></li>
-          <li><Link to="/resume" style={{ fontSize: 'var(--fs-small)', color: 'var(--accent-secondary)' }}>{t('resume.ats')}</Link></li>
-          <li><Link to="/resume/regular" style={{ fontSize: 'var(--fs-small)', color: 'var(--accent-secondary)' }}>{t('resume.standard')}</Link></li>
+          <li><Link to="/resume" style={{ fontSize: 'var(--fs-small)', color: 'var(--accent-secondary)' }}>{t('resume.title')}</Link></li>
         </ul>
 
         <div className="nav-controls">
@@ -146,8 +145,7 @@ export default function Navbar({ isAdmin, onAdminClick, onLogout, resumeUrl, pro
                 </a>
               ))}
               <Link to="/blog" onClick={() => setMobileOpen(false)}>{t('nav.blog')}</Link>
-              <Link to="/resume" onClick={() => setMobileOpen(false)}>{t('resume.ats')}</Link>
-              <Link to="/resume/regular" onClick={() => setMobileOpen(false)}>{t('resume.standard')}</Link>
+              <Link to="/resume" onClick={() => setMobileOpen(false)}>{t('resume.title')}</Link>
               <div className="mobile-menu-controls">
                 <button className="nav-lang-btn" onClick={toggleLang}>
                   {i18n.language === 'en' ? 'العربية' : 'English'}
@@ -176,7 +174,7 @@ export default function Navbar({ isAdmin, onAdminClick, onLogout, resumeUrl, pro
         </Link>
         <Link to="/resume" className="mobile-bottom-nav-item">
           <FiDownload size={20} />
-          <span>{t('resume.ats')}</span>
+          <span>{t('resume.title')}</span>
         </Link>
         <a href="#contact" className="mobile-bottom-nav-item" onClick={(e) => { e.preventDefault(); handleHashLink('#contact'); }}>
           <FiMail size={20} />

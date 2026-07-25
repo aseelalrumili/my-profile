@@ -169,14 +169,7 @@ function AppRoutes() {
         <Route path="/resume" element={
           <PageLayout data={data ?? undefined}>
             <PageTransition>
-              {data ? <ResumePage data={data} type="ats" /> : <LoadingScreen />}
-            </PageTransition>
-          </PageLayout>
-        } />
-        <Route path="/resume/regular" element={
-          <PageLayout data={data ?? undefined}>
-            <PageTransition>
-              {data ? <ResumePage data={data} type="regular" /> : <LoadingScreen />}
+              {data ? <ResumePage data={data} /> : <LoadingScreen />}
             </PageTransition>
           </PageLayout>
         } />

@@ -20,11 +20,12 @@ export default function TestimonialsTab({ data, onDataUpdate }: { data: AppData;
       else { const newItem = await addTestimonial({ ...form, sortOrder: items.length }); setItems([...items, newItem]); }
       setForm({ clientName: '', clientNameAr: '', clientTitle: '', clientTitleAr: '', avatarUrl: '', content: '', contentAr: '', rating: 5 });
       toast.success(t('admin.testimonialSaved'));
+      onDataUpdate?.();
     } catch (err: any) { toast.error(getErrorMessage(err, t('admin.failed'))); }
   };
 
   const handleDelete = async (id: number) => {
-    try { await deleteTestimonial(id); setItems(items.filter(i => i.id !== id)); toast.success(t('admin.deleted')); }
+    try { await deleteTestimonial(id); setItems(items.filter(i => i.id !== id)); toast.success(t('admin.deleted')); onDataUpdate?.(); }
     catch (err: any) { toast.error(getErrorMessage(err, t('admin.failed'))); }
   };
 
@@ -34,6 +35,7 @@ export default function TestimonialsTab({ data, onDataUpdate }: { data: AppData;
     for (const item of newItems) {
       try { await updateTestimonial(item.id, { sortOrder: item.sortOrder }); } catch {}
     }
+    onDataUpdate?.();
   };
 
   return (

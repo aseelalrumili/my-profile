@@ -159,7 +159,7 @@ export default function AdminPanel({ data, onClose, onDataUpdate, onLogout }: Pr
           {tab === 'testimonials' && <TestimonialsTab data={data} onDataUpdate={onDataUpdate} />}
           {tab === 'reviews' && <ReviewsTab data={data} onDataUpdate={onDataUpdate} />}
           {tab === 'messages' && <MessagesTab />}
-          {tab === 'resume' && <ResumeTab data={data} />}
+          {tab === 'resume' && <ResumeTab data={data} onDataUpdate={onDataUpdate} />}
           {tab === 'settings' && <SettingsTab />}
         </div>
       </div>

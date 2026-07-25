@@ -18,11 +18,12 @@ export default function ExperienceTab({ data, onDataUpdate }: { data: AppData; o
       else { const newItem = await addExperience({ ...form, sortOrder: items.length }); setItems([...items, newItem]); }
       setForm({ title: '', titleAr: '', company: '', companyAr: '', period: '', description: '', descriptionAr: '' });
       toast.success(t('admin.experienceUpdated'));
+      onDataUpdate?.();
     } catch (err: any) { toast.error(getErrorMessage(err, t('admin.failed'))); }
   };
 
   const handleDelete = async (id: number) => {
-    try { await deleteExperience(id); setItems(items.filter(i => i.id !== id)); toast.success(t('admin.deleted')); }
+    try { await deleteExperience(id); setItems(items.filter(i => i.id !== id)); toast.success(t('admin.deleted')); onDataUpdate?.(); }
     catch (err: any) { toast.error(getErrorMessage(err, t('admin.failed'))); }
   };
 
@@ -32,6 +33,7 @@ export default function ExperienceTab({ data, onDataUpdate }: { data: AppData; o
     for (const item of newItems) {
       try { await updateExperience(item.id, { sortOrder: item.sortOrder }); } catch {}
     }
+    onDataUpdate?.();
   };
 
   return (
