@@ -29,7 +29,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     try {
       const { get } = await import('@vercel/blob');
       const blob = await get(BLOB_KEY, { ...getOpts(), access: 'private' });
-      return res.status(200).json({ _debug: JSON.stringify(Object.keys(blob)) });
+      return res.status(200).json({ _debug: JSON.stringify({ type: typeof blob.blob, keys: blob.blob ? Object.keys(blob.blob as any) : null, content: String(blob.blob).substring(0, 200) }) });
     } catch (err: any) {
       return res.status(200).json({ _debug: err.message || String(err) });
     }
