@@ -29,8 +29,8 @@ async function readBlob<T = any>(key: string, opts: Record<string, string>): Pro
       return JSON.parse(text);
     }
     return null;
-  } catch {
-    return null;
+  } catch (err: any) {
+    throw new Error(`readBlob(${key}): ${err.message}`);
   }
 }
 
@@ -47,9 +47,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (!token) return res.status(200).json(null);
     try {
       const data = await readBlob(BLOB_KEY, getOpts());
-      return res.status(200).json(data);
-    } catch {
-      return res.status(200).json(null);
+      return res.status(200).json({ _debug: { data, hasData: data !== null } });
+    } catch (err: any) {
+      return res.status(200).json({ _debug: err.message });
     }
   }
 
