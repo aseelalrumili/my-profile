@@ -21,7 +21,8 @@ async function loadVisitors() {
   try {
     const { get } = await import('@vercel/blob');
     const blob = await get(BLOB_KEY, { ...opts, access: 'private' });
-    return JSON.parse(await blob.text()) as { page: string; timestamp: string }[];
+    const resp = await fetch(blob.url);
+    return (await resp.json()) as { page: string; timestamp: string }[];
   } catch {
     return [];
   }
