@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../context/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -37,15 +37,15 @@ export default function Navbar({ isAdmin, onAdminClick, onLogout, resumeUrl, pro
     return () => observer.disconnect();
   }, []);
 
-  const toggleLang = () => {
+  const toggleLang = useCallback(() => {
     const newLang = i18n.language === 'en' ? 'ar' : 'en';
     i18n.changeLanguage(newLang);
     localStorage.setItem('lang', newLang);
     document.documentElement.dir = newLang === 'ar' ? 'rtl' : 'ltr';
     document.documentElement.lang = newLang;
-  };
+  }, [i18n]);
 
-  const handleHashLink = (href: string) => {
+  const handleHashLink = useCallback((href: string) => {
     if (location.pathname === '/') {
       const el = document.querySelector(href);
       if (el) el.scrollIntoView({ behavior: 'smooth' });
@@ -56,7 +56,7 @@ export default function Navbar({ isAdmin, onAdminClick, onLogout, resumeUrl, pro
         if (el) el.scrollIntoView({ behavior: 'smooth' });
       }, 500);
     }
-  };
+  }, [location.pathname, navigate]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

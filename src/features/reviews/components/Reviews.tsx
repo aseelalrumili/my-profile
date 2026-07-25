@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { fetchReviews, fetchReviewStats } from '../../../api/reviews';
@@ -9,7 +9,7 @@ import ReviewForm from './ReviewForm';
 
 const PAGE_SIZE = 3;
 
-export default function Reviews({ settings }: { settings?: Record<string, string> }) {
+function Reviews({ settings }: { settings?: Record<string, string> }) {
   const { t } = useTranslation();
   const { isAr } = useLocale();
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -137,3 +137,5 @@ export default function Reviews({ settings }: { settings?: Record<string, string
     </section>
   );
 }
+
+export default memo(Reviews);

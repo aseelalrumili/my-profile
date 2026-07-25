@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -13,7 +13,7 @@ interface Props {
   data?: AppData;
 }
 
-export default function Projects({ data }: Props) {
+function Projects({ data }: Props) {
   const { t } = useTranslation();
   const { isAr, local } = useLocale();
   const [filter, setFilter] = useState<string>('All');
@@ -193,3 +193,5 @@ export default function Projects({ data }: Props) {
     </section>
   );
 }
+
+export default memo(Projects);

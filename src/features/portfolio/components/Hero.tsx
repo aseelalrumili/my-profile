@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
+import { useRef, useState, useCallback, useEffect, useMemo, memo } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { FiArrowRight, FiDownload } from 'react-icons/fi';
@@ -36,7 +36,7 @@ function StatCounter({ value, label }: { value: number; label: string }) {
   );
 }
 
-export default function Hero({ data }: { data: AppData }) {
+function Hero({ data }: { data: AppData }) {
   const { t } = useTranslation();
   const { isAr, local } = useLocale();
   const { profile, socialLinks } = data;
@@ -206,3 +206,5 @@ export default function Hero({ data }: { data: AppData }) {
     </section>
   );
 }
+
+export default memo(Hero);

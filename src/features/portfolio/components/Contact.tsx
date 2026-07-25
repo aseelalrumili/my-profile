@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useState, useCallback, type FormEvent } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
@@ -15,7 +15,7 @@ export default function Contact({ data }: { data: AppData }) {
   const [form, setForm] = useState({ name: '', phone: '', subject: '', messageText: '' });
   const [sending, setSending] = useState(false);
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = useCallback(async (e: FormEvent) => {
     e.preventDefault();
     setSending(true);
     try {
@@ -27,7 +27,7 @@ export default function Contact({ data }: { data: AppData }) {
     } finally {
       setSending(false);
     }
-  };
+  }, [form, t]);
 
   return (
     <section className="section" id="contact">
