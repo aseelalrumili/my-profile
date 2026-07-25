@@ -3,7 +3,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 const BLOB_KEY = 'portfolio/data.json';
 
 function getToken(): string | null {
-  return process.env.PORTFOLIO_BLOB_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN || null;
+  return process.env.PORTFOLIO_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN || null;
 }
 
 function getOpts(): Record<string, string> {
