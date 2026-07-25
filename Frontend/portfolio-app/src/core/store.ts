@@ -1,100 +1,78 @@
+import axios from 'axios';
+import type { AppData } from '../types';
 import { fallbackData } from '../fallbackData';
 
-function load<T>(key: string): T[] {
-  try {
-    const raw = localStorage.getItem(`portfolio_${key}`);
-    if (raw) return JSON.parse(raw);
-  } catch {}
-  return [];
-}
+const API = axios.create({ baseURL: '/api' });
 
-function save<T>(key: string, items: T[]) {
-  localStorage.setItem(`portfolio_${key}`, JSON.stringify(items));
-}
+API.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
 
-function loadObj<T>(key: string): T | null {
+export async function fetchAllData(): Promise<AppData | null> {
   try {
-    const raw = localStorage.getItem(`portfolio_${key}`);
-    if (raw) return JSON.parse(raw);
+    const { data } = await API.get('/data');
+    if (data && data.profile) return data as AppData;
   } catch {}
   return null;
 }
 
-function saveObj<T>(key: string, obj: T) {
-  localStorage.setItem(`portfolio_${key}`, JSON.stringify(obj));
+export async function updateData(patch: Record<string, unknown>): Promise<void> {
+  await API.put('/data', patch);
 }
 
-function nextId<T extends { id: number }>(items: T[]): number {
-  return items.length ? Math.max(...items.map((i) => i.id)) + 1 : 1;
+export async function getCollection<T extends { id: number }>(key: string): Promise<T[]> {
+  const data = await fetchAllData();
+  return (data?.[key as keyof AppData] as unknown as T[]) || [];
 }
 
-function initIfEmpty(key: string, fallback: unknown[]) {
-  if (!localStorage.getItem(`portfolio_${key}`) && fallback.length) {
-    save(key, fallback);
-  }
-}
-
-export function initData() {
-  initIfEmpty('socialLinks', fallbackData.socialLinks);
-  initIfEmpty('skills', fallbackData.skills);
-  initIfEmpty('experience', fallbackData.experience);
-  initIfEmpty('education', fallbackData.education);
-  initIfEmpty('projects', fallbackData.projects);
-  initIfEmpty('certifications', fallbackData.certifications);
-  initIfEmpty('blogPosts', fallbackData.blogPosts);
-  initIfEmpty('testimonials', fallbackData.testimonials);
-  initIfEmpty('reviews', fallbackData.reviews);
-  initIfEmpty('messages', []);
-  initIfEmpty('blogComments', []);
-  if (!localStorage.getItem('portfolio_profile')) {
-    saveObj('profile', fallbackData.profile);
-  }
-  if (!localStorage.getItem('portfolio_settings')) {
-    saveObj('settings', fallbackData.settings);
-  }
-}
-
-export function getProfile() {
-  return loadObj<import('./types').Profile>('profile') || fallbackData.profile;
-}
-
-export function updateProfile(data: Partial<import('./types').Profile>) {
-  const current = getProfile();
-  const updated = { ...current, ...data };
-  saveObj('profile', updated);
-  return updated;
-}
-
-export function getAll<T extends { id: number }>(key: string): T[] {
-  return load<T>(key);
-}
-
-export function add<T extends { id: number }>(key: string, item: Omit<T, 'id'>): T {
-  const items = load<T>(key);
-  const newItem = { ...item, id: nextId(items) } as T;
+export async function addItem<T extends { id: number }>(key: string, item: Omit<T, 'id'>): Promise<T> {
+  const data = await fetchAllData();
+  const items = (data?.[key as keyof AppData] as unknown as T[]) || [];
+  const maxId = items.length ? Math.max(...items.map((i) => i.id)) : 0;
+  const newItem = { ...item, id: maxId + 1 } as T;
   items.push(newItem);
-  save(key, items);
+  await updateData({ [key]: items });
   return newItem;
 }
 
-export function update<T extends { id: number }>(key: string, id: number, data: Partial<T>): T {
-  const items = load<T>(key);
+export async function updateItem<T extends { id: number }>(key: string, id: number, patch: Partial<T>): Promise<T> {
+  const data = await fetchAllData();
+  const items = (data?.[key as keyof AppData] as unknown as T[]) || [];
   const idx = items.findIndex((i) => i.id === id);
   if (idx === -1) throw new Error('Not found');
-  items[idx] = { ...items[idx], ...data };
-  save(key, items);
+  items[idx] = { ...items[idx], ...patch };
+  await updateData({ [key]: items });
   return items[idx];
 }
 
-export function remove<T extends { id: number }>(key: string, id: number) {
-  const items = load<T>(key);
-  save(key, items.filter((i) => i.id !== id));
+export async function removeItem<T extends { id: number }>(key: string, id: number): Promise<void> {
+  const data = await fetchAllData();
+  const items = (data?.[key as keyof AppData] as unknown as T[]) || [];
+  await updateData({ [key]: items.filter((i) => i.id !== id) });
 }
 
-export function getSettings(): Record<string, string> {
-  return loadObj<Record<string, string>>('settings') || {};
+export async function getObject<K extends keyof AppData>(key: K): Promise<AppData[K]> {
+  const data = await fetchAllData();
+  if (data && key in data) return data[key];
+  return fallbackData[key];
 }
 
-export function updateSettings(data: Record<string, string>) {
-  saveObj('settings', { ...getSettings(), ...data });
+export async function updateObject<K extends keyof AppData>(key: K, patch: Partial<AppData[K]>): Promise<void> {
+  const current = await getObject(key);
+  const updated = typeof current === 'object' && !Array.isArray(current)
+    ? { ...current, ...patch }
+    : patch;
+  await updateData({ [key]: updated });
+}
+
+export async function getSettings(): Promise<Record<string, string>> {
+  const data = await fetchAllData();
+  return data?.settings || {};
+}
+
+export async function updateSettings(data: Record<string, string>): Promise<void> {
+  const current = await getSettings();
+  await updateData({ settings: { ...current, ...data } });
 }

@@ -28,11 +28,23 @@ export async function convertToWebP(file: File, quality = 0.8): Promise<File> {
 
 export async function uploadImage(file: File): Promise<string> {
   const converted = await convertToWebP(file);
-  return await fileToBase64(converted);
+  const base64 = await fileToBase64(converted);
+  const base64Data = base64.split(',')[1];
+
+  const token = localStorage.getItem('token');
+  const { data } = await axios.post('/api/data/upload', {
+    filename: converted.name,
+    data: base64Data,
+    contentType: 'image/webp',
+  }, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+
+  return data.url;
 }
 
 export async function uploadFile(file: File): Promise<string> {
-  return await fileToBase64(file);
+  return uploadImage(file);
 }
 
 API.interceptors.request.use(function (config) {

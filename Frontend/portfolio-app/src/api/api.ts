@@ -8,5 +8,5 @@ export { fetchTestimonials, addTestimonial, updateTestimonial, deleteTestimonial
 export { fetchReviews, fetchAllReviews, addReview, updateReview, deleteReview, approveReview, fetchReviewStats } from './reviews';
 export { fetchMessages, sendMessage, markMessageRead, deleteMessage } from '../shared/api/messages';
 export { login, logout, isAuthenticated } from '../shared/api/auth';
-export { fetchVisitors, trackVisitor, fetchVisitorAnalytics } from '../shared/api/visitors';
+export { trackVisitor, fetchVisitorAnalytics } from '../shared/api/visitors';
 export { importData } from './import';

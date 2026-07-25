@@ -1,31 +1,24 @@
 import type { Review } from '../types';
-import * as store from '../core/store';
+import { getCollection, addItem, updateItem, removeItem } from '../core/store';
 
 export const fetchReviews = async (): Promise<Review[]> => {
-  return store.getAll<Review>('reviews').filter((r) => r.isApproved);
+  const all = await getCollection<Review>('reviews');
+  return all.filter((r) => r.isApproved);
 };
 
-export const fetchAllReviews = async (): Promise<Review[]> => store.getAll<Review>('reviews');
+export const fetchAllReviews = (): Promise<Review[]> => getCollection<Review>('reviews');
 
 export const addReview = async (data: Omit<Review, 'id' | 'isApproved' | 'createdAt'>): Promise<Review> => {
-  return store.add<Review>('reviews', {
+  return addItem<Review>('reviews', {
     ...data,
     isApproved: false,
     createdAt: new Date().toISOString(),
   });
 };
 
-export const updateReview = async (id: number, data: Partial<Review>): Promise<Review> => {
-  return store.update<Review>('reviews', id, data);
-};
-
-export const deleteReview = async (id: number) => {
-  store.remove<Review>('reviews', id);
-};
-
-export const approveReview = async (id: number) => {
-  return store.update<Review>('reviews', id, { isApproved: true });
-};
+export const updateReview = (id: number, data: Partial<Review>) => updateItem<Review>('reviews', id, data);
+export const deleteReview = (id: number) => removeItem<Review>('reviews', id);
+export const approveReview = (id: number) => updateItem<Review>('reviews', id, { isApproved: true } as any);
 
 export const fetchReviewStats = async (): Promise<{ total: number; average: number }> => {
   const approved = await fetchReviews();

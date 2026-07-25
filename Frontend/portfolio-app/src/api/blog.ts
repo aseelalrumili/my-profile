@@ -1,10 +1,10 @@
 import type { BlogPost, BlogComment } from '../types';
-import * as store from '../core/store';
+import { getCollection, addItem, updateItem, removeItem, fetchAllData, updateData } from '../core/store';
 
-export const fetchBlogPosts = async (): Promise<BlogPost[]> => store.getAll<BlogPost>('blogPosts');
+export const fetchBlogPosts = (): Promise<BlogPost[]> => getCollection<BlogPost>('blogPosts');
 
 export const fetchBlogPost = async (slug: string): Promise<BlogPost> => {
-  const posts = store.getAll<BlogPost>('blogPosts');
+  const posts = await getCollection<BlogPost>('blogPosts');
   const post = posts.find((p) => p.slug === slug);
   if (!post) throw new Error('Not found');
   return post;
@@ -12,7 +12,7 @@ export const fetchBlogPost = async (slug: string): Promise<BlogPost> => {
 
 export const createBlogPost = async (data: Partial<BlogPost>): Promise<BlogPost> => {
   const now = new Date().toISOString();
-  return store.add<BlogPost>('blogPosts', {
+  return addItem<BlogPost>('blogPosts', {
     title: data.title || '',
     titleAr: data.titleAr,
     slug: data.slug || '',
@@ -29,32 +29,25 @@ export const createBlogPost = async (data: Partial<BlogPost>): Promise<BlogPost>
   });
 };
 
-export const updateBlogPost = async (id: number, data: Partial<BlogPost>): Promise<BlogPost> => {
-  return store.update<BlogPost>('blogPosts', id, { ...data, updatedAt: new Date().toISOString() });
-};
+export const updateBlogPost = (id: number, data: Partial<BlogPost>) =>
+  updateItem<BlogPost>('blogPosts', id, { ...data, updatedAt: new Date().toISOString() });
 
-export const deleteBlogPost = async (id: number) => {
-  store.remove<BlogPost>('blogPosts', id);
-};
+export const deleteBlogPost = (id: number) => removeItem<BlogPost>('blogPosts', id);
 
 export const fetchBlogComments = async (postId: number): Promise<BlogComment[]> => {
-  return store.getAll<BlogComment>('blogComments').filter((c) => c.blogPostId === postId && c.isApproved);
+  const all = await getCollection<BlogComment>('blogComments');
+  return all.filter((c) => c.blogPostId === postId && c.isApproved);
 };
 
-export const fetchAllBlogComments = async (): Promise<BlogComment[]> => store.getAll<BlogComment>('blogComments');
+export const fetchAllBlogComments = (): Promise<BlogComment[]> => getCollection<BlogComment>('blogComments');
 
 export const addBlogComment = async (data: Omit<BlogComment, 'id' | 'isApproved' | 'createdAt'>): Promise<BlogComment> => {
-  return store.add<BlogComment>('blogComments', {
+  return addItem<BlogComment>('blogComments', {
     ...data,
     isApproved: false,
     createdAt: new Date().toISOString(),
   });
 };
 
-export const approveBlogComment = async (id: number) => {
-  return store.update<BlogComment>('blogComments', id, { isApproved: true });
-};
-
-export const deleteBlogComment = async (id: number) => {
-  store.remove<BlogComment>('blogComments', id);
-};
+export const approveBlogComment = (id: number) => updateItem<BlogComment>('blogComments', id, { isApproved: true } as any);
+export const deleteBlogComment = (id: number) => removeItem<BlogComment>('blogComments', id);

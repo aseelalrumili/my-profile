@@ -1,10 +1,10 @@
-import type { Project, MediaItem } from '../types';
-import * as store from '../core/store';
+import type { Project } from '../types';
+import { getCollection, addItem, updateItem, removeItem, fetchAllData } from '../core/store';
 
-export const fetchProjects = async (): Promise<Project[]> => store.getAll<Project>('projects');
+export const fetchProjects = (): Promise<Project[]> => getCollection<Project>('projects');
 
 export const createProject = async (data: Partial<Project>): Promise<Project> => {
-  return store.add<Project>('projects', {
+  return addItem<Project>('projects', {
     title: data.title || '',
     titleAr: data.titleAr,
     description: data.description,
@@ -26,20 +26,16 @@ export const createProject = async (data: Partial<Project>): Promise<Project> =>
   });
 };
 
-export const updateProject = async (id: number, data: Partial<Project>): Promise<Project> => {
-  return store.update<Project>('projects', id, data);
-};
-
-export const deleteProject = async (id: number) => {
-  store.remove<Project>('projects', id);
-};
+export const updateProject = (id: number, data: Partial<Project>) => updateItem<Project>('projects', id, data);
+export const deleteProject = (id: number) => removeItem<Project>('projects', id);
 
 export const deleteMedia = async (id: number) => {
-  const projects = store.getAll<Project>('projects');
-  for (const p of projects) {
+  const data = await fetchAllData();
+  if (!data) return;
+  for (const p of data.projects) {
     const filtered = p.media.filter((m) => m.id !== id);
     if (filtered.length !== p.media.length) {
-      store.update<Project>('projects', p.id, { media: filtered });
+      await updateItem<Project>('projects', p.id, { media: filtered });
       return;
     }
   }
