@@ -115,6 +115,10 @@
   },
   "resume": {
     "title": "السيرة الذاتية",
+    "builder": "محرر السيرة الذاتية",
+    "save": "حفظ",
+    "saved": "تم حفظ إعدادات السيرة الذاتية!",
+    "preview": "معاينة",
     "print": "طباعة السيرة الذاتية",
     "summary": "الملخص المهني",
     "skills": "المهارات",
@@ -125,7 +129,52 @@
     "ats": "نظام ATS",
     "standard": "النظام العادي",
     "preview": "معاينة السيرة الذاتية",
-    "downloadPdf": "تحميل PDF"
+    "downloadPdf": "تحميل PDF",
+    "tab": {
+      "layout": "التخطيط",
+      "photo": "الصورة",
+      "colors": "الألوان",
+      "fonts": "الخطوط",
+      "sections": "الأقسام"
+    },
+    "layout": {
+      "type": "نوع التخطيط",
+      "singleCol": "عمود واحد",
+      "twoCol": "عمودين",
+      "pageMargin": "هامش الصفحة",
+      "sectionGap": "المسافة بين الأقسام",
+      "sectionPadding": "هوامش القسم",
+      "borderRadius": "حواف القسم"
+    },
+    "photo": {
+      "show": "إظهار الصورة",
+      "size": "حجم الصورة",
+      "shape": "شكل الصورة",
+      "circle": "دائري",
+      "square": "مربع",
+      "rounded": "مدورة"
+    },
+    "colors": {
+      "pageBg": "خلفية الصفحة",
+      "sectionBg": "خلفية الأقسام",
+      "primaryText": "النص الرئيسي",
+      "secondaryText": "النص الثانوي",
+      "headingText": "لون العناوين",
+      "accent": "اللون الأساسي",
+      "borderColor": "لون الحدود",
+      "skillBg": "خلفية المهارات",
+      "skillText": "نص المهارات"
+    },
+    "fonts": {
+      "family": "نوع الخط",
+      "titleSize": "حجم الاسم",
+      "titleWeight": "سمك الاسم",
+      "headingSize": "حجم العناوين",
+      "headingWeight": "سمك العناوين",
+      "bodySize": "حجم النص",
+      "lineHeight": "ارتفاع السطر",
+      "metaSize": "حجم النصوص الوسيطة"
+    }
   },
   "blogPage": {
     "title": "المدونة",

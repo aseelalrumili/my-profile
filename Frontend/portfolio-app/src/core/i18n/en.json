@@ -115,6 +115,10 @@
   },
   "resume": {
     "title": "Resume",
+    "builder": "Resume Builder",
+    "save": "Save",
+    "saved": "Resume settings saved!",
+    "preview": "Preview",
     "print": "Print Resume",
     "summary": "Professional Summary",
     "skills": "Skills",
@@ -125,7 +129,52 @@
     "ats": "ATS Format",
     "standard": "Standard Format",
     "preview": "Resume Preview",
-    "downloadPdf": "Download PDF"
+    "downloadPdf": "Download PDF",
+    "tab": {
+      "layout": "Layout",
+      "photo": "Photo",
+      "colors": "Colors",
+      "fonts": "Fonts",
+      "sections": "Sections"
+    },
+    "layout": {
+      "type": "Layout Type",
+      "singleCol": "Single Column",
+      "twoCol": "Two Columns",
+      "pageMargin": "Page Margin",
+      "sectionGap": "Section Gap",
+      "sectionPadding": "Section Padding",
+      "borderRadius": "Section Border Radius"
+    },
+    "photo": {
+      "show": "Show Photo",
+      "size": "Photo Size",
+      "shape": "Photo Shape",
+      "circle": "Circle",
+      "square": "Square",
+      "rounded": "Rounded"
+    },
+    "colors": {
+      "pageBg": "Page Background",
+      "sectionBg": "Section Background",
+      "primaryText": "Primary Text",
+      "secondaryText": "Secondary Text",
+      "headingText": "Heading Text",
+      "accent": "Accent Color",
+      "borderColor": "Border Color",
+      "skillBg": "Skill Background",
+      "skillText": "Skill Text"
+    },
+    "fonts": {
+      "family": "Font Family",
+      "titleSize": "Title Size",
+      "titleWeight": "Title Weight",
+      "headingSize": "Heading Size",
+      "headingWeight": "Heading Weight",
+      "bodySize": "Body Size",
+      "lineHeight": "Line Height",
+      "metaSize": "Meta Size"
+    }
   },
   "blogPage": {
     "title": "Blog",
