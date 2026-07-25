@@ -83,7 +83,7 @@ export default function AdminPanel({ data, onClose, onDataUpdate, onLogout }: Pr
       await importData(json);
       toast.success(t('admin.dataImported'));
       await onDataUpdate();
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(getErrorMessage(err, t('admin.importError')));
     } finally {
       setImporting(false);

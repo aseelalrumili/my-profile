@@ -162,9 +162,9 @@ export default function ResumeTab({ data, onDataUpdate }: Props) {
           </div>
           <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
             {editing.type === 'ats' ? (
-              <ResumePDF data={data} settings={editing.settings} isAr={isAr} />
+              <ResumePDF data={data} settings={editing.settings} />
             ) : (
-              <ResumePDF data={data} settings={editing.settings} isAr={isAr} />
+              <ResumePDF data={data} settings={editing.settings} />
             )}
             {editing.type === 'ats' && (
               <button className="btn btn-secondary btn-sm" onClick={() => {
@@ -223,7 +223,7 @@ export default function ResumeTab({ data, onDataUpdate }: Props) {
               overflow: 'auto',
               padding: 'var(--space-4)',
             }}>
-              <ResumePreview key={previewKey} data={data} settings={editing.settings} isAr={isAr} />
+              <ResumePreview key={previewKey} data={data} settings={editing.settings} />
             </div>
           )}
         </div>

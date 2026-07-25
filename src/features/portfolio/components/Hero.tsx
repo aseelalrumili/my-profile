@@ -5,6 +5,7 @@ import { FiArrowRight, FiDownload } from 'react-icons/fi';
 import { FaLinkedinIn, FaGithub, FaTwitter, FaInstagram, FaBehance, FaDribbble, FaGlobe } from 'react-icons/fa';
 import type { AppData } from '../../../types';
 import { useCountUp } from '../../../shared/hooks/useCountUp';
+import { useLocale } from '../../../shared/hooks/useLocale';
 import LazyImage from '../../../shared/components/UI/LazyImage';
 
 const socialIcons: Record<string, React.ReactNode> = {
@@ -44,11 +45,11 @@ const floatingShapes = [
 ];
 
 export default function Hero({ data }: { data: AppData }) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
+  const { isAr, local } = useLocale();
   const { profile, socialLinks } = data;
   const photoRef = useRef<HTMLDivElement>(null);
   const [transform, setTransform] = useState('');
-  const isAr = i18n.language === 'ar';
   const sectionRef = useRef<HTMLElement>(null);
 
   const { scrollYProgress } = useScroll({
@@ -57,8 +58,8 @@ export default function Hero({ data }: { data: AppData }) {
   });
   const parallaxY = useTransform(scrollYProgress, [0, 1], [0, -100]);
 
-  const getName = () => isAr && profile.fullNameAr ? profile.fullNameAr : profile.fullName;
-  const getJobTitle = () => isAr && profile.jobTitleAr ? profile.jobTitleAr : profile.jobTitle;
+  const getName = () => local(profile, 'fullName') || profile.fullName;
+  const getJobTitle = () => local(profile, 'jobTitle') || profile.jobTitle;
 
   const nameParts = useMemo(() => {
     const name = getName() || 'Your Name';
@@ -161,7 +162,7 @@ export default function Hero({ data }: { data: AppData }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.65 }}
           >
-            {isAr && profile.bioAr ? profile.bioAr : (profile.bio || t('hero.bio'))}
+            {local(profile, 'bio') || t('hero.bio')}
           </motion.p>
 
           <motion.div

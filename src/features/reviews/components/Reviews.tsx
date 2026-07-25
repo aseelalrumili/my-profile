@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { fetchReviews, fetchReviewStats, addReview } from '../../../api/reviews';
 import type { Review } from '../../../types';
+import SectionHeader from '../../../shared/components/UI/SectionHeader';
+import { useLocale } from '../../../shared/hooks/useLocale';
 
 const PAGE_SIZE = 3;
 
@@ -29,8 +31,8 @@ function StarInput({ value, onChange }: { value: number; onChange: (v: number) =
 }
 
 export default function Reviews({ settings }: { settings?: Record<string, string> }) {
-  const { t, i18n } = useTranslation();
-  const isAr = i18n.language === 'ar';
+  const { t } = useTranslation();
+  const { isAr } = useLocale();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [stats, setStats] = useState({ total: 0, average: 0 });
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
@@ -100,24 +102,7 @@ export default function Reviews({ settings }: { settings?: Record<string, string
 
   return (
     <section className="section" id="reviews">
-      <motion.h2
-        className="section-title"
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-      >
-        {t('reviews.title')}
-      </motion.h2>
-      <motion.p
-        className="section-subtitle"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-      >
-        {t('reviews.subtitle')}
-      </motion.p>
+      <SectionHeader title={t('reviews.title')} subtitle={t('reviews.subtitle')} />
 
       {stats.total > 0 && (
         <motion.div

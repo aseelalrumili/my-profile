@@ -16,7 +16,7 @@ export const addReview = async (data: Omit<Review, 'id' | 'isApproved' | 'create
 
 export const updateReview = (id: number, data: Partial<Review>) => updateItem<Review>('reviews', id, data);
 export const deleteReview = (id: number) => removeItem<Review>('reviews', id);
-export const approveReview = (id: number) => updateItem<Review>('reviews', id, { isApproved: true } as any);
+export const approveReview = (id: number) => updateItem<Review>('reviews', id, { isApproved: true });
 
 export const fetchReviewStats = async (): Promise<{ total: number; average: number }> => {
   const approved = await fetchReviews();

@@ -35,7 +35,7 @@ export default function ResumeEditor({ settings, onChange, isAts }: Props) {
     update('fonts', { ...settings.fonts, [key]: value });
   };
 
-  const updateSection = (id: string, field: keyof ResumeSection, value: any) => {
+  const updateSection = (id: string, field: keyof ResumeSection, value: string | number | boolean | undefined) => {
     update('sections', settings.sections.map((s) => s.id === id ? { ...s, [field]: value } : s));
   };
 

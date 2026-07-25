@@ -1,13 +1,14 @@
 import type { ResumeSettings } from '@/core/types/resume';
 import type { Skill } from '@/core/types/profile';
+import { useLocale } from '@/shared/hooks/useLocale';
 
 interface Props {
   skills: Skill[];
   settings: ResumeSettings;
-  isAr: boolean;
 }
 
-export default function ResumeSkills({ skills, settings, isAr }: Props) {
+export default function ResumeSkills({ skills, settings }: Props) {
+  const { local } = useLocale();
   const { colors, fonts } = settings;
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
@@ -20,7 +21,7 @@ export default function ResumeSkills({ skills, settings, isAr }: Props) {
           fontSize: fonts.metaSize,
           fontFamily: fonts.fontFamily,
         }}>
-          {isAr && s.nameAr ? s.nameAr : s.name}
+          {local(s, 'name')}
         </span>
       ))}
     </div>

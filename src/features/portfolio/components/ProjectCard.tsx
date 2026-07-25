@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { FiExternalLink } from 'react-icons/fi';
 import type { Project } from '../../../types';
 import LazyImage from '../../../shared/components/UI/LazyImage';
+import { useLocale } from '../../../shared/hooks/useLocale';
 
 interface Props {
   project: Project;
@@ -12,10 +13,10 @@ interface Props {
 }
 
 export default function ProjectCard({ project, index = 0, onSelect, onKeyDown }: Props) {
-  const { i18n } = useTranslation();
-  const isAr = i18n.language === 'ar';
-  const getTitle = () => isAr && project.titleAr ? project.titleAr : project.title;
-  const getDesc = () => isAr && project.descriptionAr ? project.descriptionAr : project.description;
+  const { t } = useTranslation();
+  const { isAr, local } = useLocale();
+  const getTitle = () => local(project, 'title') || project.title;
+  const getDesc = () => local(project, 'description') || '';
 
   return (
     <motion.div

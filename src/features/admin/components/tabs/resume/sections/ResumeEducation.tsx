@@ -1,13 +1,14 @@
 import type { ResumeSettings } from '@/core/types/resume';
 import type { Education } from '@/core/types/profile';
+import { useLocale } from '@/shared/hooks/useLocale';
 
 interface Props {
   items: Education[];
   settings: ResumeSettings;
-  isAr: boolean;
 }
 
-export default function ResumeEducation({ items, settings, isAr }: Props) {
+export default function ResumeEducation({ items, settings }: Props) {
+  const { local } = useLocale();
   const { colors, fonts } = settings;
   return (
     <div>
@@ -19,7 +20,7 @@ export default function ResumeEducation({ items, settings, isAr }: Props) {
               fontWeight: 600,
               color: colors.primaryText,
               fontFamily: fonts.fontFamily,
-            }}>{isAr && edu.degreeAr ? edu.degreeAr : edu.degree}</h3>
+            }}>{local(edu, 'degree')}</h3>
             {edu.period && <span style={{
               fontSize: fonts.metaSize,
               color: colors.secondaryText,
@@ -32,7 +33,7 @@ export default function ResumeEducation({ items, settings, isAr }: Props) {
             color: colors.accent,
             fontFamily: fonts.fontFamily,
             fontStyle: 'italic',
-          }}>{isAr && edu.institutionAr ? edu.institutionAr : edu.institution}</div>}
+          }}>{local(edu, 'institution')}</div>}
           {edu.description && <p style={{
             fontSize: fonts.bodySize,
             lineHeight: fonts.bodyLineHeight,

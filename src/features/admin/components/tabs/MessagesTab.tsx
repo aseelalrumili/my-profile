@@ -13,12 +13,12 @@ export default function MessagesTab() {
 
   const handleMarkRead = async (id: number) => {
     try { await markMessageRead(id); setMessages(messages.map(m => m.id === id ? { ...m, isRead: true } : m)); toast.success(t('admin.markRead')); }
-    catch (err: any) { toast.error(getErrorMessage(err, t('admin.failed'))); }
+    catch (err: unknown) { toast.error(getErrorMessage(err, t('admin.failed'))); }
   };
 
   const handleDelete = async (id: number) => {
     try { await deleteMessage(id); setMessages(messages.filter(m => m.id !== id)); toast.success(t('admin.deleted')); }
-    catch (err: any) { toast.error(getErrorMessage(err, t('admin.failed'))); }
+    catch (err: unknown) { toast.error(getErrorMessage(err, t('admin.failed'))); }
   };
 
   return (

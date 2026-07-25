@@ -4,14 +4,15 @@ import { FiPrinter, FiDownload, FiFileText } from 'react-icons/fi';
 import type { AppData } from '../../../types';
 import type { ResumeSettings } from '../../../core/types/resume';
 import { defaultAtsSettings } from '../../admin/components/tabs/resume/defaultSettings';
+import { useLocale } from '../../../shared/hooks/useLocale';
 
 interface Props {
   data: AppData | null;
 }
 
 export default function ResumePage({ data }: Props) {
-  const { t, i18n } = useTranslation();
-  const isAr = i18n.language === 'ar';
+  const { t } = useTranslation();
+  const { isAr, local } = useLocale();
   const [activeTab, setActiveTab] = useState<'ats' | 'regular'>('ats');
 
   const settings: ResumeSettings = useMemo(() => {
@@ -29,26 +30,26 @@ export default function ResumePage({ data }: Props) {
   const { profile, skills = [], experience = [], education = [], certifications = [] } = data;
   const { layout, colors, fonts, sections } = settings;
 
-  const name = isAr && profile.fullNameAr ? profile.fullNameAr : profile.fullName;
-  const title = isAr && profile.jobTitleAr ? profile.jobTitleAr : profile.jobTitle;
-  const bio = isAr && profile.bioAr ? profile.bioAr : profile.bio;
-  const location = isAr && profile.locationAr ? profile.locationAr : profile.location;
+  const name = local(profile, 'fullName');
+  const title = local(profile, 'jobTitle');
+  const bio = local(profile, 'bio');
+  const location = local(profile, 'location');
 
   const visibleSections = sections.filter((s) => s.visible);
   const photoRadius = layout.photoShape === 'circle' ? '50%' : layout.photoShape === 'rounded' ? '12px' : '0';
 
-  const getSectionTitle = (s: typeof sections[0]) => isAr ? s.titleAr : s.title;
+  const getSectionTitle = (s: typeof sections[0]) => local(s, 'title');
 
   const getSectionContent = (section: typeof sections[0]): string => {
     switch (section.type) {
       case 'summary': return bio || '';
-      case 'skills': return skills.map((s) => isAr && s.nameAr ? s.nameAr : s.name).join(' | ');
+      case 'skills': return skills.map((s) => local(s, 'name')).join(' | ');
       case 'experience':
         return experience.map((exp) => {
           const lines = [];
-          const expTitle = isAr && exp.titleAr ? exp.titleAr : exp.title;
-          const expCompany = isAr && exp.companyAr ? exp.companyAr : exp.company;
-          const expDesc = isAr && exp.descriptionAr ? exp.descriptionAr : exp.description;
+          const expTitle = local(exp, 'title');
+          const expCompany = local(exp, 'company');
+          const expDesc = local(exp, 'description');
           lines.push(`${expTitle}${expCompany ? ` - ${expCompany}` : ''}`);
           if (exp.period) lines.push(`  ${exp.period}`);
           if (expDesc) lines.push(`  ${expDesc}`);
@@ -57,8 +58,8 @@ export default function ResumePage({ data }: Props) {
       case 'education':
         return education.map((edu) => {
           const lines = [];
-          const eduDegree = isAr && edu.degreeAr ? edu.degreeAr : edu.degree;
-          const eduInst = isAr && edu.institutionAr ? edu.institutionAr : edu.institution;
+          const eduDegree = local(edu, 'degree');
+          const eduInst = local(edu, 'institution');
           lines.push(`${eduDegree}${eduInst ? ` - ${eduInst}` : ''}`);
           if (edu.period) lines.push(`  ${edu.period}`);
           if (edu.description) lines.push(`  ${edu.description}`);
@@ -66,12 +67,12 @@ export default function ResumePage({ data }: Props) {
         }).join('\n\n');
       case 'certifications':
         return certifications.map((cert) => {
-          const certName = isAr && cert.nameAr ? cert.nameAr : cert.name;
-          const certIssuer = isAr && cert.issuerAr ? cert.issuerAr : cert.issuer;
+          const certName = local(cert, 'name');
+          const certIssuer = local(cert, 'issuer');
           return `${certName}${certIssuer ? ` - ${certIssuer}` : ''}${cert.issueDate ? ` (${cert.issueDate})` : ''}`;
         }).join('\n');
       case 'custom':
-        return isAr ? (section.customContentAr || '') : (section.customContent || '');
+        return local(section, 'customContent') || '';
       default:
         return '';
     }
@@ -100,7 +101,7 @@ export default function ResumePage({ data }: Props) {
       lines.push(sepShort);
 
       if (section.type === 'skills') {
-        lines.push(skills.map((s) => isAr && s.nameAr ? s.nameAr : s.name).join(', '));
+        lines.push(skills.map((s) => local(s, 'name')).join(', '));
       } else {
         lines.push(content);
       }
@@ -140,7 +141,7 @@ export default function ResumePage({ data }: Props) {
         <div style="background:${colors.sectionBg};padding:${layout.sectionPadding}px;border-radius:${layout.sectionBorderRadius}px;border:1px solid ${colors.borderColor}">
           <h2 style="font-size:${fonts.headingSize}px;font-weight:${fonts.headingWeight};color:${colors.headingText};font-family:${fonts.fontFamily};border-bottom:2px solid ${colors.accent};padding-bottom:4px;margin:0 0 10px;text-transform:uppercase;letter-spacing:0.5px">${getSectionTitle(section)}</h2>
           ${section.type === 'skills'
-            ? `<div style="display:flex;flex-wrap:wrap;gap:6px">${skills.map((s) => `<span style="background:${colors.skillBg};color:${colors.skillText};padding:3px 10px;border-radius:4px;font-size:${fonts.metaSize}px;font-family:${fonts.fontFamily}">${isAr && s.nameAr ? s.nameAr : s.name}</span>`).join('')}</div>`
+            ? `<div style="display:flex;flex-wrap:wrap;gap:6px">${skills.map((s) => `<span style="background:${colors.skillBg};color:${colors.skillText};padding:3px 10px;border-radius:4px;font-size:${fonts.metaSize}px;font-family:${fonts.fontFamily}">${local(s, 'name')}</span>`).join('')}</div>`
             : `<pre style="font-size:${fonts.bodySize}px;line-height:${fonts.bodyLineHeight};color:${colors.primaryText};font-family:${fonts.fontFamily};white-space:pre-wrap;margin:0;border:none;background:none;padding:0">${content}</pre>`
           }
         </div>
@@ -285,7 +286,7 @@ export default function ResumePage({ data }: Props) {
                           fontSize: fonts.metaSize,
                         }}
                       >
-                        {isAr && s.nameAr ? s.nameAr : s.name}
+                        {local(s, 'name')}
                       </span>
                     ))}
                   </div>

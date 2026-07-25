@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import type { AppData } from '../../../types';
 import LazyImage from '../../../shared/components/UI/LazyImage';
+import SectionHeader from '../../../shared/components/UI/SectionHeader';
+import { useLocale } from '../../../shared/hooks/useLocale';
 
 function StarRating({ rating }: { rating: number }) {
   return (
@@ -13,8 +15,8 @@ function StarRating({ rating }: { rating: number }) {
 }
 
 export default function Testimonials({ data }: { data: AppData }) {
-  const { t, i18n } = useTranslation();
-  const isAr = i18n.language === 'ar';
+  const { t } = useTranslation();
+  const { isAr, local } = useLocale();
   const testimonials = data.testimonials || [];
   const [current, setCurrent] = useState(0);
 
@@ -35,24 +37,7 @@ export default function Testimonials({ data }: { data: AppData }) {
 
   return (
     <section className="section">
-      <motion.h2
-        className="section-title"
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-      >
-        {t('testimonials.title')}
-      </motion.h2>
-      <motion.p
-        className="section-subtitle"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-      >
-        {t('testimonials.subtitle')}
-      </motion.p>
+      <SectionHeader title={t('testimonials.title')} subtitle={t('testimonials.subtitle')} />
 
       <div className="testimonials-container">
         <AnimatePresence mode="wait">
@@ -65,16 +50,16 @@ export default function Testimonials({ data }: { data: AppData }) {
             transition={{ duration: 0.4 }}
           >
             <StarRating rating={t_item.rating} />
-            <p className="testimonial-content">&ldquo;{isAr && t_item.contentAr ? t_item.contentAr : t_item.content}&rdquo;</p>
+            <p className="testimonial-content">&ldquo;{local(t_item, 'content')}&rdquo;</p>
             {t_item.avatarUrl ? (
               <LazyImage src={t_item.avatarUrl} alt={t_item.clientName} className="testimonial-avatar" />
             ) : (
               <div className="testimonial-avatar-placeholder">
-                {(isAr && t_item.clientNameAr ? t_item.clientNameAr : t_item.clientName).charAt(0)}
+                {local(t_item, 'clientName')?.charAt(0)}
               </div>
             )}
-            <div className="testimonial-name">{isAr && t_item.clientNameAr ? t_item.clientNameAr : t_item.clientName}</div>
-            <div className="testimonial-client-title">{isAr && t_item.clientTitleAr ? t_item.clientTitleAr : t_item.clientTitle}</div>
+            <div className="testimonial-name">{local(t_item, 'clientName')}</div>
+            <div className="testimonial-client-title">{local(t_item, 'clientTitle')}</div>
           </motion.div>
         </AnimatePresence>
 

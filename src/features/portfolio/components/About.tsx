@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import type { AppData } from '../../../types';
 import { useCountUp } from '../../../shared/hooks/useCountUp';
+import { useLocale } from '../../../shared/hooks/useLocale';
 
 function AboutStatCard({ value, label }: { value: number; label: string }) {
   const { count, ref } = useCountUp(value);
@@ -19,10 +20,10 @@ function AboutStatCard({ value, label }: { value: number; label: string }) {
 }
 
 export default function About({ data }: { data: AppData }) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { profile, education = [] } = data;
-  const isAr = i18n.language === 'ar';
-  const getBio = () => isAr && profile.bioAr ? profile.bioAr : profile.bio;
+  const { isAr, local } = useLocale();
+  const getBio = () => local(profile, 'bio');
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -83,7 +84,7 @@ export default function About({ data }: { data: AppData }) {
             {profile.location && (
               <motion.div className="about-info-item" variants={itemVariants}>
                 <span className="about-info-label">{t('about.location')}</span>
-                <p className="about-info-value">{isAr && profile.locationAr ? profile.locationAr : profile.location}</p>
+                <p className="about-info-value">{local(profile, 'location')}</p>
               </motion.div>
             )}
             {profile.phone && (
@@ -115,8 +116,8 @@ export default function About({ data }: { data: AppData }) {
                   <div className="about-timeline-dot" />
                   <div className="about-timeline-content">
                     <span className="about-timeline-period">{edu.period}</span>
-                    <h4>{isAr && edu.degreeAr ? edu.degreeAr : edu.degree}</h4>
-                    <p>{isAr && edu.institutionAr ? edu.institutionAr : edu.institution}</p>
+                    <h4>{local(edu, 'degree')}</h4>
+                    <p>{local(edu, 'institution')}</p>
                   </div>
                 </motion.div>
               ))}

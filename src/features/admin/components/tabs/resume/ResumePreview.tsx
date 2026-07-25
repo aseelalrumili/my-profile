@@ -1,5 +1,6 @@
 import type { ResumeSettings } from '@/core/types/resume';
 import type { AppData } from '@/types';
+import { useLocale } from '@/shared/hooks/useLocale';
 import ResumeHeader from './sections/ResumeHeader';
 import ResumeSummary from './sections/ResumeSummary';
 import ResumeSkills from './sections/ResumeSkills';
@@ -11,14 +12,14 @@ import ResumeCustomSection from './sections/ResumeCustomSection';
 interface Props {
   data: AppData;
   settings: ResumeSettings;
-  isAr: boolean;
 }
 
-export default function ResumePreview({ data, settings, isAr }: Props) {
+export default function ResumePreview({ data, settings }: Props) {
+  const { isAr, local } = useLocale();
   const { layout, colors, fonts, sections } = settings;
   const { profile, skills = [], experience = [], education = [], certifications = [] } = data;
 
-  const bio = isAr && profile.bioAr ? profile.bioAr : profile.bio;
+  const bio = local(profile, 'bio');
 
   const sectionTitleStyle = {
     fontSize: fonts.headingSize,
@@ -32,7 +33,7 @@ export default function ResumePreview({ data, settings, isAr }: Props) {
     letterSpacing: '0.5px',
   };
 
-  const getSectionTitle = (s: typeof sections[0]) => isAr ? s.titleAr : s.title;
+  const getSectionTitle = (s: typeof sections[0]) => local(s, 'title');
 
   const visibleSections = sections.filter((s) => s.visible);
 
@@ -41,15 +42,15 @@ export default function ResumePreview({ data, settings, isAr }: Props) {
       case 'summary':
         return bio ? <ResumeSummary text={bio} settings={settings} /> : null;
       case 'skills':
-        return skills.length > 0 ? <ResumeSkills skills={skills} settings={settings} isAr={isAr} /> : null;
+        return skills.length > 0 ? <ResumeSkills skills={skills} settings={settings} /> : null;
       case 'experience':
-        return experience.length > 0 ? <ResumeExperience items={experience} settings={settings} isAr={isAr} /> : null;
+        return experience.length > 0 ? <ResumeExperience items={experience} settings={settings} /> : null;
       case 'education':
-        return education.length > 0 ? <ResumeEducation items={education} settings={settings} isAr={isAr} /> : null;
+        return education.length > 0 ? <ResumeEducation items={education} settings={settings} /> : null;
       case 'certifications':
-        return certifications.length > 0 ? <ResumeCertifications items={certifications} settings={settings} isAr={isAr} /> : null;
+        return certifications.length > 0 ? <ResumeCertifications items={certifications} settings={settings} /> : null;
       case 'custom':
-        return <ResumeCustomSection title={getSectionTitle(section)} content={isAr ? (section.customContentAr || '') : (section.customContent || '')} settings={settings} />;
+        return <ResumeCustomSection title={getSectionTitle(section)} content={local(section, 'customContent') || ''} settings={settings} />;
       default:
         return null;
     }
@@ -98,7 +99,7 @@ export default function ResumePreview({ data, settings, isAr }: Props) {
         color: colors.primaryText,
         minHeight: '100%',
       }}>
-        <ResumeHeader profile={profile} settings={settings} isAr={isAr} />
+        <ResumeHeader profile={profile} settings={settings} />
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: layout.sectionGap, marginTop: layout.sectionGap }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: layout.sectionGap }}>
             {sidebarSections.map(renderSection)}
@@ -119,7 +120,7 @@ export default function ResumePreview({ data, settings, isAr }: Props) {
       color: colors.primaryText,
       minHeight: '100%',
     }}>
-      <ResumeHeader profile={profile} settings={settings} isAr={isAr} />
+      <ResumeHeader profile={profile} settings={settings} />
       <div style={{ display: 'flex', flexDirection: 'column', gap: layout.sectionGap, marginTop: layout.sectionGap }}>
         {visibleSections.map(renderSection)}
       </div>

@@ -4,13 +4,14 @@ import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { fetchBlogPost } from '../../../api/api';
 import type { BlogPost as BlogPostType } from '../../../types';
+import { useLocale } from '../../../shared/hooks/useLocale';
 import ShareButtons from '../../../shared/components/UI/ShareButtons';
 import CommentSection from './CommentSection';
 
 export default function BlogPost() {
   const { slug } = useParams<{ slug: string }>();
-  const { t, i18n } = useTranslation();
-  const isAr = i18n.language === 'ar';
+  const { t } = useTranslation();
+  const { isAr, local } = useLocale();
   const [post, setPost] = useState<BlogPostType | null>(null);
   const [notFound, setNotFound] = useState(false);
 
@@ -43,11 +44,11 @@ export default function BlogPost() {
         transition={{ duration: 0.5 }}
       >
         {post.coverImageUrl && (
-          <img className="blog-post-cover" src={post.coverImageUrl} alt={isAr && post.titleAr ? post.titleAr : post.title} loading="lazy" />
+          <img className="blog-post-cover" src={post.coverImageUrl} alt={local(post, 'title') || post.title} loading="lazy" />
         )}
 
         <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '1rem' }}>
-          {isAr && post.titleAr ? post.titleAr : post.title}
+          {local(post, 'title') || post.title}
         </h1>
 
         <div className="blog-post-meta">
@@ -57,13 +58,13 @@ export default function BlogPost() {
         </div>
 
         <div className="blog-post-content">
-          {(isAr && post.contentAr ? post.contentAr : post.content).split('\n').map((para, i) => (
+          {(local(post, 'content') || post.content).split('\n').map((para, i) => (
             <p key={i}>{para}</p>
           ))}
         </div>
 
         <div style={{ marginTop: '2rem' }}>
-          <ShareButtons url={window.location.href} title={isAr && post.titleAr ? post.titleAr : post.title} />
+          <ShareButtons url={window.location.href} title={local(post, 'title') || post.title} />
         </div>
       </motion.article>
 

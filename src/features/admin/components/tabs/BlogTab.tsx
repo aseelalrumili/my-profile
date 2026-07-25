@@ -28,7 +28,7 @@ export default function BlogTab({ data, onDataUpdate }: { data: AppData; onDataU
   const handleAdd = async () => {
     if (!form.title || !form.slug) return;
     try {
-      const payload: any = { ...form };
+      const payload: Partial<BlogPost> = { ...form };
       if (coverImageFile) {
         payload.coverImageUrl = await uploadImage(coverImageFile);
       }
@@ -39,22 +39,22 @@ export default function BlogTab({ data, onDataUpdate }: { data: AppData; onDataU
       setCoverPreview(null);
       toast.success(t('admin.blogPostSaved'));
       onDataUpdate?.();
-    } catch (err: any) { toast.error(getErrorMessage(err, t('admin.failed'))); }
+    } catch (err: unknown) { toast.error(getErrorMessage(err, t('admin.failed'))); }
   };
 
   const handleDelete = async (id: number) => {
     try { await deleteBlogPost(id); setItems(items.filter(i => i.id !== id)); toast.success(t('admin.deleted')); onDataUpdate?.(); }
-    catch (err: any) { toast.error(getErrorMessage(err, t('admin.failed'))); }
+    catch (err: unknown) { toast.error(getErrorMessage(err, t('admin.failed'))); }
   };
 
   const handleApproveComment = async (id: number) => {
     try { await approveBlogComment(id); toast.success(t('admin.reviewApproved')); await loadComments(); onDataUpdate?.(); }
-    catch (err: any) { toast.error(getErrorMessage(err, t('admin.failed'))); }
+    catch (err: unknown) { toast.error(getErrorMessage(err, t('admin.failed'))); }
   };
 
   const handleDeleteComment = async (id: number) => {
     try { await deleteBlogComment(id); toast.success(t('admin.deleted')); await loadComments(); onDataUpdate?.(); }
-    catch (err: any) { toast.error(getErrorMessage(err, t('admin.failed'))); }
+    catch (err: unknown) { toast.error(getErrorMessage(err, t('admin.failed'))); }
   };
 
   const pendingCount = comments.filter(c => !c.isApproved).length;

@@ -5,10 +5,12 @@ import { Link } from 'react-router-dom';
 import type { AppData } from '../../../types';
 import Lightbox from '../../../shared/components/UI/Lightbox';
 import LazyImage from '../../../shared/components/UI/LazyImage';
+import SectionHeader from '../../../shared/components/UI/SectionHeader';
+import { useLocale } from '../../../shared/hooks/useLocale';
 
 export default function Certifications({ data, limit }: { data: AppData; limit?: number }) {
-  const { t, i18n } = useTranslation();
-  const isAr = i18n.language === 'ar';
+  const { t } = useTranslation();
+  const { isAr, local } = useLocale();
   const certs = data.certifications || [];
   const [filter, setFilter] = useState('All');
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
@@ -18,24 +20,7 @@ export default function Certifications({ data, limit }: { data: AppData; limit?:
 
   return (
     <section className="section">
-      <motion.h2
-        className="section-title"
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-      >
-        {t('certifications.title')}
-      </motion.h2>
-      <motion.p
-        className="section-subtitle"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-      >
-        {t('certifications.subtitle')}
-      </motion.p>
+      <SectionHeader title={t('certifications.title')} subtitle={t('certifications.subtitle')} />
 
       {categories.length > 1 && (
         <div className="certs-filter">
@@ -67,8 +52,8 @@ export default function Certifications({ data, limit }: { data: AppData; limit?:
             ) : (
               <div className="cert-card-image cert-card-image-placeholder">&#128203;</div>
             )}
-            <h3>{isAr && cert.nameAr ? cert.nameAr : cert.name}</h3>
-            <div className="cert-issuer">{isAr && cert.issuerAr ? cert.issuerAr : cert.issuer}</div>
+            <h3>{local(cert, 'name')}</h3>
+            <div className="cert-issuer">{local(cert, 'issuer')}</div>
             <div className="cert-dates">
               {cert.issueDate && `${t('certifications.issued')}: ${cert.issueDate}`}
               {cert.expiryDate && ` | ${t('certifications.expires')}: ${cert.expiryDate}`}

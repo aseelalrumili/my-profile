@@ -31,13 +31,13 @@ export default function ProfileTab({ data, onDataUpdate }: { data: AppData; onDa
     try {
       const computedFullName = [form.firstName, form.middleName, form.lastName].filter(Boolean).join(' ') || form.fullName;
       const computedFullNameAr = [form.firstNameAr, form.middleNameAr, form.lastNameAr].filter(Boolean).join(' ') || form.fullNameAr;
-      const payload: any = { ...form, fullName: computedFullName, fullNameAr: computedFullNameAr };
+      const payload: Partial<Profile> = { ...form, fullName: computedFullName, fullNameAr: computedFullNameAr };
       if (photoFile) payload.photoUrl = await uploadImage(photoFile);
       if (resumeFile) payload.resumeUrl = await uploadFile(resumeFile);
       await updateProfile(payload);
       await onDataUpdate();
       toast.success(t('admin.profileUpdated'));
-    } catch (err: any) { toast.error(getErrorMessage(err, t('admin.failedToUpdateProfile'))); }
+    } catch (err: unknown) { toast.error(getErrorMessage(err, t('admin.failedToUpdateProfile'))); }
     setLoading(false);
   };
 

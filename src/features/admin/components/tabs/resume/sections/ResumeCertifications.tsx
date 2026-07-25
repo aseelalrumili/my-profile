@@ -1,13 +1,14 @@
 import type { ResumeSettings } from '@/core/types/resume';
 import type { Certification } from '@/core/types/certification';
+import { useLocale } from '@/shared/hooks/useLocale';
 
 interface Props {
   items: Certification[];
   settings: ResumeSettings;
-  isAr: boolean;
 }
 
-export default function ResumeCertifications({ items, settings, isAr }: Props) {
+export default function ResumeCertifications({ items, settings }: Props) {
+  const { local } = useLocale();
   const { colors, fonts } = settings;
   return (
     <div>
@@ -19,7 +20,7 @@ export default function ResumeCertifications({ items, settings, isAr }: Props) {
               fontWeight: 600,
               color: colors.primaryText,
               fontFamily: fonts.fontFamily,
-            }}>{isAr && cert.nameAr ? cert.nameAr : cert.name}</h3>
+            }}>{local(cert, 'name')}</h3>
             {cert.issueDate && <span style={{
               fontSize: fonts.metaSize,
               color: colors.secondaryText,
@@ -32,7 +33,7 @@ export default function ResumeCertifications({ items, settings, isAr }: Props) {
             color: colors.accent,
             fontFamily: fonts.fontFamily,
             fontStyle: 'italic',
-          }}>{isAr && cert.issuerAr ? cert.issuerAr : cert.issuer}</div>
+          }}>{local(cert, 'issuer')}</div>
         </div>
       ))}
     </div>

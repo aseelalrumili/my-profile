@@ -4,10 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { fetchBlogPosts } from '../../../api/api';
 import type { BlogPost as BlogPostType } from '../../../types';
+import SectionHeader from '../../../shared/components/UI/SectionHeader';
+import { useLocale } from '../../../shared/hooks/useLocale';
 
 export default function BlogPage() {
-  const { t, i18n } = useTranslation();
-  const isAr = i18n.language === 'ar';
+  const { t } = useTranslation();
+  const { isAr, local } = useLocale();
   const [posts, setPosts] = useState<BlogPostType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -25,22 +27,7 @@ export default function BlogPage() {
         {t('common.backHome')}
       </Link>
 
-      <motion.h2
-        className="section-title"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        {t('blogPage.title')}
-      </motion.h2>
-      <motion.p
-        className="section-subtitle"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-      >
-        {t('blogPage.subtitle')}
-      </motion.p>
+      <SectionHeader title={t('blogPage.title')} subtitle={t('blogPage.subtitle')} animate />
 
       {loading ? (
         <div className="blog-grid">
@@ -71,11 +58,11 @@ export default function BlogPage() {
               <Link to={`/blog/${post.slug}`} style={{ textDecoration: 'none' }}>
                 <article className="blog-card">
                   {post.coverImageUrl && (
-                    <img className="blog-card-image" src={post.coverImageUrl} alt={isAr && post.titleAr ? post.titleAr : post.title} />
+                    <img className="blog-card-image" src={post.coverImageUrl} alt={local(post, 'title') || post.title} />
                   )}
                   <div className="blog-card-body">
-                    <h3>{isAr && post.titleAr ? post.titleAr : post.title}</h3>
-                    <p className="blog-excerpt">{isAr && post.excerptAr ? post.excerptAr : post.excerpt}</p>
+                    <h3>{local(post, 'title')}</h3>
+                    <p className="blog-excerpt">{local(post, 'excerpt')}</p>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <span className="blog-date">{new Date(post.createdAt).toLocaleDateString()}</span>
                       <span className="blog-read-more">{t('blog.readMore')} &rarr;</span>

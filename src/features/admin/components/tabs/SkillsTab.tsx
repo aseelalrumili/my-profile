@@ -19,12 +19,12 @@ export default function SkillsTab({ data, onDataUpdate }: { data: AppData; onDat
       setForm({ name: '', nameAr: '', category: 'Technical', categoryAr: '', type: 'Design', percentage: 80 });
       toast.success(t('admin.skillUpdated'));
       onDataUpdate?.();
-    } catch (err: any) { toast.error(getErrorMessage(err, t('admin.failed'))); }
+    } catch (err: unknown) { toast.error(getErrorMessage(err, t('admin.failed'))); }
   };
 
   const handleDelete = async (id: number) => {
     try { await deleteSkill(id); setItems(items.filter(i => i.id !== id)); toast.success(t('admin.deleted')); onDataUpdate?.(); }
-    catch (err: any) { toast.error(getErrorMessage(err, t('admin.failed'))); }
+    catch (err: unknown) { toast.error(getErrorMessage(err, t('admin.failed'))); }
   };
 
   const handleSort = async (index: number, dir: 'up' | 'down') => {

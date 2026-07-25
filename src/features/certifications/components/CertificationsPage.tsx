@@ -6,10 +6,12 @@ import { fetchCertifications } from '../../../api/api';
 import type { Certification } from '../../../types';
 import Lightbox from '../../../shared/components/UI/Lightbox';
 import LazyImage from '../../../shared/components/UI/LazyImage';
+import SectionHeader from '../../../shared/components/UI/SectionHeader';
+import { useLocale } from '../../../shared/hooks/useLocale';
 
 export default function CertificationsPage() {
-  const { t, i18n } = useTranslation();
-  const isAr = i18n.language === 'ar';
+  const { t } = useTranslation();
+  const { isAr, local } = useLocale();
   const [certs, setCerts] = useState<Certification[]>([]);
   const [filter, setFilter] = useState('All');
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
@@ -32,22 +34,7 @@ export default function CertificationsPage() {
         {t('common.backHome')}
       </Link>
 
-      <motion.h2
-        className="section-title"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        {t('certsPage.title')}
-      </motion.h2>
-      <motion.p
-        className="section-subtitle"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-      >
-        {t('certsPage.subtitle')}
-      </motion.p>
+      <SectionHeader title={t('certsPage.title')} subtitle={t('certsPage.subtitle')} animate />
 
       {loading ? (
         <div className="certs-grid">
@@ -98,8 +85,8 @@ export default function CertificationsPage() {
                 ) : (
                   <div className="cert-card-image cert-card-image-placeholder">&#128203;</div>
                 )}
-                <h3>{isAr && cert.nameAr ? cert.nameAr : cert.name}</h3>
-                <div className="cert-issuer">{isAr && cert.issuerAr ? cert.issuerAr : cert.issuer}</div>
+                <h3>{local(cert, 'name')}</h3>
+                <div className="cert-issuer">{local(cert, 'issuer')}</div>
                 <div className="cert-dates">
                   {cert.issueDate && `${t('certifications.issued')}: ${cert.issueDate}`}
                   {cert.expiryDate && ` | ${t('certifications.expires')}: ${cert.expiryDate}`}

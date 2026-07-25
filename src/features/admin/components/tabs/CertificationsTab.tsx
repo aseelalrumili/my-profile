@@ -24,12 +24,13 @@ export default function CertificationsTab({ data, onDataUpdate }: { data: AppDat
   const handleAdd = async () => {
     if (!form.name) return;
     try {
-      const payload: any = { ...form, sortOrder: items.length };
+      const payload: Partial<Certification> & { sortOrder: number } = { ...form, sortOrder: items.length };
       for (let i = 0; i < 2; i++) {
+        const key = `imageUrl${i + 1}` as keyof Certification;
         if (imageFiles[i]) {
-          payload[`imageUrl${i + 1}`] = await uploadImage(imageFiles[i]!);
+          (payload as Record<keyof Certification, unknown>)[key] = await uploadImage(imageFiles[i]!);
         } else if (existingImages[i]?.url) {
-          payload[`imageUrl${i + 1}`] = existingImages[i].url;
+          (payload as Record<keyof Certification, unknown>)[key] = existingImages[i].url;
         }
       }
       if (editingId) { await updateCertification(editingId, payload); setEditingId(null); }
@@ -41,12 +42,12 @@ export default function CertificationsTab({ data, onDataUpdate }: { data: AppDat
       await onDataUpdate();
       setItems(await fetchCertifications());
       toast.success(t('admin.certificationSaved'));
-    } catch (err: any) { toast.error(getErrorMessage(err, t('admin.failed'))); }
+    } catch (err: unknown) { toast.error(getErrorMessage(err, t('admin.failed'))); }
   };
 
   const handleDelete = async (id: number) => {
     try { await deleteCertification(id); await onDataUpdate(); setItems(items.filter(i => i.id !== id)); toast.success(t('admin.deleted')); }
-    catch (err: any) { toast.error(getErrorMessage(err, t('admin.failed'))); }
+    catch (err: unknown) { toast.error(getErrorMessage(err, t('admin.failed'))); }
   };
 
   const handleSort = async (index: number, dir: 'up' | 'down') => {

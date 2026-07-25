@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import type { AppData, Project } from '../../../types';
 import ProjectCard from './ProjectCard';
 import ProjectModal from './ProjectModal';
+import SectionHeader from '../../../shared/components/UI/SectionHeader';
 
 export default function PortfolioPage({ data }: { data: AppData | null }) {
   const { t } = useTranslation();
@@ -26,22 +27,7 @@ export default function PortfolioPage({ data }: { data: AppData | null }) {
         &larr; Home
       </Link>
 
-      <motion.h2
-        className="section-title"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        {t('portfolioPage.title')}
-      </motion.h2>
-      <motion.p
-        className="section-subtitle"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-      >
-        {t('portfolioPage.subtitle')}
-      </motion.p>
+      <SectionHeader title={t('portfolioPage.title')} subtitle={t('portfolioPage.subtitle')} animate />
 
       <div className="projects-filter">
         {categories.map((cat) => (

@@ -49,5 +49,5 @@ export const addBlogComment = async (data: Omit<BlogComment, 'id' | 'isApproved'
   });
 };
 
-export const approveBlogComment = (id: number) => updateItem<BlogComment>('blogComments', id, { isApproved: true } as any);
+export const approveBlogComment = (id: number) => updateItem<BlogComment>('blogComments', id, { isApproved: true });
 export const deleteBlogComment = (id: number) => removeItem<BlogComment>('blogComments', id);
