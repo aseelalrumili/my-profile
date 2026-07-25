@@ -125,9 +125,8 @@ export default function Navbar({ isAdmin, onAdminClick, onLogout, resumeUrl, pro
               animate={{ x: 0 }}
               exit={{ x: isAr ? '-100%' : '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              style={isAr ? { left: 0, right: 'auto', borderLeft: 'none', borderRight: '1px solid var(--border)' } : undefined}
             >
-              <button className="mobile-menu-close" onClick={() => setMobileOpen(false)} aria-label={t('admin.close')} style={isAr ? { left: '1.25rem', right: 'auto' } : undefined}>
+              <button className="mobile-menu-close" onClick={() => setMobileOpen(false)} aria-label={t('admin.close')}>
                 <FiX />
               </button>
               <Link to="/" onClick={() => setMobileOpen(false)}>{t('nav.home')}</Link>
@@ -136,8 +135,8 @@ export default function Navbar({ isAdmin, onAdminClick, onLogout, resumeUrl, pro
                   {t(`nav.${item.key}`)}
                 </a>
               ))}
-              <Link to="/blog" style={{ fontSize: 'var(--fs-small)', color: 'var(--accent-secondary)' }} onClick={() => setMobileOpen(false)}>{t('nav.blog')}</Link>
-              <Link to="/resume" style={{ fontSize: 'var(--fs-small)', color: 'var(--accent-secondary)' }} onClick={() => setMobileOpen(false)}>{t('resume.title')}</Link>
+              <Link to="/blog" onClick={() => setMobileOpen(false)}>{t('nav.blog')}</Link>
+              <Link to="/resume" onClick={() => setMobileOpen(false)}>{t('resume.title')}</Link>
               <div className="mobile-menu-controls">
                 <button className="nav-lang-btn" onClick={toggleLang}>
                   {i18n.language === 'en' ? 'العربية' : 'English'}
