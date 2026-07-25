@@ -18,10 +18,14 @@ export async function convertToWebP(file: File, quality = 0.8): Promise<File> {
   const canvas = document.createElement('canvas');
   canvas.width = bitmap.width;
   canvas.height = bitmap.height;
-  const ctx = canvas.getContext('2d')!;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('Canvas 2D context not supported');
   ctx.drawImage(bitmap, 0, 0);
-  const blob: Blob = await new Promise((resolve) =>
-    canvas.toBlob((b) => resolve(b!), 'image/webp', quality)
+  const blob: Blob = await new Promise((resolve, reject) =>
+    canvas.toBlob((b) => {
+      if (b) resolve(b);
+      else reject(new Error('Canvas toBlob failed'));
+    }, 'image/webp', quality)
   );
   return new File([blob], file.name.replace(/\.[^.]+$/, '.webp'), { type: 'image/webp' });
 }
@@ -48,7 +52,7 @@ export async function uploadFile(file: File): Promise<string> {
 }
 
 API.interceptors.request.use(function (config) {
-  var token = localStorage.getItem('token');
+  const token = localStorage.getItem('token');
   if (token) {
     config.headers['Authorization'] = 'Bearer ' + token;
   }
