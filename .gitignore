@@ -1,21 +1,4 @@
-# Dependencies
-node_modules/
-dist/
-.env
+.vercel
 .env.local
-
-# Uploads (images stored as Base64 in JSON)
-uploads/
-
-# IDE
-.vs/
-.vscode/
-*.user
-*.suo
-
-# Logs
-*.log
-
-# OS
-.DS_Store
-Thumbs.db
+node_modules
+dist
