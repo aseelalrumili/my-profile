@@ -48,9 +48,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (!token) return res.status(200).json(null);
     try {
       const data = await readBlob(BLOB_KEY, getOpts());
-      return res.status(200).json({ _debug_data: data });
-    } catch (err: any) {
-      return res.status(200).json({ _debug_err: err.message });
+      return res.status(200).json(data);
+    } catch {
+      return res.status(200).json(null);
     }
   }
 
