@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import type { AppData } from '../../../../types';
-import type { ResumeSettings } from '../../../../types/resume';
+import type { AppData } from '@/types';
+import type { ResumeSettings } from '@/core/types/resume';
 import { defaultResumeSettings, STORAGE_KEY } from './resume/defaultSettings';
 import ResumeEditor from './resume/ResumeEditor';
 import ResumePreview from './resume/ResumePreview';

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FiLayout, FiDroplet, FiType, FiList, FiImage, FiPlus, FiTrash2 } from 'react-icons/fi';
-import type { ResumeSettings, ResumeSection } from '../../../../types/resume';
+import type { ResumeSettings, ResumeSection } from '@/core/types/resume';
 import { FONT_OPTIONS } from './defaultSettings';
 
 interface Props {

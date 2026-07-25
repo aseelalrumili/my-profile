@@ -1,5 +1,5 @@
-import type { ResumeSettings } from '../../../../types/resume';
-import type { Certification } from '../../../../types/certification';
+import type { ResumeSettings } from '@/core/types/resume';
+import type { Certification } from '@/core/types/certification';
 
 interface Props {
   items: Certification[];

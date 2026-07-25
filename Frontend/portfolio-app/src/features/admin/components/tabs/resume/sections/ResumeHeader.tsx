@@ -1,5 +1,5 @@
-import type { ResumeSettings } from '../../../../types/resume';
-import type { Profile } from '../../../../types/profile';
+import type { ResumeSettings } from '@/core/types/resume';
+import type { Profile } from '@/core/types/profile';
 
 interface Props {
   profile: Profile;

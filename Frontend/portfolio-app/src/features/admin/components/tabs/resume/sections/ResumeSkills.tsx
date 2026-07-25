@@ -1,5 +1,5 @@
-import type { ResumeSettings } from '../../../../types/resume';
-import type { Skill } from '../../../../types/profile';
+import type { ResumeSettings } from '@/core/types/resume';
+import type { Skill } from '@/core/types/profile';
 
 interface Props {
   skills: Skill[];

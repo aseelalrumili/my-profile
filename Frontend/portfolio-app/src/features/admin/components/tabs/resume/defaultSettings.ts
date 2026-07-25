@@ -1,4 +1,4 @@
-import type { ResumeSettings } from '../../types/resume';
+import type { ResumeSettings } from '@/core/types/resume';
 
 export const defaultResumeSettings: ResumeSettings = {
   layout: {

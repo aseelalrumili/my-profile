@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import type { ResumeSettings } from '../../../../types/resume';
-import type { AppData } from '../../../../types';
+import type { ResumeSettings } from '@/core/types/resume';
+import type { AppData } from '@/types';
 
 interface Props {
   data: AppData;

@@ -1,5 +1,5 @@
-import type { ResumeSettings } from '../../../../types/resume';
-import type { AppData } from '../../../../types';
+import type { ResumeSettings } from '@/core/types/resume';
+import type { AppData } from '@/types';
 import ResumeHeader from './sections/ResumeHeader';
 import ResumeSummary from './sections/ResumeSummary';
 import ResumeSkills from './sections/ResumeSkills';

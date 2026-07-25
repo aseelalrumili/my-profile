@@ -1,5 +1,5 @@
-import type { ResumeSettings } from '../../../../types/resume';
-import type { Experience } from '../../../../types/profile';
+import type { ResumeSettings } from '@/core/types/resume';
+import type { Experience } from '@/core/types/profile';
 
 interface Props {
   items: Experience[];
