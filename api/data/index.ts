@@ -31,8 +31,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const blob = await get(BLOB_KEY, getOpts());
       const data = JSON.parse(await blob.text());
       return res.status(200).json(data);
-    } catch {
-      return res.status(200).json(null);
+    } catch (err: any) {
+      return res.status(200).json({ _debug: err.message || String(err) });
     }
   }
 
