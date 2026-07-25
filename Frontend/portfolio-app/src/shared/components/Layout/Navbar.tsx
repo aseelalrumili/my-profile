@@ -20,12 +20,21 @@ export default function Navbar({ isAdmin, onAdminClick, onLogout, resumeUrl, pro
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const isAr = i18n.language === 'ar';
+  const [dir, setDir] = useState(() => document.documentElement.dir || 'ltr');
+  const isAr = dir === 'rtl';
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setDir(document.documentElement.dir || 'ltr');
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['dir'] });
+    return () => observer.disconnect();
   }, []);
 
   const toggleLang = () => {
@@ -121,9 +130,9 @@ export default function Navbar({ isAdmin, onAdminClick, onLogout, resumeUrl, pro
               role="dialog"
               aria-modal="true"
               aria-label="Navigation menu"
-              initial={{ x: isAr ? '-100%' : '100%' }}
+              initial={{ x: dir === 'rtl' ? '-100%' : '100%' }}
               animate={{ x: 0 }}
-              exit={{ x: isAr ? '-100%' : '100%' }}
+              exit={{ x: dir === 'rtl' ? '-100%' : '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             >
               <button className="mobile-menu-close" onClick={() => setMobileOpen(false)} aria-label={t('admin.close')}>
