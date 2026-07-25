@@ -29,9 +29,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     try {
       const { get } = await import('@vercel/blob');
       const blob = await get(BLOB_KEY, { ...getOpts(), access: 'private' });
-      const resp = await fetch(blob.url);
-      const data = await resp.json();
-      return res.status(200).json(data);
+      return res.status(200).json({ _debug: JSON.stringify(Object.keys(blob)) });
     } catch (err: any) {
       return res.status(200).json({ _debug: err.message || String(err) });
     }
