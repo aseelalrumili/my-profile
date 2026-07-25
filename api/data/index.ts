@@ -71,7 +71,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       await put(BLOB_KEY, JSON.stringify(merged), {
         ...opts,
         contentType: 'application/json',
-        access: 'public',
       });
 
       return res.status(200).json(merged);
