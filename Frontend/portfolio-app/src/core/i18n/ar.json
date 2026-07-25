@@ -66,7 +66,9 @@
     "copyLink": "نسخ الرابط",
     "copied": "تم نسخ الرابط!",
     "close": "إغلاق",
-    "noImage": "لا توجد صورة"
+    "noImage": "لا توجد صورة",
+    "search": "بحث في المشاريع...",
+    "noResults": "لا توجد مشاريع"
   },
   "certifications": {
     "title": "الشهادات",

@@ -1,4 +1,4 @@
-import { useState, useEffect, Suspense, lazy } from 'react';
+import { useState, useEffect, Suspense, lazy, useCallback } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import PageTransition from './shared/components/Effects/PageTransition';
@@ -25,6 +25,8 @@ import Particles from './shared/components/Effects/Particles';
 import ErrorBoundary from './shared/components/Effects/ErrorBoundary';
 import LoginModal from './features/admin/components/LoginModal';
 import ReadingProgress from './shared/components/UI/ReadingProgress';
+import SplashScreen from './shared/components/UI/SplashScreen';
+import SectionDivider from './shared/components/Effects/SectionDivider';
 import { fallbackData } from './fallbackData';
 import { useTranslation } from 'react-i18next';
 
@@ -110,13 +112,20 @@ function HomePage({ data, onLoadData }: { data: AppData; onLoadData: () => Promi
     <PageLayout data={data}>
       <Particles />
       <Hero data={data} />
+      <SectionDivider />
       <div id="about"><About data={data} /></div>
+      <SectionDivider style="dots" />
       <div id="skills"><Skills data={data} /></div>
+      <SectionDivider />
       <div id="projects"><Projects data={data} /></div>
+      <SectionDivider style="dots" />
       <div id="experience"><Experience data={data} /></div>
+      <SectionDivider />
       <div id="certifications"><Certifications data={data} limit={3} /></div>
+      <SectionDivider style="dots" />
       <Reviews settings={data.settings} />
       <Testimonials data={data} />
+      <SectionDivider />
       <div id="contact"><Contact data={data} /></div>
     </PageLayout>
   );
@@ -126,7 +135,10 @@ function AppRoutes() {
   const [data, setData] = useState<AppData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [splashDone, setSplashDone] = useState(false);
   const location = useLocation();
+
+  const handleSplashComplete = useCallback(() => setSplashDone(true), []);
 
   const loadData = async () => {
     try {
@@ -144,6 +156,7 @@ function AppRoutes() {
 
   useEffect(() => { loadData(); }, []);
 
+  if (!splashDone) return <SplashScreen onComplete={handleSplashComplete} />;
   if (loading) return <LoadingScreen />;
   if (!data) return <LoadingScreen />;
 

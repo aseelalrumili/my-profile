@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../context/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiSun, FiMoon, FiMenu, FiX, FiDownload, FiLock } from 'react-icons/fi';
+import { FiSun, FiMoon, FiMenu, FiX, FiDownload, FiLock, FiHome, FiUser, FiBriefcase, FiMail } from 'react-icons/fi';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 interface Props {
@@ -150,6 +150,29 @@ export default function Navbar({ isAdmin, onAdminClick, onLogout, resumeUrl, pro
           </>
         )}
       </AnimatePresence>
+
+      {/* Bottom Mobile Navigation */}
+      <nav className="mobile-bottom-nav" aria-label={isAr ? 'تنقل الهاتف' : 'Mobile navigation'}>
+        <a href="#about" className="mobile-bottom-nav-item" onClick={(e) => { e.preventDefault(); handleHashLink('#about'); }}>
+          <FiUser size={20} />
+          <span>{t('nav.about')}</span>
+        </a>
+        <a href="#projects" className="mobile-bottom-nav-item" onClick={(e) => { e.preventDefault(); handleHashLink('#projects'); }}>
+          <FiBriefcase size={20} />
+          <span>{t('nav.work')}</span>
+        </a>
+        <Link to="/" className="mobile-bottom-nav-item mobile-bottom-nav-home" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+          <FiHome size={22} />
+        </Link>
+        <Link to="/resume" className="mobile-bottom-nav-item">
+          <FiDownload size={20} />
+          <span>{t('resume.title')}</span>
+        </Link>
+        <a href="#contact" className="mobile-bottom-nav-item" onClick={(e) => { e.preventDefault(); handleHashLink('#contact'); }}>
+          <FiMail size={20} />
+          <span>{t('nav.contact')}</span>
+        </a>
+      </nav>
     </>
   );
 }

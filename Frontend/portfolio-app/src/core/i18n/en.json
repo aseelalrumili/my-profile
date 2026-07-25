@@ -66,7 +66,9 @@
     "copyLink": "Copy Link",
     "copied": "Link copied!",
     "close": "Close",
-    "noImage": "No Image"
+    "noImage": "No Image",
+    "search": "Search projects...",
+    "noResults": "No projects found"
   },
   "certifications": {
     "title": "Certifications",

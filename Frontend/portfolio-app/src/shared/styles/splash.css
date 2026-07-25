@@ -1,0 +1,70 @@
+.splash-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.splash-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.splash-name {
+  display: flex;
+  gap: 0.15em;
+  perspective: 600px;
+}
+
+.splash-letter {
+  font-family: var(--font-heading);
+  font-size: clamp(3rem, 10vw, 6rem);
+  font-weight: 700;
+  color: var(--accent);
+  display: inline-block;
+  text-shadow: 0 0 40px rgba(201, 168, 76, 0.3);
+}
+
+.splash-line {
+  width: clamp(60px, 20vw, 160px);
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  transform-origin: center;
+}
+
+.splash-line-left {
+  transform-origin: right center;
+}
+
+.splash-line-right {
+  transform-origin: left center;
+}
+
+.splash-subtitle {
+  font-family: var(--font-body);
+  font-size: clamp(0.75rem, 2vw, 1rem);
+  color: var(--text-secondary);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-top: 0.5rem;
+}
+
+.splash-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-top: 0.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash-screen {
+    animation: none;
+  }
+}
