@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { addCertification, updateCertification, deleteCertification, fetchCertifications } from '../../../../api/api';
@@ -12,14 +12,19 @@ export default function CertificationsTab({ data, onDataUpdate }: { data: AppDat
   const [form, setForm] = useState({ name: '', nameAr: '', issuer: '', issuerAr: '', issueDate: '', expiryDate: '', credentialUrl: '', logoUrl: '', category: '', categoryAr: '' });
   const [editingId, setEditingId] = useState<number | null>(null);
   const [imageFiles, setImageFiles] = useState<(File | null)[]>([null, null]);
+  const [imagePreviews, setImagePreviews] = useState<(string | null)[]>([null, null]);
   const [existingImages, setExistingImages] = useState<{ url: string | null; index: number }[]>([]);
 
   useEffect(() => { setItems(data.certifications || []); }, [data.certifications]);
 
+  useEffect(() => {
+    return () => { imagePreviews.forEach(u => { if (u) URL.revokeObjectURL(u); }); };
+  }, []);
+
   const handleAdd = async () => {
     if (!form.name) return;
     try {
-      const payload: any = { ...form, sortOrder: String(items.length) };
+      const payload: any = { ...form, sortOrder: items.length };
       for (let i = 0; i < 2; i++) {
         if (imageFiles[i]) {
           payload[`imageUrl${i + 1}`] = await uploadImage(imageFiles[i]!);
@@ -30,7 +35,8 @@ export default function CertificationsTab({ data, onDataUpdate }: { data: AppDat
       if (editingId) { await updateCertification(editingId, payload); setEditingId(null); }
       else { await addCertification(payload); }
       setForm({ name: '', nameAr: '', issuer: '', issuerAr: '', issueDate: '', expiryDate: '', credentialUrl: '', logoUrl: '', category: '', categoryAr: '' });
-      setImageFiles([null, null, null]);
+      setImageFiles([null, null]);
+      setImagePreviews([null, null]);
       setExistingImages([]);
       await onDataUpdate();
       setItems(await fetchCertifications());
@@ -67,7 +73,7 @@ export default function CertificationsTab({ data, onDataUpdate }: { data: AppDat
                 { url: item.imageUrl2 || null, index: 1 },
               ]);
               setImageFiles([null, null]);
-              setEditingId(item.id);
+              setImagePreviews([null, null]);              setEditingId(item.id);
             }}>{t('admin.edit')}</button>
             <button className="btn btn-danger btn-sm" onClick={() => handleDelete(item.id)}>{t('admin.delete')}</button>
           </div>
@@ -103,16 +109,20 @@ export default function CertificationsTab({ data, onDataUpdate }: { data: AppDat
                 {existingImages[i]?.url && !imageFiles[i] ? (
                   <img src={existingImages[i].url!} alt={`${t('admin.image')} ${i + 1}`} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', border: '1px solid var(--border)', display: 'block', marginBottom: '0.25rem' }} />
                 ) : imageFiles[i] ? (
-                  <img src={URL.createObjectURL(imageFiles[i]!)} alt={`${t('admin.preview')} ${i + 1}`} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', border: '1px solid var(--accent)', display: 'block', marginBottom: '0.25rem' }} />
+                  <img src={imagePreviews[i] || ''} alt={`${t('admin.preview')} ${i + 1}`} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', border: '1px solid var(--accent)', display: 'block', marginBottom: '0.25rem' }} />
                 ) : (
                   <div style={{ width: '80px', height: '80px', borderRadius: '8px', border: '2px dashed var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: '0.7rem', marginBottom: '0.25rem' }}>{t('admin.image')} {i + 1}</div>
                 )}
                 <label style={{ fontSize: '0.7rem', color: 'var(--accent)', cursor: 'pointer', textDecoration: 'underline' }}>
                   <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => {
                     const file = e.target.files?.[0] || null;
+                    if (imagePreviews[i]) URL.revokeObjectURL(imagePreviews[i]!);
                     const newFiles = [...imageFiles];
+                    const newPreviews = [...imagePreviews];
                     newFiles[i] = file;
+                    newPreviews[i] = file ? URL.createObjectURL(file) : null;
                     setImageFiles(newFiles);
+                    setImagePreviews(newPreviews);
                     if (file) {
                       const newExisting = [...existingImages];
                       newExisting[i] = { url: null, index: i };

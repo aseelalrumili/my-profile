@@ -56,7 +56,7 @@ export default function AdminPanel({ data, onClose, onDataUpdate, onLogout }: Pr
   const [tab, setTab] = useState<Tab>('profile');
   const [isPinned, setIsPinned] = useState(false);
 
-  const handleLogout = () => { logout(); onLogout(); toast.info(t('admin.logout')); };
+  const handleLogout = () => { onLogout(); toast.info(t('admin.logout')); };
 
   const handleExport = () => {
     const json = JSON.stringify(data, null, 2);

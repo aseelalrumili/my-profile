@@ -83,7 +83,7 @@ export default function BlogTab({ data, onDataUpdate }: { data: AppData; onDataU
                   </div>
                   <div className="list-item-actions">
                     {!comment.isApproved && (
-                      <button className="btn btn-secondary btn-sm" onClick={() => handleApproveComment(comment.id)}>{t('admin.yes')}</button>
+                      <button className="btn btn-secondary btn-sm" onClick={() => handleApproveComment(comment.id)}>{t('admin.approve')}</button>
                     )}
                     <button className="btn btn-danger btn-sm" onClick={() => handleDeleteComment(comment.id)}>{t('admin.delete')}</button>
                   </div>

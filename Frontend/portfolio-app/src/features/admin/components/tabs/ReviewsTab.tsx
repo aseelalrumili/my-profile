@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { FiEye, FiEyeOff, FiTrash2 } from 'react-icons/fi';
 import type { AppData, Review } from '../../../../types';
-import { fetchAllReviews, updateReview, deleteReview, approveReview } from '../../../../api/reviews';
+import { fetchAllReviews, updateReview, deleteReview, approveReview } from '../../../../api/api';
 import { getErrorMessage } from '../helpers';
 
 interface Props {

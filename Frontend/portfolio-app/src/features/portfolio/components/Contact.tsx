@@ -141,7 +141,7 @@ export default function Contact({ data }: { data: AppData }) {
           )}
           {profile.phone && (
             <a
-              href={`https://wa.me/${profile.phone.replace(/[^0-9]/g, '')}`}
+              href={`https://wa.me/${profile.phone!.replace(/[^0-9]/g, '')}`}
               target="_blank"
               rel="noopener noreferrer"
               className="contact-item"

@@ -216,6 +216,11 @@
   },
   "admin": {
     "dashboardTitle": "لوحة التحكم",
+    "frontend": "Frontend",
+    "backend": "Backend",
+    "database": "Database",
+    "other": "Other",
+    "author": "Author",
     "login": "تسجيل دخول المدير",
     "username": "اسم المستخدم",
     "password": "كلمة المرور",

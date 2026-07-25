@@ -46,7 +46,7 @@ function SkipToContent() {
   );
 }
 
-function PageLayout({ children, data }: { children: React.ReactNode; data?: AppData }) {
+function PageLayout({ children, data, onDataUpdate }: { children: React.ReactNode; data?: AppData; onDataUpdate?: () => Promise<void> }) {
   const { isAdmin, login, logout } = useAuth();
   const [showLogin, setShowLogin] = useState(false);
   const [showAdmin, setShowAdmin] = useState(false);
@@ -68,7 +68,7 @@ function PageLayout({ children, data }: { children: React.ReactNode; data?: AppD
           <AdminPanel
             data={data}
             onClose={() => setShowAdmin(false)}
-            onDataUpdate={() => fetchAll().then(() => {})}
+            onDataUpdate={async () => { await onDataUpdate?.(); }}
             onLogout={() => { logout(); setShowAdmin(false); }}
           />
         </Suspense>
@@ -101,11 +101,11 @@ function PageLayout({ children, data }: { children: React.ReactNode; data?: AppD
   );
 }
 
-function HomePage({ data, onLoadData }: { data: AppData; onLoadData: () => Promise<void> }) {
+function HomePage({ data, onDataUpdate }: { data: AppData; onDataUpdate?: () => Promise<void> }) {
   useEffect(() => { trackVisitor('/').catch(() => {}); }, []);
 
   return (
-    <PageLayout data={data}>
+    <PageLayout data={data} onDataUpdate={onDataUpdate}>
       <Particles />
       <Hero data={data} />
       <SectionDivider />
@@ -165,7 +165,7 @@ function AppRoutes() {
       )}
       <Suspense fallback={<LoadingScreen />}>
       <Routes location={location} key={location.pathname}>
-        <Route path="/" element={data ? <HomePage data={data} onLoadData={loadData} /> : <LoadingScreen />} />
+        <Route path="/" element={<HomePage data={data} onDataUpdate={loadData} />} />
         <Route path="/resume" element={
           <PageLayout data={data ?? undefined}>
             <PageTransition>
@@ -228,7 +228,7 @@ export default function App() {
     <ErrorBoundary>
       <ThemeProvider>
         <AuthProvider>
-          <BrowserRouter basename="/my-profile" future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <BrowserRouter basename="/" future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <SkipToContent />
             <AppRoutes />
             <ToastContainer position="bottom-right" autoClose={3000} theme="colored" />

@@ -36,7 +36,7 @@ export default function Footer({ data }: { data: AppData }) {
           </div>
           {data.profile.phone && (
             <a
-              href={`https://wa.me/${data.profile.phone.replace(/[^0-9]/g, '')}`}
+              href={`https://wa.me/${data.profile.phone!.replace(/[^0-9]/g, '')}`}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-outline btn-sm"

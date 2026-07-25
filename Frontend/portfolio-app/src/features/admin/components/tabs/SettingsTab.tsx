@@ -15,7 +15,7 @@ export default function SettingsTab() {
   const { t } = useTranslation();
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
 
-  useEffect(() => { fetchVisitorAnalytics().then(setAnalytics).catch(() => {}); }, []);
+  useEffect(() => { fetchVisitorAnalytics().then(setAnalytics).catch(() => setAnalytics({ totalVisitors: 0, todayVisitors: 0, thisWeek: 0, thisMonth: 0, topPages: [], dailyVisits: [] })); }, []);
 
   if (!analytics) return <div>{t('loading')}</div>;
 

@@ -45,7 +45,7 @@ export default function Projects({ data }: Props) {
       const q = search.toLowerCase();
       result = result.filter(p => {
         const title = (isAr && p.titleAr ? p.titleAr : p.title).toLowerCase();
-        const desc = (isAr && p.descriptionAr ? p.descriptionAr : p.description).toLowerCase();
+        const desc = (isAr && p.descriptionAr ? p.descriptionAr : p.description || '').toLowerCase();
         const tech = (p.techStack || '').toLowerCase();
         return title.includes(q) || desc.includes(q) || tech.includes(q);
       });

@@ -13,7 +13,10 @@ export default function PortfolioPage({ data }: { data: AppData | null }) {
 
   if (!data) return <div className="section"><p>{t('loading')}</p></div>;
 
-  const categories = ['All', 'Design', 'Code'];
+  const hasDesign = data.projects.some(p => p.type === 'Design');
+  const hasCode = data.projects.some(p => p.type === 'Code');
+  const hasFullstack = data.projects.some(p => p.type === 'Full-stack');
+  const categories = ['All', ...([hasDesign && 'Design', hasCode && 'Code', hasFullstack && 'Full-stack'].filter(Boolean) as string[])];
   const filtered = filter === 'All' ? data.projects : data.projects.filter((p) => p.type === filter);
 
   return (

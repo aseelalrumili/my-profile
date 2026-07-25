@@ -215,7 +215,12 @@
     "noComments": "No comments yet."
   },
   "admin": {
-    "dashboardTitle": "لوحة التحكم",
+    "dashboardTitle": "Admin Dashboard",
+    "frontend": "Frontend",
+    "backend": "Backend",
+    "database": "Database",
+    "other": "Other",
+    "author": "Author",
     "login": "Admin Login",
     "username": "Username",
     "password": "Password",

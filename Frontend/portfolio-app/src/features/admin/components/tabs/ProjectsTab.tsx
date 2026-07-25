@@ -37,7 +37,7 @@ function ProjectForm({ project, onSave, onClose, onDeleteMedia }: {
         isPrimary: media.length === 0,
       });
     }
-    const payload: any = { title, description, type, category, techStack, liveUrl, sortOrder: '0', media };
+    const payload: any = { title, description, type, category, techStack, liveUrl, sortOrder: 0, media };
     await onSave(payload); setSaving(false);
   };
 
