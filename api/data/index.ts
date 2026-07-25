@@ -1,5 +1,4 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { get, put } from '@vercel/blob';
 import { verifyToken } from '../auth/verify';
 
 const BLOB_KEY = 'portfolio/data.json';
@@ -11,12 +10,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method === 'OPTIONS') return res.status(200).end();
 
+  const token = process.env.BLOB_READ_WRITE_TOKEN;
+
   if (req.method === 'GET') {
-    const token = process.env.BLOB_READ_WRITE_TOKEN;
-    if (!token) {
-      return res.status(200).json(null);
-    }
+    if (!token) return res.status(200).json(null);
     try {
+      const { get } = await import('@vercel/blob');
       const blob = await get(BLOB_KEY, { token });
       const data = JSON.parse(await blob.text());
       return res.status(200).json(data);
@@ -28,13 +27,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'PUT') {
     const email = verifyToken(req, res);
     if (!email) return;
-
-    const token = process.env.BLOB_READ_WRITE_TOKEN;
-    if (!token) {
-      return res.status(500).json({ error: 'Blob storage not configured' });
-    }
+    if (!token) return res.status(500).json({ error: 'Blob storage not configured' });
 
     try {
+      const { get, put } = await import('@vercel/blob');
       let current: Record<string, unknown> = {};
       try {
         const blob = await get(BLOB_KEY, { token });

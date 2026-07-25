@@ -1,10 +1,10 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { put, get } from '@vercel/blob';
 
 const BLOB_KEY = 'portfolio/visitors.json';
 
 async function loadVisitors(token: string) {
   try {
+    const { get } = await import('@vercel/blob');
     const blob = await get(BLOB_KEY, { token });
     return JSON.parse(await blob.text()) as { page: string; timestamp: string }[];
   } catch {
@@ -13,6 +13,7 @@ async function loadVisitors(token: string) {
 }
 
 async function saveVisitors(visitors: { page: string; timestamp: string }[], token: string) {
+  const { put } = await import('@vercel/blob');
   await put(BLOB_KEY, JSON.stringify(visitors), {
     contentType: 'application/json',
     access: 'public',

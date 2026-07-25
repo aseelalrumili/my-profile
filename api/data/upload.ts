@@ -1,5 +1,4 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { put } from '@vercel/blob';
 import { verifyToken } from '../auth/verify';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -14,11 +13,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (!email) return;
 
   const token = process.env.BLOB_READ_WRITE_TOKEN;
-  if (!token) {
-    return res.status(500).json({ error: 'Blob storage not configured' });
-  }
+  if (!token) return res.status(500).json({ error: 'Blob storage not configured' });
 
   try {
+    const { put } = await import('@vercel/blob');
     const { filename, data: fileData, contentType } = req.body;
     if (!filename || !fileData) {
       return res.status(400).json({ error: 'filename and data required' });
