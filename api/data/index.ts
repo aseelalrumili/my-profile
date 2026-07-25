@@ -15,6 +15,25 @@ function getOpts(): Record<string, string> {
   return opts;
 }
 
+async function readBlob<T = any>(key: string, opts: Record<string, string>): Promise<T | null> {
+  try {
+    const { get } = await import('@vercel/blob');
+    const result = await get(key, { ...opts, access: 'private' });
+    const blobMeta = (result as any).blob || result;
+    if (blobMeta.url) {
+      const resp = await fetch(blobMeta.url);
+      return await resp.json();
+    }
+    if (result.stream) {
+      const text = await new Response(result.stream).text();
+      return JSON.parse(text);
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, PUT, OPTIONS');
@@ -27,11 +46,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'GET') {
     if (!token) return res.status(200).json(null);
     try {
-      const { get } = await import('@vercel/blob');
-      const blob = await get(BLOB_KEY, { ...getOpts(), access: 'private' });
-      return res.status(200).json({ _debug: JSON.stringify({ type: typeof blob.blob, keys: blob.blob ? Object.keys(blob.blob as any) : null, content: String(blob.blob).substring(0, 200) }) });
-    } catch (err: any) {
-      return res.status(200).json({ _debug: err.message || String(err) });
+      const data = await readBlob(BLOB_KEY, getOpts());
+      return res.status(200).json(data);
+    } catch {
+      return res.status(200).json(null);
     }
   }
 
@@ -56,14 +74,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     try {
-      const { get, put } = await import('@vercel/blob');
+      const { put } = await import('@vercel/blob');
       const opts = getOpts();
       let current: Record<string, unknown> = {};
-      try {
-        const blob = await get(BLOB_KEY, { ...opts, access: 'private' });
-        const resp = await fetch(blob.url);
-        current = await resp.json();
-      } catch {}
+      const existing = await readBlob(BLOB_KEY, opts);
+      if (existing && typeof existing === 'object') {
+        current = existing as Record<string, unknown>;
+      }
 
       const update = req.body;
       const merged = { ...current, ...update };

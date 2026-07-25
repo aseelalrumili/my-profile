@@ -15,17 +15,30 @@ function getOpts(): Record<string, string> {
   return opts;
 }
 
+async function readBlob<T = any>(key: string, opts: Record<string, string>): Promise<T | null> {
+  try {
+    const { get } = await import('@vercel/blob');
+    const result = await get(key, { ...opts, access: 'private' });
+    const blobMeta = (result as any).blob || result;
+    if (blobMeta.url) {
+      const resp = await fetch(blobMeta.url);
+      return await resp.json();
+    }
+    if (result.stream) {
+      const text = await new Response(result.stream).text();
+      return JSON.parse(text);
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 async function loadVisitors() {
   const opts = getOpts();
   if (!opts.token) return [];
-  try {
-    const { get } = await import('@vercel/blob');
-    const blob = await get(BLOB_KEY, { ...opts, access: 'private' });
-    const resp = await fetch(blob.url);
-    return (await resp.json()) as { page: string; timestamp: string }[];
-  } catch {
-    return [];
-  }
+  const data = await readBlob<{ page: string; timestamp: string }[]>(BLOB_KEY, opts);
+  return data || [];
 }
 
 async function saveVisitors(visitors: { page: string; timestamp: string }[]) {
@@ -34,6 +47,7 @@ async function saveVisitors(visitors: { page: string; timestamp: string }[]) {
     ...getOpts(),
     contentType: 'application/json',
     access: 'private',
+    allowOverwrite: true,
   });
 }
 
