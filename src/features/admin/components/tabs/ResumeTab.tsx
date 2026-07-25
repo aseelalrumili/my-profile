@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { FiPlus, FiCopy, FiTrash2, FiStar, FiEdit3, FiDownload, FiFileText } from 'react-icons/fi';
@@ -15,6 +15,15 @@ import {
 
 interface Props { data: AppData }
 
+function dedupVersions(arr: ResumeVersion[]): ResumeVersion[] {
+  const seen = new Set<string>();
+  return arr.filter(v => {
+    if (seen.has(v.id)) return false;
+    seen.add(v.id);
+    return true;
+  });
+}
+
 export default function ResumeTab({ data }: Props) {
   const { t, i18n } = useTranslation();
   const isAr = i18n.language === 'ar';
@@ -24,10 +33,27 @@ export default function ResumeTab({ data }: Props) {
   const [showPreview, setShowPreview] = useState(false);
   const [previewKey, setPreviewKey] = useState(0);
   const [loading, setLoading] = useState(true);
+  const creatingRef = useRef(false);
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pendingSettingsRef = useRef<{ id: string; settings: ResumeSettings } | null>(null);
+
+  const flushSave = useCallback(async () => {
+    const pending = pendingSettingsRef.current;
+    if (!pending) return;
+    pendingSettingsRef.current = null;
+    await updateResumeVersion(pending.id, { settings: pending.settings });
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+      flushSave();
+    };
+  }, [flushSave]);
 
   const loadVersions = useCallback(async () => {
     const v = await fetchResumeVersions();
-    setVersions(v);
+    setVersions(dedupVersions(v));
     setLoading(false);
   }, []);
 
@@ -36,24 +62,45 @@ export default function ResumeTab({ data }: Props) {
   const filtered = versions.filter(v => v.type === activeTab);
   const editing = editingId ? versions.find(v => v.id === editingId) : undefined;
 
-  const handleCreate = async () => {
-    const name = isAr
-      ? (activeTab === 'ats' ? 'سيرة ذاتية ATS جديدة' : 'سيرة ذاتية جديدة')
-      : (activeTab === 'ats' ? 'New ATS Resume' : 'New Resume');
-    const settings = activeTab === 'ats'
-      ? { ...defaultAtsSettings, sections: [...defaultAtsSettings.sections] }
-      : { ...defaultResumeSettings, sections: [...defaultResumeSettings.sections] };
-    const v = await createResumeVersion(name, activeTab, settings);
-    setVersions(prev => [...prev, v]);
-    setEditingId(v.id);
-    toast.success(t('resume.versionCreated'));
+  const handleTabSwitch = (tab: 'ats' | 'regular') => {
+    setActiveTab(tab);
+    if (editingId) {
+      const editingVersion = versions.find(v => v.id === editingId);
+      if (editingVersion && editingVersion.type !== tab) {
+        setEditingId(null);
+      }
+    }
   };
 
-  const handleSaveSettings = async (settings: ResumeSettings) => {
-    if (!editingId) return;
-    const v = await updateResumeVersion(editingId, { settings });
-    setVersions(prev => prev.map(x => x.id === v.id ? v : x));
+  const handleCreate = async () => {
+    if (creatingRef.current) return;
+    creatingRef.current = true;
+    try {
+      const name = isAr
+        ? (activeTab === 'ats' ? 'سيرة ذاتية ATS جديدة' : 'سيرة ذاتية جديدة')
+        : (activeTab === 'ats' ? 'New ATS Resume' : 'New Resume');
+      const settings = activeTab === 'ats'
+        ? { ...defaultAtsSettings, sections: [...defaultAtsSettings.sections] }
+        : { ...defaultResumeSettings, sections: [...defaultResumeSettings.sections] };
+      const v = await createResumeVersion(name, activeTab, settings);
+      setVersions(prev => dedupVersions([...prev, v]));
+      setEditingId(v.id);
+      toast.success(t('resume.versionCreated'));
+    } finally {
+      creatingRef.current = false;
+    }
   };
+
+  const handleSaveSettings = useCallback((settings: ResumeSettings) => {
+    const currentId = editingId;
+    if (!currentId) return;
+    setVersions(prev => prev.map(x => x.id === currentId ? { ...x, settings, updatedAt: new Date().toISOString() } : x));
+    pendingSettingsRef.current = { id: currentId, settings };
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(() => {
+      flushSave();
+    }, 600);
+  }, [editingId, flushSave]);
 
   const handleSaveName = async (id: string, name: string) => {
     const v = await updateResumeVersion(id, { name });
@@ -66,7 +113,7 @@ export default function ResumeTab({ data }: Props) {
     if (!source) return;
     const newName = isAr ? `${source.name} (نسخة)` : `${source.name} (Copy)`;
     const v = await cloneResumeVersion(id, newName);
-    setVersions(prev => [...prev, v]);
+    setVersions(prev => dedupVersions([...prev, v]));
     toast.success(t('resume.versionCloned'));
   };
 
@@ -192,7 +239,7 @@ export default function ResumeTab({ data }: Props) {
           <button
             key={tab}
             className={`btn ${activeTab === tab ? 'btn-primary' : 'btn-secondary'} btn-sm`}
-            onClick={() => setActiveTab(tab)}
+            onClick={() => handleTabSwitch(tab)}
             style={{ textTransform: 'capitalize' }}
           >
             {tab === 'ats' ? 'ATS System' : t('resume.regularSystem')}
