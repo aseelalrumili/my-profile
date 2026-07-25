@@ -38,12 +38,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const downloadUrl = blobMeta.downloadUrl || blobMeta.url;
     if (!downloadUrl) {
-      return res.status(404).json({ error: 'Image not found' });
+      return res.status(404).json({ error: 'Image not found', detail: 'no downloadUrl', keys: Object.keys(blobMeta) });
     }
 
     const resp = await fetch(downloadUrl);
     if (!resp.ok) {
-      return res.status(404).json({ error: 'Image not found' });
+      return res.status(404).json({ error: 'Image not found', detail: `fetch ${resp.status}`, downloadUrl: downloadUrl.substring(0, 80) });
     }
 
     const ext = file.split('.').pop()?.toLowerCase() || 'webp';
@@ -57,7 +57,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const buffer = Buffer.from(await resp.arrayBuffer());
     return res.status(200).send(buffer);
-  } catch {
-    return res.status(404).json({ error: 'Image not found' });
+  } catch (err: any) {
+    return res.status(500).json({ error: 'Image not found', detail: err.message });
   }
 }
