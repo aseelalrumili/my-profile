@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import type { ResumeSettings } from '../../../../types/resume';
 import type { AppData } from '../../../../types';
 
@@ -8,6 +9,7 @@ interface Props {
 }
 
 export default function ResumePDF({ data, settings, isAr }: Props) {
+  const { t } = useTranslation();
   const { layout, colors, fonts, sections } = settings;
   const { profile, skills, experience, education, certifications } = data;
 
