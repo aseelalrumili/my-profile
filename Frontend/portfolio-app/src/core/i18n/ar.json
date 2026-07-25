@@ -200,8 +200,7 @@
   },
   "loading": "جاري التحميل...",
   "common": {
-    "backHome": "← الرئيسية",
-    "skipToContent": "انتقل إلى المحتوى"
+    "backHome": "← الرئيسية"
   },
   "backToTop": "العودة للأعلى",
   "share": "مشاركة",

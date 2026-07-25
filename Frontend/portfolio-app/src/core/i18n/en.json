@@ -200,8 +200,7 @@
   },
   "loading": "Loading...",
   "common": {
-    "backHome": "← Home",
-    "skipToContent": "Skip to content"
+    "backHome": "← Home"
   },
   "backToTop": "Back to Top",
   "share": "Share",

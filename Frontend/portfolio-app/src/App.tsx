@@ -38,18 +38,6 @@ const BlogPage = lazy(() => import('./features/blog/components/BlogPage'));
 const BlogPost = lazy(() => import('./features/blog/components/BlogPost'));
 const Page404 = lazy(() => import('./shared/components/UI/Page404'));
 
-function SkipToContent() {
-  const { t } = useTranslation();
-  return (
-    <a href="#main-content" style={{ position: 'absolute', top: '-100%', left: 0, zIndex: 10000, background: 'var(--accent)', color: '#fff', padding: '0.5rem 1rem', textDecoration: 'none', fontWeight: 600 }}
-      onFocus={(e) => { e.currentTarget.style.top = '0'; }}
-      onBlur={(e) => { e.currentTarget.style.top = '-100%'; }}
-    >
-      {t('common.skipToContent')}
-    </a>
-  );
-}
-
 function PageLayout({ children, data }: { children: React.ReactNode; data?: AppData }) {
   const { isAdmin, login, logout } = useAuth();
   const [showLogin, setShowLogin] = useState(false);
@@ -233,7 +221,6 @@ export default function App() {
       <ThemeProvider>
         <AuthProvider>
           <BrowserRouter basename="/my-profile" future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-            <SkipToContent />
             <AppRoutes />
             <ToastContainer position="bottom-right" autoClose={3000} theme="colored" />
           </BrowserRouter>
