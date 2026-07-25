@@ -16,22 +16,23 @@ function getOpts(): Record<string, string> {
 }
 
 async function readBlob<T = any>(key: string, opts: Record<string, string>): Promise<T | null> {
-  try {
-    const { get } = await import('@vercel/blob');
-    const result = await get(key, { ...opts, access: 'private' });
-    const blobMeta = (result as any).blob || result;
-    if (blobMeta.url) {
-      const resp = await fetch(blobMeta.url);
-      return await resp.json();
-    }
-    if (result.stream) {
-      const text = await new Response(result.stream).text();
-      return JSON.parse(text);
-    }
-    return null;
-  } catch (err: any) {
-    throw new Error(`readBlob(${key}): ${err.message}`);
+  const { get } = await import('@vercel/blob');
+  const result = await get(key, { ...opts, access: 'private' });
+  const blobMeta = (result as any).blob || result;
+
+  if (blobMeta.downloadUrl) {
+    const resp = await fetch(blobMeta.downloadUrl);
+    if (resp.ok) return await resp.json();
   }
+  if (blobMeta.url) {
+    const resp = await fetch(blobMeta.url);
+    if (resp.ok) return await resp.json();
+  }
+  if (result.stream) {
+    const text = await new Response(result.stream).text();
+    return JSON.parse(text);
+  }
+  return null;
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -47,9 +48,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (!token) return res.status(200).json(null);
     try {
       const data = await readBlob(BLOB_KEY, getOpts());
-      return res.status(200).json({ _debug: { data, hasData: data !== null } });
+      return res.status(200).json({ _debug_data: data });
     } catch (err: any) {
-      return res.status(200).json({ _debug: err.message });
+      return res.status(200).json({ _debug_err: err.message });
     }
   }
 
@@ -77,10 +78,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const { put } = await import('@vercel/blob');
       const opts = getOpts();
       let current: Record<string, unknown> = {};
-      const existing = await readBlob(BLOB_KEY, opts);
-      if (existing && typeof existing === 'object') {
-        current = existing as Record<string, unknown>;
-      }
+      try {
+        const existing = await readBlob(BLOB_KEY, opts);
+        if (existing && typeof existing === 'object') {
+          current = existing as Record<string, unknown>;
+        }
+      } catch {}
 
       const update = req.body;
       const merged = { ...current, ...update };
