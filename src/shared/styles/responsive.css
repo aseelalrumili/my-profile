@@ -20,7 +20,8 @@
   }
   
   .hero-section {
-    min-height: 100vh;
+    min-height: 100svh;
+    min-height: 100dvh;
     padding: 100px var(--container-padding) var(--space-6);
   }
   
@@ -325,6 +326,7 @@
 @media (max-width: 480px) {
   .hero-section {
     min-height: 100svh;
+    min-height: 100dvh;
   }
   
   .hero-title {
