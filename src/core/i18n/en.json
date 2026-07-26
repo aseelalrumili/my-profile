@@ -358,7 +358,21 @@
     "visitors": "Visitors",
     "noMessages": "No messages.",
     "photo": "Photo",
-    "arSuffix": "(AR)"
+    "arSuffix": "(AR)",
+    "sectionVisibility": "Section Visibility",
+    "saveSectionVisibility": "Save Section Visibility",
+    "themeSettings": "Theme Settings",
+    "changePassword": "Change Password",
+    "newPassword": "New Password",
+    "newPasswordPlaceholder": "Enter new password (min 8 chars)",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordPlaceholder": "Confirm new password",
+    "passwordRequired": "Password is required",
+    "passwordTooShort": "Password must be at least 8 characters",
+    "passwordMismatch": "Passwords do not match",
+    "passwordChanged": "Password changed successfully!",
+    "failedToUpdatePassword": "Failed to change password",
+    "settingsSaved": "Settings saved!"
   },
   "notFound": {
     "title": "404",

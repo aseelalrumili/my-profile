@@ -158,9 +158,9 @@ export default function AdminPanel({ data, onClose, onDataUpdate, onLogout }: Pr
           {tab === 'blog' && <BlogTab data={data} onDataUpdate={onDataUpdate} />}
           {tab === 'testimonials' && <TestimonialsTab data={data} onDataUpdate={onDataUpdate} />}
           {tab === 'reviews' && <ReviewsTab data={data} onDataUpdate={onDataUpdate} />}
-          {tab === 'messages' && <MessagesTab />}
+          {tab === 'messages' && <MessagesTab data={data} onDataUpdate={onDataUpdate} />}
           {tab === 'resume' && <ResumeTab data={data} onDataUpdate={onDataUpdate} />}
-          {tab === 'settings' && <SettingsTab />}
+          {tab === 'settings' && <SettingsTab data={data} onDataUpdate={onDataUpdate} />}
         </div>
       </div>
     </motion.div>
