@@ -19,6 +19,7 @@ async function readBlob<T = any>(key: string, opts: Record<string, string>): Pro
   try {
     const { get } = await import('@vercel/blob');
     const result = await get(key, { ...opts, access: 'private' });
+    if (!result) return null;
     const blobMeta = (result as any).blob || result;
     if (blobMeta.downloadUrl) {
       const resp = await fetch(blobMeta.downloadUrl);
@@ -28,8 +29,8 @@ async function readBlob<T = any>(key: string, opts: Record<string, string>): Pro
       const resp = await fetch(blobMeta.url);
       if (resp.ok) return await resp.json();
     }
-    if (result.stream) {
-      const text = await new Response(result.stream).text();
+    if ((result as any).stream) {
+      const text = await new Response((result as any).stream).text();
       return JSON.parse(text);
     }
     return null;
