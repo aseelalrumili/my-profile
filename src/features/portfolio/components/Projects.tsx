@@ -2,7 +2,7 @@ import { useState, useMemo, memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { FiSearch, FiX } from 'react-icons/fi';
+import { FiFolder } from 'react-icons/fi';
 import type { AppData, Project } from '../../../types';
 import ProjectCard from './ProjectCard';
 import ProjectModal from './ProjectModal';
@@ -17,7 +17,6 @@ function Projects({ data }: Props) {
   const { t } = useTranslation();
   const { isAr, local } = useLocale();
   const [filter, setFilter] = useState<string>('All');
-  const [search, setSearch] = useState('');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   if (!data) return null;
@@ -43,27 +42,17 @@ function Projects({ data }: Props) {
   };
 
   const filtered = useMemo(() => {
-    let result = filter === 'All' ? projects : projects.filter((p) => p.type === filter);
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      result = result.filter(p => {
-        const title = local(p, 'title')?.toLowerCase() || '';
-        const desc = local(p, 'description')?.toLowerCase() || '';
-        const tech = (p.techStack || '').toLowerCase();
-        return title.includes(q) || desc.includes(q) || tech.includes(q);
-      });
-    }
-    return result;
-  }, [projects, filter, search, isAr]);
+    return filter === 'All' ? projects : projects.filter((p) => p.type === filter);
+  }, [projects, filter, isAr]);
 
   const featured = projects.slice(0, 2);
 
   return (
     <section className="section">
-      <SectionHeader title={t('projects.title')} subtitle={t('projects.subtitle')} />
+      <SectionHeader title={t('projects.title')} subtitle={t('projects.subtitle')} icon={<FiFolder />} />
 
       {/* Featured projects showcase */}
-      {featured.length > 0 && !search && filter === 'All' && (
+      {featured.length > 0 && filter === 'All' && (
         <motion.div
           className="projects-featured"
           initial={{ opacity: 0, y: 30 }}
@@ -114,31 +103,7 @@ function Projects({ data }: Props) {
         </motion.div>
       )}
 
-      {/* Search bar */}
-      <motion.div
-        className="projects-search"
-        initial={{ opacity: 0, y: 15 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.4, delay: 0.15 }}
-      >
-        <FiSearch className="projects-search-icon" size={18} />
-        <input
-          type="text"
-          placeholder={t('projects.search')}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="projects-search-input"
-          aria-label={t('projects.search')}
-        />
-        {search && (
-          <button className="projects-search-clear" onClick={() => setSearch('')} aria-label="Clear search">
-            <FiX size={16} />
-          </button>
-        )}
-      </motion.div>
-
-      {/* Category tabs with counts */}
+      {/* Category tabs with counts (without All) */}
       <motion.div
         className="projects-filter"
         initial={{ opacity: 0, y: 15 }}
@@ -146,11 +111,11 @@ function Projects({ data }: Props) {
         viewport={{ once: true }}
         transition={{ duration: 0.4, delay: 0.2 }}
       >
-        {categories.map((cat) => (
+        {categories.filter(c => c !== 'All').map((cat) => (
           <button
             key={cat}
             className={`filter-btn ${filter === cat ? 'active' : ''}`}
-            onClick={() => setFilter(cat)}
+            onClick={() => setFilter(filter === cat ? 'All' : cat)}
           >
             <span>{categoryLabels[cat] || cat}</span>
             <span className="filter-btn-count">{categoryCounts[cat] || 0}</span>

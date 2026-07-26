@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { FiMessageCircle } from 'react-icons/fi';
 import type { AppData } from '../../../types';
 import LazyImage from '../../../shared/components/UI/LazyImage';
 import SectionHeader from '../../../shared/components/UI/SectionHeader';
@@ -37,7 +38,7 @@ export default function Testimonials({ data }: { data: AppData }) {
 
   return (
     <section className="section">
-      <SectionHeader title={t('testimonials.title')} subtitle={t('testimonials.subtitle')} />
+      <SectionHeader title={t('testimonials.title')} subtitle={t('testimonials.subtitle')} icon={<FiMessageCircle />} />
 
       <div className="testimonials-container">
         <AnimatePresence mode="wait">

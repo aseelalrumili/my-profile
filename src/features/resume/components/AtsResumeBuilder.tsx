@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { FiFileText } from 'react-icons/fi';
+import { FiDownload } from 'react-icons/fi';
 import type { AppData } from '@/types';
 import type { ResumeSettings } from '@/core/types/resume';
 import { useLocale } from '@/shared/hooks/useLocale';
@@ -119,7 +119,7 @@ export default function AtsResumeBuilder({ data, settings }: Props) {
           onClick={handleDownloadTxt}
           style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
         >
-          <FiFileText /> {t('resume.ats')} TXT
+          <FiDownload /> PDF
         </button>
       </div>
       <div

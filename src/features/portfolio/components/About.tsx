@@ -1,8 +1,10 @@
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { FiUser } from 'react-icons/fi';
 import type { AppData } from '../../../types';
 import { useCountUp } from '../../../shared/hooks/useCountUp';
 import { useLocale } from '../../../shared/hooks/useLocale';
+import SectionHeader from '../../../shared/components/UI/SectionHeader';
 
 function AboutStatCard({ value, label }: { value: number; label: string }) {
   const { count, ref } = useCountUp(value);
@@ -47,13 +49,7 @@ export default function About({ data }: { data: AppData }) {
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
       >
-        <h2 className="section-title">
-          {t('about.title')}
-          <span className="section-title-underline" />
-        </h2>
-        <p className="section-subtitle">
-          {t('about.subtitle')}
-        </p>
+        <SectionHeader title={t('about.title')} subtitle={t('about.subtitle')} underline icon={<FiUser />} />
       </motion.div>
 
       <div className="about-content">

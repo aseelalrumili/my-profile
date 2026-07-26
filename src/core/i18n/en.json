@@ -72,7 +72,7 @@
   },
   "certifications": {
     "title": "Certifications",
-    "subtitle": "Professional credentials and achievements",
+    "subtitle": "Academic, professional credentials and achievements",
     "viewCredential": "View Credential",
     "viewAll": "View All",
     "issued": "Issued",
@@ -195,7 +195,7 @@
   },
   "certsPage": {
     "title": "Certifications",
-    "subtitle": "Professional credentials and achievements",
+    "subtitle": "Academic, professional credentials and achievements",
     "loadError": "Failed to load certifications."
   },
   "loading": "Loading...",

@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { FiBriefcase } from 'react-icons/fi';
 import type { AppData } from '../../../types';
 import { useLocale } from '../../../shared/hooks/useLocale';
 import SectionHeader from '../../../shared/components/UI/SectionHeader';
@@ -10,7 +11,7 @@ export default function Experience({ data }: { data: AppData }) {
 
   return (
     <section className="section">
-      <SectionHeader title={t('experience.title')} subtitle={t('experience.subtitle')} />
+      <SectionHeader title={t('experience.title')} subtitle={t('experience.subtitle')} icon={<FiBriefcase />} />
 
       <div className="timeline">
         {(data.experience || []).map((exp, idx) => (

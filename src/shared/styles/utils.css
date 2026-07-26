@@ -42,7 +42,22 @@
   margin-bottom: var(--space-2);
   color: var(--text);
   position: relative;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-title-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+  color: var(--bg-primary);
+  font-size: 1.1rem;
+  flex-shrink: 0;
 }
 
 .section-title::after {

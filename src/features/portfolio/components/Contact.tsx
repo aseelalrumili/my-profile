@@ -2,7 +2,7 @@ import { useState, useCallback, type FormEvent } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import { FiMail, FiPhone, FiMapPin, FiMessageCircle } from 'react-icons/fi';
+import { FiMail, FiPhone, FiMapPin, FiMessageCircle, FiSend } from 'react-icons/fi';
 import { sendMessage } from '../../../api/api';
 import type { AppData } from '../../../types';
 import SectionHeader from '../../../shared/components/UI/SectionHeader';
@@ -31,7 +31,7 @@ export default function Contact({ data }: { data: AppData }) {
 
   return (
     <section className="section" id="contact">
-      <SectionHeader title={t('contact.title')} subtitle={t('contact.subtitle')} underline />
+      <SectionHeader title={t('contact.title')} subtitle={t('contact.subtitle')} underline icon={<FiSend />} />
 
       <div className="contact-section">
         <motion.div

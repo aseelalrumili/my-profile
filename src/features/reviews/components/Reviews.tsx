@@ -1,6 +1,7 @@
 import { useState, useEffect, memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { FiStar } from 'react-icons/fi';
 import { fetchReviews, fetchReviewStats } from '../../../api/reviews';
 import type { Review } from '../../../types';
 import SectionHeader from '../../../shared/components/UI/SectionHeader';
@@ -57,7 +58,7 @@ function Reviews({ settings }: { settings?: Record<string, string> }) {
 
   return (
     <section className="section" id="reviews">
-      <SectionHeader title={t('reviews.title')} subtitle={t('reviews.subtitle')} />
+      <SectionHeader title={t('reviews.title')} subtitle={t('reviews.subtitle')} icon={<FiStar />} />
 
       {stats.total > 0 && (
         <motion.div

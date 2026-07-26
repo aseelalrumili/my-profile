@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { FiAward } from 'react-icons/fi';
 import type { AppData } from '../../../types';
 import Lightbox from '../../../shared/components/UI/Lightbox';
 import LazyImage from '../../../shared/components/UI/LazyImage';
@@ -20,7 +21,7 @@ export default function Certifications({ data, limit }: { data: AppData; limit?:
 
   return (
     <section className="section">
-      <SectionHeader title={t('certifications.title')} subtitle={t('certifications.subtitle')} />
+      <SectionHeader title={t('certifications.title')} subtitle={t('certifications.subtitle')} icon={<FiAward />} />
 
       {categories.length > 1 && (
         <div className="certs-filter">

@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { motion, type Variants } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { FiTool } from 'react-icons/fi';
 import type { AppData, Skill } from '../../../types';
 import { useLocale } from '../../../shared/hooks/useLocale';
 import SectionHeader from '../../../shared/components/UI/SectionHeader';
@@ -78,7 +79,7 @@ export default function Skills({ data }: { data: AppData }) {
 
   return (
     <section className="section">
-      <SectionHeader title={t('skills.title')} subtitle={t('skills.subtitle')} underline />
+      <SectionHeader title={t('skills.title')} subtitle={t('skills.subtitle')} underline icon={<FiTool />} />
 
       <div className="skills-split">
         <SkillColumn title={t('skills.designTools')} skills={designSkills} isAr={isAr} containerVariants={containerVariants} cardVariants={cardVariants} />

@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { FiPrinter, FiDownload } from 'react-icons/fi';
+import { FiDownload } from 'react-icons/fi';
 import type { AppData } from '@/types';
 import type { ResumeSettings } from '@/core/types/resume';
 import { useLocale } from '@/shared/hooks/useLocale';
@@ -115,14 +115,9 @@ export default function RegularResumeBuilder({ data, settings }: Props) {
   return (
     <>
       <div className="resume-actions no-print" style={{ justifyContent: 'center', marginBottom: '1rem' }}>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <button className="btn btn-outline btn-sm" onClick={handlePrint} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
-            <FiPrinter /> {t('resume.print')}
-          </button>
-          <button className="btn btn-outline btn-sm" onClick={handlePrint} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
-            <FiDownload /> PDF
-          </button>
-        </div>
+        <button className="btn btn-outline btn-sm" onClick={handlePrint} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+          <FiDownload /> PDF
+        </button>
       </div>
 
       <div

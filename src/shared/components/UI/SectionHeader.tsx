@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react';
 import { motion, type Target } from 'framer-motion';
 
 interface Props {
@@ -5,9 +6,10 @@ interface Props {
   subtitle: string;
   animate?: boolean;
   underline?: boolean;
+  icon?: ReactNode;
 }
 
-export default function SectionHeader({ title, subtitle, animate, underline }: Props) {
+export default function SectionHeader({ title, subtitle, animate, underline, icon }: Props) {
   const initial: Target = { opacity: 0, y: 30 };
   const visible: Target = { opacity: 1, y: 0 };
   const trigger = animate ? { animate: visible } : { whileInView: visible };
@@ -21,6 +23,7 @@ export default function SectionHeader({ title, subtitle, animate, underline }: P
         viewport={{ once: true }}
         transition={{ duration: 0.5 }}
       >
+        {icon && <span className="section-title-icon">{icon}</span>}
         {title}
         {underline && <span className="section-title-underline" />}
       </motion.h2>
