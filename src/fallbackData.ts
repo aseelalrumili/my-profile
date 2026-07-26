@@ -36,6 +36,7 @@ export const fallbackData: AppData = {
   blogPosts: [],
   testimonials: [],
   reviews: [],
+  messages: [],
   settings: {},
   resumeVersions: [
     {

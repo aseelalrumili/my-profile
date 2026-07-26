@@ -6,12 +6,15 @@ export function useLocale() {
   const isAr = i18n.language === 'ar';
 
   const local = useCallback(
-    <T extends Record<string, unknown>>(obj: T, field: string): T[typeof field] | undefined => {
+    <T extends object, K extends keyof T & string>(obj: T, field: K): T[K] | undefined => {
       if (isAr) {
-        const arKey = `${field}Ar` as keyof T;
-        if (obj[arKey] !== undefined && obj[arKey] !== '') return obj[arKey];
+        const arKey = `${field}Ar` as K;
+        if (arKey in obj) {
+          const val = obj[arKey];
+          if (val !== undefined && val !== null && val !== '') return val;
+        }
       }
-      return obj[field as keyof T];
+      return obj[field];
     },
     [isAr]
   );

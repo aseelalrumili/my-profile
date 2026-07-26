@@ -34,7 +34,7 @@ export default function CertificationsTab({ data, onDataUpdate }: { data: AppDat
         }
       }
       if (editingId) { await updateCertification(editingId, payload); setEditingId(null); }
-      else { await addCertification(payload); }
+      else { await addCertification(payload as any); }
       setForm({ name: '', nameAr: '', issuer: '', issuerAr: '', issueDate: '', expiryDate: '', credentialUrl: '', logoUrl: '', category: '', categoryAr: '' });
       setImageFiles([null, null]);
       setImagePreviews([null, null]);

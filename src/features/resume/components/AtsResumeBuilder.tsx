@@ -16,10 +16,10 @@ export default function AtsResumeBuilder({ data, settings }: Props) {
   const { profile, skills = [], experience = [], education = [], certifications = [] } = data;
   const { sections } = settings;
 
-  const name = local(profile, 'fullName');
-  const title = local(profile, 'jobTitle');
-  const bio = local(profile, 'bio');
-  const location = local(profile, 'location');
+  const name = local(profile, 'fullName') || profile.fullName;
+  const title = local(profile, 'jobTitle') || profile.jobTitle;
+  const bio = local(profile, 'bio') || profile.bio;
+  const location = local(profile, 'location') || profile.location;
 
   const visibleSections = sections.filter((s) => s.visible);
 
@@ -82,7 +82,7 @@ export default function AtsResumeBuilder({ data, settings }: Props) {
       if (!content) continue;
 
       lines.push(sep);
-      lines.push(getSectionTitle(section).toUpperCase());
+      lines.push((getSectionTitle(section) || '').toUpperCase());
       lines.push(sepShort);
 
       if (section.type === 'skills') {

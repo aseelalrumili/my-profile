@@ -50,7 +50,7 @@ export default function ResumePreview({ data, settings }: Props) {
       case 'certifications':
         return certifications.length > 0 ? <ResumeCertifications items={certifications} settings={settings} /> : null;
       case 'custom':
-        return <ResumeCustomSection title={getSectionTitle(section)} content={local(section, 'customContent') || ''} settings={settings} />;
+        return <ResumeCustomSection title={getSectionTitle(section) || ''} content={local(section, 'customContent') || ''} settings={settings} />;
       default:
         return null;
     }
