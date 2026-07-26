@@ -102,6 +102,18 @@
     display: none;
   }
 
+  /* Prevent .nav.scrolled from shrinking buttons on mobile */
+  .nav.scrolled .nav-lang-btn,
+  .nav.scrolled .nav-toggle-btn,
+  .nav.scrolled .nav-admin-btn {
+    width: 44px;
+    height: 44px;
+  }
+
+  .nav.scrolled .nav-logo {
+    font-size: clamp(0.85rem, 3.5vw, 1.1rem);
+  }
+
   /* ===== MOBILE MENU — Full screen overlay ===== */
   .mobile-menu-overlay {
     background: rgba(0, 0, 0, 0.7);

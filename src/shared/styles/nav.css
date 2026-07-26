@@ -16,8 +16,7 @@
   border-top: none;
   border-radius: 0 0 16px 16px;
   transition: background var(--dur-base) var(--ease-out),
-              box-shadow var(--dur-base) var(--ease-out),
-              padding var(--dur-base) var(--ease-out);
+              box-shadow var(--dur-base) var(--ease-out);
 }
 
 [data-theme="light"] .nav {
@@ -130,7 +129,7 @@
   font-size: var(--fs-xs);
   font-weight: var(--fw-semibold);
   cursor: pointer;
-  transition: all var(--dur-fast);
+  transition: color var(--dur-fast), border-color var(--dur-fast);
 }
 
 .nav-lang-btn:hover { border-color: var(--accent); color: var(--accent); }
@@ -147,7 +146,7 @@
   justify-content: center;
   cursor: pointer;
   font-size: 1rem;
-  transition: all var(--dur-fast);
+  transition: color var(--dur-fast), border-color var(--dur-fast);
 }
 
 .nav-toggle-btn:hover { border-color: var(--accent); color: var(--accent); }
@@ -161,7 +160,7 @@
   font-size: var(--fs-xs);
   font-weight: var(--fw-semibold);
   cursor: pointer;
-  transition: all var(--dur-fast);
+  transition: background var(--dur-fast);
 }
 
 .nav-cv-btn:hover { background: var(--accent-hover); }
@@ -178,7 +177,7 @@
   justify-content: center;
   font-size: var(--fs-xs);
   cursor: pointer;
-  transition: all var(--dur-fast);
+  transition: color var(--dur-fast), border-color var(--dur-fast);
 }
 
 .nav-admin-btn:hover { border-color: var(--accent); color: var(--accent); }
