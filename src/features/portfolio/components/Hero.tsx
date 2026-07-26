@@ -1,11 +1,13 @@
-import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
+import { useRef, useState, useCallback, useEffect, useMemo, memo } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { FiArrowRight, FiDownload } from 'react-icons/fi';
 import { FaLinkedinIn, FaGithub, FaTwitter, FaInstagram, FaBehance, FaDribbble, FaGlobe } from 'react-icons/fa';
 import type { AppData } from '../../../types';
 import { useCountUp } from '../../../shared/hooks/useCountUp';
+import { useLocale } from '../../../shared/hooks/useLocale';
 import LazyImage from '../../../shared/components/UI/LazyImage';
+import HeroFloatingShapes from './HeroFloatingShapes';
 
 const socialIcons: Record<string, React.ReactNode> = {
   linkedin: <FaLinkedinIn />,
@@ -34,21 +36,12 @@ function StatCounter({ value, label }: { value: number; label: string }) {
   );
 }
 
-const floatingShapes = [
-  { size: 80, x: '10%', y: '15%', delay: 0, type: 'circle' as const },
-  { size: 50, x: '85%', y: '20%', delay: 1.5, type: 'diamond' as const },
-  { size: 35, x: '75%', y: '70%', delay: 0.8, type: 'circle' as const },
-  { size: 60, x: '15%', y: '75%', delay: 2, type: 'diamond' as const },
-  { size: 25, x: '50%', y: '10%', delay: 1.2, type: 'circle' as const },
-  { size: 45, x: '90%', y: '50%', delay: 0.5, type: 'diamond' as const },
-];
-
-export default function Hero({ data }: { data: AppData }) {
-  const { t, i18n } = useTranslation();
+function Hero({ data }: { data: AppData }) {
+  const { t } = useTranslation();
+  const { isAr, local } = useLocale();
   const { profile, socialLinks } = data;
   const photoRef = useRef<HTMLDivElement>(null);
   const [transform, setTransform] = useState('');
-  const isAr = i18n.language === 'ar';
   const sectionRef = useRef<HTMLElement>(null);
 
   const { scrollYProgress } = useScroll({
@@ -57,8 +50,8 @@ export default function Hero({ data }: { data: AppData }) {
   });
   const parallaxY = useTransform(scrollYProgress, [0, 1], [0, -100]);
 
-  const getName = () => isAr && profile.fullNameAr ? profile.fullNameAr : profile.fullName;
-  const getJobTitle = () => isAr && profile.jobTitleAr ? profile.jobTitleAr : profile.jobTitle;
+  const getName = () => local(profile, 'fullName') || profile.fullName;
+  const getJobTitle = () => local(profile, 'jobTitle') || profile.jobTitle;
 
   const nameParts = useMemo(() => {
     const name = getName() || 'Your Name';
@@ -86,31 +79,7 @@ export default function Hero({ data }: { data: AppData }) {
     <section className="hero-section" ref={sectionRef}>
       <div className="hero-gradient-bg" />
 
-      <div aria-hidden="true">
-        {floatingShapes.map((shape, i) => (
-          <motion.div
-            key={i}
-            className={`floating-shape floating-shape-${shape.type}`}
-            style={{
-              width: shape.size,
-              height: shape.size,
-              left: shape.x,
-              top: shape.y,
-            }}
-            animate={{
-              y: [0, -20, 0],
-              rotate: shape.type === 'diamond' ? [45, 55, 45] : [0, 360],
-              opacity: [0.12, 0.25, 0.12],
-            }}
-            transition={{
-              duration: 6 + i,
-              repeat: Infinity,
-              delay: shape.delay,
-              ease: 'easeInOut',
-            }}
-          />
-        ))}
-      </div>
+      <HeroFloatingShapes />
 
       <motion.div className="hero-content" style={{ y: parallaxY }}>
         <div className="hero-text">
@@ -161,7 +130,7 @@ export default function Hero({ data }: { data: AppData }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.65 }}
           >
-            {isAr && profile.bioAr ? profile.bioAr : (profile.bio || t('hero.bio'))}
+            {local(profile, 'bio') || t('hero.bio')}
           </motion.p>
 
           <motion.div
@@ -237,3 +206,5 @@ export default function Hero({ data }: { data: AppData }) {
     </section>
   );
 }
+
+export default memo(Hero);

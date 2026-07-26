@@ -1,5 +1,10 @@
-export function getErrorMessage(err: any, fallback: string): string {
-  const detail = err?.response?.data?.error || err?.response?.data?.inner || err?.message;
+export function getErrorMessage(err: unknown, fallback: string): string {
+  if (err && typeof err === 'object' && 'response' in err) {
+    const axiosErr = err as { response?: { data?: { error?: string; inner?: string } } };
+    const detail = axiosErr.response?.data?.error || axiosErr.response?.data?.inner;
+    if (detail) return `${fallback}: ${detail}`;
+  }
+  const detail = err instanceof Error ? err.message : undefined;
   return detail ? `${fallback}: ${detail}` : fallback;
 }
 

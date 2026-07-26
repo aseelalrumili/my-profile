@@ -69,24 +69,24 @@ export default function AdminPanel({ data, onClose, onDataUpdate, onLogout }: Pr
   };
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [importing, setImporting] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
 
   const handleImportClick = () => { fileInputRef.current?.click(); };
 
   const handleImportFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setImporting(true);
+    setIsImporting(true);
     try {
       const text = await file.text();
       const json = JSON.parse(text);
       await importData(json);
       toast.success(t('admin.dataImported'));
       await onDataUpdate();
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(getErrorMessage(err, t('admin.importError')));
     } finally {
-      setImporting(false);
+      setIsImporting(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
@@ -118,7 +118,7 @@ export default function AdminPanel({ data, onClose, onDataUpdate, onLogout }: Pr
         <h2 style={{ fontFamily: 'var(--font-heading)', margin: 0 }}>{t('admin.dashboardTitle')}</h2>
         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
           <button className="btn btn-secondary btn-sm" onClick={handleExport}>{t('admin.exportData')}</button>
-          <button className="btn btn-secondary btn-sm" onClick={handleImportClick} disabled={importing}>{importing ? t('admin.importing') : t('admin.importData')}</button>
+          <button className="btn btn-secondary btn-sm" onClick={handleImportClick} disabled={isImporting}>{isImporting ? t('admin.importing') : t('admin.importData')}</button>
           <input ref={fileInputRef} type="file" accept=".json" style={{ display: 'none' }} onChange={handleImportFile} />
           <button className="btn btn-danger btn-sm" onClick={handleLogout}>{t('admin.logout')}</button>
           <button className="btn btn-secondary btn-sm" onClick={onClose}>{t('admin.close')}</button>
@@ -158,9 +158,9 @@ export default function AdminPanel({ data, onClose, onDataUpdate, onLogout }: Pr
           {tab === 'blog' && <BlogTab data={data} onDataUpdate={onDataUpdate} />}
           {tab === 'testimonials' && <TestimonialsTab data={data} onDataUpdate={onDataUpdate} />}
           {tab === 'reviews' && <ReviewsTab data={data} onDataUpdate={onDataUpdate} />}
-          {tab === 'messages' && <MessagesTab />}
+          {tab === 'messages' && <MessagesTab data={data} onDataUpdate={onDataUpdate} />}
           {tab === 'resume' && <ResumeTab data={data} onDataUpdate={onDataUpdate} />}
-          {tab === 'settings' && <SettingsTab />}
+          {tab === 'settings' && <SettingsTab data={data} onDataUpdate={onDataUpdate} />}
         </div>
       </div>
     </motion.div>

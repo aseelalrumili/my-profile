@@ -4,6 +4,7 @@ import type { Project } from '../../../types';
 import Lightbox from '../../../shared/components/UI/Lightbox';
 import ShareButtons from '../../../shared/components/UI/ShareButtons';
 import LazyImage from '../../../shared/components/UI/LazyImage';
+import { useLocale } from '../../../shared/hooks/useLocale';
 
 interface Props {
   project: Project | null;
@@ -11,14 +12,14 @@ interface Props {
 }
 
 export default function ProjectModal({ project, onClose }: Props) {
-  const { t, i18n } = useTranslation();
-  const isAr = i18n.language === 'ar';
+  const { t } = useTranslation();
+  const { local } = useLocale();
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
   if (!project) return null;
 
-  const getTitle = isAr && project.titleAr ? project.titleAr : project.title;
-  const getDesc = isAr && project.descriptionAr ? project.descriptionAr : project.description;
+  const getTitle = local(project, 'title') || project.title;
+  const getDesc = local(project, 'description') || '';
 
   return (
     <>
@@ -43,25 +44,25 @@ export default function ProjectModal({ project, onClose }: Props) {
           {project.problem && (
             <div className="project-modal-casestudy">
               <h4>{t('projects.problem')}</h4>
-              <p>{isAr && project.problemAr ? project.problemAr : project.problem}</p>
+              <p>{local(project, 'problem')}</p>
             </div>
           )}
           {project.solution && (
             <div className="project-modal-casestudy">
               <h4>{t('projects.solution')}</h4>
-              <p>{isAr && project.solutionAr ? project.solutionAr : project.solution}</p>
+              <p>{local(project, 'solution')}</p>
             </div>
           )}
           {project.role && (
             <div className="project-modal-casestudy">
               <h4>{t('projects.role')}</h4>
-              <p>{isAr && project.roleAr ? project.roleAr : project.role}</p>
+              <p>{local(project, 'role')}</p>
             </div>
           )}
           {project.impact && (
             <div className="project-modal-casestudy">
               <h4>{t('projects.impact')}</h4>
-              <p>{isAr && project.impactAr ? project.impactAr : project.impact}</p>
+              <p>{local(project, 'impact')}</p>
             </div>
           )}
           {project.techStack && (

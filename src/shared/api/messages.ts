@@ -11,5 +11,5 @@ export const sendMessage = async (data: Omit<Message, 'id' | 'isRead' | 'created
   });
 };
 
-export const markMessageRead = (id: number) => updateItem<Message>('messages', id, { isRead: true } as any);
+export const markMessageRead = (id: number) => updateItem<Message>('messages', id, { isRead: true });
 export const deleteMessage = (id: number) => removeItem<Message>('messages', id);

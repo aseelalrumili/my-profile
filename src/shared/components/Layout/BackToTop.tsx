@@ -5,17 +5,17 @@ import { FiArrowUp } from 'react-icons/fi';
 
 export default function BackToTop() {
   const { t } = useTranslation();
-  const [visible, setVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setVisible(window.scrollY > 300);
+    const handleScroll = () => setIsVisible(window.scrollY > 300);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
     <AnimatePresence>
-      {visible && (
+      {isVisible && (
         <motion.button
           className="back-to-top"
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}

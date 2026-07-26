@@ -19,12 +19,12 @@ export default function EducationTab({ data, onDataUpdate }: { data: AppData; on
       setForm({ degree: '', degreeAr: '', institution: '', institutionAr: '', period: '', description: '' });
       toast.success(t('admin.educationUpdated'));
       onDataUpdate?.();
-    } catch (err: any) { toast.error(getErrorMessage(err, t('admin.failed'))); }
+    } catch (err: unknown) { toast.error(getErrorMessage(err, t('admin.failed'))); }
   };
 
   const handleDelete = async (id: number) => {
     try { await deleteEducation(id); setItems(items.filter(i => i.id !== id)); toast.success(t('admin.deleted')); onDataUpdate?.(); }
-    catch (err: any) { toast.error(getErrorMessage(err, t('admin.failed'))); }
+    catch (err: unknown) { toast.error(getErrorMessage(err, t('admin.failed'))); }
   };
 
   const handleSort = async (index: number, dir: 'up' | 'down') => {

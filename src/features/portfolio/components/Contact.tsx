@@ -1,21 +1,23 @@
-import { useState, type FormEvent } from 'react';
+import { useState, useCallback, type FormEvent } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import { FiMail, FiPhone, FiMapPin, FiMessageCircle } from 'react-icons/fi';
+import { FiMail, FiPhone, FiMapPin, FiMessageCircle, FiSend } from 'react-icons/fi';
 import { sendMessage } from '../../../api/api';
 import type { AppData } from '../../../types';
+import SectionHeader from '../../../shared/components/UI/SectionHeader';
+import { useLocale } from '../../../shared/hooks/useLocale';
 
 export default function Contact({ data }: { data: AppData }) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { profile } = data;
-  const isAr = i18n.language === 'ar';
+  const { isAr, local } = useLocale();
   const [form, setForm] = useState({ name: '', phone: '', subject: '', messageText: '' });
-  const [sending, setSending] = useState(false);
+  const [isSending, setIsSending] = useState(false);
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = useCallback(async (e: FormEvent) => {
     e.preventDefault();
-    setSending(true);
+    setIsSending(true);
     try {
       await sendMessage(form);
       toast.success(t('contact.success'));
@@ -23,31 +25,13 @@ export default function Contact({ data }: { data: AppData }) {
     } catch {
       toast.error(t('contact.error'));
     } finally {
-      setSending(false);
+      setIsSending(false);
     }
-  };
+  }, [form, t]);
 
   return (
     <section className="section" id="contact">
-      <motion.h2
-        className="section-title"
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-      >
-        {t('contact.title')}
-        <span className="section-title-underline" />
-      </motion.h2>
-      <motion.p
-        className="section-subtitle"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-      >
-        {t('contact.subtitle')}
-      </motion.p>
+      <SectionHeader title={t('contact.title')} subtitle={t('contact.subtitle')} underline icon={<FiSend />} />
 
       <div className="contact-section">
         <motion.div
@@ -99,8 +83,8 @@ export default function Contact({ data }: { data: AppData }) {
                 required
               />
             </div>
-            <button type="submit" className="contact-btn primary" disabled={sending}>
-              {sending ? t('contact.sending') : t('contact.send')}
+            <button type="submit" className="contact-btn primary" disabled={isSending}>
+              {isSending ? t('contact.sending') : t('contact.send')}
             </button>
           </motion.form>
         </motion.div>
@@ -135,7 +119,7 @@ export default function Contact({ data }: { data: AppData }) {
               <div className="contact-icon"><FiMapPin /></div>
               <div>
                 <div className="contact-label">{t('contact.locationLabel')}</div>
-                <div className="contact-value">{isAr && profile.locationAr ? profile.locationAr : profile.location}</div>
+                <div className="contact-value">{local(profile, 'location')}</div>
               </div>
             </div>
           )}

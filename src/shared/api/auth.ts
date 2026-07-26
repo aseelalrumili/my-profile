@@ -1,27 +1,28 @@
 import axios from 'axios';
+import { safeStorage } from '../utils/safeStorage';
 
 export const login = async (email: string, password: string) => {
   const { data } = await axios.post('/api/auth/login', { email, password });
-  localStorage.setItem('token', data.token);
-  localStorage.setItem('email', data.email);
-  localStorage.setItem('tokenExpiry', data.expiration);
+  safeStorage.setItem('token', data.token);
+  safeStorage.setItem('email', data.email);
+  safeStorage.setItem('tokenExpiry', data.expiration);
   return data;
 };
 
 export const logout = async () => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('email');
-  localStorage.removeItem('tokenExpiry');
+  safeStorage.removeItem('token');
+  safeStorage.removeItem('email');
+  safeStorage.removeItem('tokenExpiry');
 };
 
 export const isAuthenticated = async (): Promise<boolean> => {
-  const token = localStorage.getItem('token');
-  const expiry = localStorage.getItem('tokenExpiry');
+  const token = safeStorage.getItem('token');
+  const expiry = safeStorage.getItem('tokenExpiry');
   if (!token) return false;
   if (expiry && new Date(expiry) < new Date()) {
-    localStorage.removeItem('token');
-    localStorage.removeItem('email');
-    localStorage.removeItem('tokenExpiry');
+    safeStorage.removeItem('token');
+    safeStorage.removeItem('email');
+    safeStorage.removeItem('tokenExpiry');
     return false;
   }
   return true;

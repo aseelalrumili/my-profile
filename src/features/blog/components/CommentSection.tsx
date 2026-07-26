@@ -11,21 +11,21 @@ interface Props {
 export default function CommentSection({ postId }: Props) {
   const { t } = useTranslation();
   const [comments, setComments] = useState<BlogComment[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [form, setForm] = useState({ authorName: '', authorEmail: '', content: '' });
-  const [submitting, setSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     fetchBlogComments(postId)
       .then(setComments)
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, [postId]);
+      .catch(() => toast.error(t('contact.error')))
+      .finally(() => setIsLoading(false));
+  }, [postId, t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.authorName || !form.authorEmail || !form.content) return;
-    setSubmitting(true);
+    setIsSubmitting(true);
     try {
       await addBlogComment({ blogPostId: postId, ...form });
       setForm({ authorName: '', authorEmail: '', content: '' });
@@ -33,7 +33,7 @@ export default function CommentSection({ postId }: Props) {
     } catch {
       toast.error(t('contact.error'));
     } finally {
-      setSubmitting(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -76,13 +76,13 @@ export default function CommentSection({ postId }: Props) {
             style={{ minHeight: '80px' }}
           />
         </div>
-        <button className="btn btn-primary btn-sm" type="submit" disabled={submitting}>
-          {submitting ? t('contact.sending') : t('comments.submit')}
+        <button className="btn btn-primary btn-sm" type="submit" disabled={isSubmitting}>
+          {isSubmitting ? t('contact.sending') : t('comments.submit')}
         </button>
       </form>
 
       <div className="comments-list">
-        {loading ? (
+        {isLoading ? (
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{t('loading')}</p>
         ) : comments.length === 0 ? (
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{t('comments.noComments')}</p>

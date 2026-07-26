@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { safeStorage } from '@/shared/utils/safeStorage';
 
 export const API_BASE = '/api';
 
@@ -18,10 +19,14 @@ export async function convertToWebP(file: File, quality = 0.8): Promise<File> {
   const canvas = document.createElement('canvas');
   canvas.width = bitmap.width;
   canvas.height = bitmap.height;
-  const ctx = canvas.getContext('2d')!;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('Canvas 2D context not supported');
   ctx.drawImage(bitmap, 0, 0);
-  const blob: Blob = await new Promise((resolve) =>
-    canvas.toBlob((b) => resolve(b!), 'image/webp', quality)
+  const blob: Blob = await new Promise((resolve, reject) =>
+    canvas.toBlob((b) => {
+      if (b) resolve(b);
+      else reject(new Error('Canvas toBlob failed'));
+    }, 'image/webp', quality)
   );
   return new File([blob], file.name.replace(/\.[^.]+$/, '.webp'), { type: 'image/webp' });
 }
@@ -31,7 +36,7 @@ export async function uploadImage(file: File): Promise<string> {
   const base64 = await fileToBase64(converted);
   const base64Data = base64.split(',')[1];
 
-  const token = localStorage.getItem('token');
+  const token = safeStorage.getItem('token');
   const { data } = await axios.post('/api/data/upload', {
     filename: converted.name,
     data: base64Data,
@@ -48,7 +53,7 @@ export async function uploadFile(file: File): Promise<string> {
 }
 
 API.interceptors.request.use(function (config) {
-  var token = localStorage.getItem('token');
+  const token = safeStorage.getItem('token');
   if (token) {
     config.headers['Authorization'] = 'Bearer ' + token;
   }
@@ -59,8 +64,8 @@ API.interceptors.response.use(
   function (response) { return response; },
   function (error) {
     if (error.response && error.response.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('email');
+      safeStorage.removeItem('token');
+      safeStorage.removeItem('email');
       window.location.reload();
     }
     return Promise.reject(error);

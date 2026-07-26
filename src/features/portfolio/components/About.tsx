@@ -1,7 +1,10 @@
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { FiUser, FiBookOpen } from 'react-icons/fi';
 import type { AppData } from '../../../types';
 import { useCountUp } from '../../../shared/hooks/useCountUp';
+import { useLocale } from '../../../shared/hooks/useLocale';
+import SectionHeader from '../../../shared/components/UI/SectionHeader';
 
 function AboutStatCard({ value, label }: { value: number; label: string }) {
   const { count, ref } = useCountUp(value);
@@ -19,10 +22,10 @@ function AboutStatCard({ value, label }: { value: number; label: string }) {
 }
 
 export default function About({ data }: { data: AppData }) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { profile, education = [] } = data;
-  const isAr = i18n.language === 'ar';
-  const getBio = () => isAr && profile.bioAr ? profile.bioAr : profile.bio;
+  const { isAr, local } = useLocale();
+  const getBio = () => local(profile, 'bio');
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -46,13 +49,7 @@ export default function About({ data }: { data: AppData }) {
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
       >
-        <h2 className="section-title">
-          {t('about.title')}
-          <span className="section-title-underline" />
-        </h2>
-        <p className="section-subtitle">
-          {t('about.subtitle')}
-        </p>
+        <SectionHeader title={t('about.title')} subtitle={t('about.subtitle')} underline icon={<FiUser />} />
       </motion.div>
 
       <div className="about-content">
@@ -83,7 +80,7 @@ export default function About({ data }: { data: AppData }) {
             {profile.location && (
               <motion.div className="about-info-item" variants={itemVariants}>
                 <span className="about-info-label">{t('about.location')}</span>
-                <p className="about-info-value">{isAr && profile.locationAr ? profile.locationAr : profile.location}</p>
+                <p className="about-info-value">{local(profile, 'location')}</p>
               </motion.div>
             )}
             {profile.phone && (
@@ -101,7 +98,10 @@ export default function About({ data }: { data: AppData }) {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            <h3 className="about-subtitle">{t('about.education') || 'Education'}</h3>
+            <h3 className="section-title" style={{ fontSize: 'var(--fs-h3)' }}>
+              <span className="section-title-icon" style={{ width: '1.8rem', height: '1.8rem', fontSize: '0.95rem' }}><FiBookOpen /></span>
+              {t('about.education') || 'Education'}
+            </h3>
             <div className="about-timeline">
               {education.map((edu, idx) => (
                 <motion.div
@@ -115,8 +115,8 @@ export default function About({ data }: { data: AppData }) {
                   <div className="about-timeline-dot" />
                   <div className="about-timeline-content">
                     <span className="about-timeline-period">{edu.period}</span>
-                    <h4>{isAr && edu.degreeAr ? edu.degreeAr : edu.degree}</h4>
-                    <p>{isAr && edu.institutionAr ? edu.institutionAr : edu.institution}</p>
+                    <h4>{local(edu, 'degree')}</h4>
+                    <p>{local(edu, 'institution')}</p>
                   </div>
                 </motion.div>
               ))}

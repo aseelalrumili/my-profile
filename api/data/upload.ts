@@ -1,17 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-
-function getToken(): string | null {
-  return process.env.PORTFOLIO_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN || null;
-}
-
-function getOpts(): Record<string, string> {
-  const opts: Record<string, string> = {};
-  const token = getToken();
-  const storeId = process.env.PORTFOLIO_STORE_ID || null;
-  if (token) opts.token = token;
-  if (storeId) opts.storeId = storeId;
-  return opts;
-}
+import { getToken, getOpts, getErrorMessage } from '../lib/blobUtils';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -53,14 +41,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const justName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
     const blobPath = `portfolio/images/${justName}`;
 
-    const blob = await put(blobPath, buffer, {
+    await put(blobPath, buffer, {
       ...getOpts(),
       contentType: contentType || 'image/webp',
       access: 'private',
     });
 
     return res.status(200).json({ url: `/api/data/image?file=${justName}` });
-  } catch (err: any) {
-    return res.status(500).json({ error: err.message || 'Upload failed' });
+  } catch (err: unknown) {
+    return res.status(500).json({ error: getErrorMessage(err) || 'Upload failed' });
   }
 }

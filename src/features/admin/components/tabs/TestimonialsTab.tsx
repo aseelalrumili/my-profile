@@ -21,12 +21,12 @@ export default function TestimonialsTab({ data, onDataUpdate }: { data: AppData;
       setForm({ clientName: '', clientNameAr: '', clientTitle: '', clientTitleAr: '', avatarUrl: '', content: '', contentAr: '', rating: 5 });
       toast.success(t('admin.testimonialSaved'));
       onDataUpdate?.();
-    } catch (err: any) { toast.error(getErrorMessage(err, t('admin.failed'))); }
+    } catch (err: unknown) { toast.error(getErrorMessage(err, t('admin.failed'))); }
   };
 
   const handleDelete = async (id: number) => {
     try { await deleteTestimonial(id); setItems(items.filter(i => i.id !== id)); toast.success(t('admin.deleted')); onDataUpdate?.(); }
-    catch (err: any) { toast.error(getErrorMessage(err, t('admin.failed'))); }
+    catch (err: unknown) { toast.error(getErrorMessage(err, t('admin.failed'))); }
   };
 
   const handleSort = async (index: number, dir: 'up' | 'down') => {

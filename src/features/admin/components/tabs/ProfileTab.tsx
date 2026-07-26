@@ -23,22 +23,22 @@ export default function ProfileTab({ data, onDataUpdate }: { data: AppData; onDa
   });
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    setIsLoading(true);
     try {
       const computedFullName = [form.firstName, form.middleName, form.lastName].filter(Boolean).join(' ') || form.fullName;
       const computedFullNameAr = [form.firstNameAr, form.middleNameAr, form.lastNameAr].filter(Boolean).join(' ') || form.fullNameAr;
-      const payload: any = { ...form, fullName: computedFullName, fullNameAr: computedFullNameAr };
+      const payload: Partial<Profile> = { ...form, fullName: computedFullName, fullNameAr: computedFullNameAr };
       if (photoFile) payload.photoUrl = await uploadImage(photoFile);
       if (resumeFile) payload.resumeUrl = await uploadFile(resumeFile);
       await updateProfile(payload);
       await onDataUpdate();
       toast.success(t('admin.profileUpdated'));
-    } catch (err: any) { toast.error(getErrorMessage(err, t('admin.failedToUpdateProfile'))); }
-    setLoading(false);
+    } catch (err: unknown) { toast.error(getErrorMessage(err, t('admin.failedToUpdateProfile'))); }
+    setIsLoading(false);
   };
 
   return (
@@ -109,7 +109,7 @@ export default function ProfileTab({ data, onDataUpdate }: { data: AppData; onDa
           <p>{resumeFile ? resumeFile.name : data.profile.resumeUrl ? t('admin.current') + data.profile.resumeUrl.split('/').pop() : t('admin.uploadCv')}</p>
         </label>
       </div>
-      <button type="submit" className="btn btn-primary" disabled={loading}>{loading ? t('admin.saving') : t('admin.save')}</button>
+      <button type="submit" className="btn btn-primary" disabled={isLoading}>{isLoading ? t('admin.saving') : t('admin.save')}</button>
     </form>
   );
 }

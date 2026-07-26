@@ -5,25 +5,21 @@ import { FiEye, FiEyeOff, FiTrash2 } from 'react-icons/fi';
 import type { AppData, Review } from '../../../../types';
 import { fetchAllReviews, updateReview, deleteReview, approveReview } from '../../../../api/api';
 import { getErrorMessage } from '../helpers';
+import { useConfirmDelete } from '@/shared/hooks/useConfirmDelete';
 
 interface Props {
   data: AppData;
   onDataUpdate: () => Promise<void>;
 }
 
-const iconBtnBase: React.CSSProperties = {
-  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-  width: 32, height: 32, borderRadius: 6, border: '1px solid var(--border)',
-  background: 'var(--bg-primary)', cursor: 'pointer', transition: 'all 0.15s',
-};
-
 export default function ReviewsTab({ data, onDataUpdate }: Props) {
   const { t } = useTranslation();
+  const confirmDelete = useConfirmDelete();
   const [items, setItems] = useState<Review[]>([]);
-  const [sectionVisible, setSectionVisible] = useState(
+  const [isSectionVisible, setIsSectionVisible] = useState(
     data.settings?.reviewsSectionVisible !== 'false'
   );
-  const [savingToggle, setSavingToggle] = useState(false);
+  const [isSavingToggle, setIsSavingToggle] = useState(false);
 
   const load = async () => {
     try {
@@ -36,7 +32,7 @@ export default function ReviewsTab({ data, onDataUpdate }: Props) {
 
   useEffect(() => { load(); }, []);
   useEffect(() => {
-    setSectionVisible(data.settings?.reviewsSectionVisible !== 'false');
+    setIsSectionVisible(data.settings?.reviewsSectionVisible !== 'false');
   }, [data.settings]);
 
   const pending = items.filter((r) => !r.isApproved);
@@ -65,7 +61,7 @@ export default function ReviewsTab({ data, onDataUpdate }: Props) {
   };
 
   const handleDelete = async (id: number) => {
-    if (!window.confirm(t('admin.confirmDelete'))) return;
+    if (!confirmDelete()) return;
     try {
       await deleteReview(id);
       toast.success(t('admin.deleted'));
@@ -77,58 +73,47 @@ export default function ReviewsTab({ data, onDataUpdate }: Props) {
   };
 
   const handleSectionToggle = async () => {
-    setSavingToggle(true);
+    setIsSavingToggle(true);
     try {
-      const newVal = !sectionVisible;
-      setSectionVisible(newVal);
+      const newVal = !isSectionVisible;
+      setIsSectionVisible(newVal);
       const { updateSettings } = await import('../../../../api/api');
-      updateSettings({ reviewsSectionVisible: String(newVal) });
+      await updateSettings({ reviewsSectionVisible: String(newVal) });
       toast.success(newVal ? t('admin.reviewApproved') : t('admin.hide'));
       await onDataUpdate();
     } catch {
-      setSectionVisible(!sectionVisible);
+      setIsSectionVisible(!isSectionVisible);
       toast.error(t('admin.failed'));
     } finally {
-      setSavingToggle(false);
+      setIsSavingToggle(false);
     }
   };
 
   const renderCard = (r: Review, isPending: boolean) => (
     <div
       key={r.id}
-      style={{
-        padding: '0.75rem 1rem',
-        borderRadius: 'var(--radius-sm)',
-        background: isPending ? 'rgba(201, 168, 76, 0.08)' : 'var(--bg-primary)',
-        border: `1px solid ${isPending ? 'var(--accent)' : 'var(--border)'}`,
-        display: 'flex',
-        alignItems: 'flex-start',
-        gap: '0.75rem',
-      }}
+      className={`admin-review-card${isPending ? ' pending' : ''}`}
     >
       {r.avatarUrl ? (
         <img
           src={r.avatarUrl}
           alt={r.name}
-          style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover', flexShrink: 0, border: '2px solid var(--accent)' }}
+          className="admin-review-avatar"
         />
       ) : (
-        <div style={{
-          width: 36, height: 36, borderRadius: '50%', background: 'var(--navy)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          color: 'var(--accent)', fontWeight: 700, fontSize: '0.8rem', flexShrink: 0,
-        }}>
+        <div className="admin-review-avatar-placeholder">
           {r.name.charAt(0)}
         </div>
       )}
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem' }}>
-          <strong style={{ fontSize: '0.85rem' }}>{r.name}</strong>
-          <div style={{ display: 'flex', gap: '0.35rem', flexShrink: 0 }}>
+      <div className="admin-review-body">
+        <div className="admin-review-header">
+          <strong>{r.name}</strong>
+          <div className="admin-review-actions">
             {!r.isApproved && (
               <button
                 title={t('admin.approve')}
-                style={{ ...iconBtnBase, borderColor: 'var(--accent)' }}
+                className="admin-btn-icon"
+                style={{ borderColor: 'var(--accent)' }}
                 onClick={() => handleApprove(r.id)}
                 onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--accent)'; e.currentTarget.style.color = '#fff'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--bg-primary)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
@@ -139,7 +124,8 @@ export default function ReviewsTab({ data, onDataUpdate }: Props) {
             {r.isApproved && (
               <button
                 title={t('admin.hide')}
-                style={{ ...iconBtnBase, borderColor: 'var(--accent-secondary)' }}
+                className="admin-btn-icon"
+                style={{ borderColor: 'var(--accent-secondary)' }}
                 onClick={() => handleHide(r.id)}
                 onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--accent-secondary)'; e.currentTarget.style.color = '#fff'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--bg-primary)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
@@ -149,7 +135,8 @@ export default function ReviewsTab({ data, onDataUpdate }: Props) {
             )}
             <button
               title={t('admin.delete')}
-              style={{ ...iconBtnBase, borderColor: '#e74c3c' }}
+              className="admin-btn-icon"
+              style={{ borderColor: '#e74c3c' }}
               onClick={() => handleDelete(r.id)}
               onMouseEnter={(e) => { e.currentTarget.style.background = '#e74c3c'; e.currentTarget.style.color = '#fff'; }}
               onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--bg-primary)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
@@ -158,29 +145,28 @@ export default function ReviewsTab({ data, onDataUpdate }: Props) {
             </button>
           </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: '0.25rem 0' }}>
-          <span style={{ color: 'var(--accent)', fontSize: '0.8rem' }}>
+        <div style={{ margin: '0.25rem 0' }}>
+          <span className="admin-review-stars">
             {'\u2605'.repeat(r.rating)}{'\u2606'.repeat(5 - r.rating)}
           </span>
         </div>
-        <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{r.comment}</p>
+        <p className="admin-review-comment">{r.comment}</p>
       </div>
     </div>
   );
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-        <h3 style={{ fontFamily: 'var(--font-heading)', margin: 0 }}>
+      <div className="admin-section-header">
+        <h3 className="admin-section-title">
           {t('admin.reviews')} ({items.length})
         </h3>
-        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.85rem' }}>
+        <label className="admin-toggle-label">
           <input
             type="checkbox"
-            checked={sectionVisible}
+            checked={isSectionVisible}
             onChange={handleSectionToggle}
-            disabled={savingToggle}
-            style={{ accentColor: 'var(--accent)' }}
+            disabled={isSavingToggle}
           />
           {t('admin.reviewsSection')}
         </label>
@@ -189,13 +175,13 @@ export default function ReviewsTab({ data, onDataUpdate }: Props) {
       {items.length === 0 ? (
         <p style={{ color: 'var(--text-muted)' }}>{t('reviews.noReviews')}</p>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <div className="admin-flex-col" style={{ gap: '1.5rem' }}>
           {pending.length > 0 && (
             <div>
-              <h4 style={{ fontSize: '0.8rem', color: 'var(--accent)', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              <h4 className="admin-section-heading" style={{ color: 'var(--accent)' }}>
                 {t('admin.pendingReviews')} ({pending.length})
               </h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <div className="admin-flex-col" style={{ gap: '0.5rem' }}>
                 {pending.map((r) => renderCard(r, true))}
               </div>
             </div>
@@ -203,10 +189,10 @@ export default function ReviewsTab({ data, onDataUpdate }: Props) {
 
           {approved.length > 0 && (
             <div>
-              <h4 style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              <h4 className="admin-section-heading" style={{ color: 'var(--text-muted)' }}>
                 {t('admin.approvedReviews')} ({approved.length})
               </h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <div className="admin-flex-col" style={{ gap: '0.5rem' }}>
                 {approved.map((r) => renderCard(r, false))}
               </div>
             </div>

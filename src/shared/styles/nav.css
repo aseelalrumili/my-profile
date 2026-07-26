@@ -15,7 +15,8 @@
   border: 1px solid var(--border);
   border-top: none;
   border-radius: 0 0 16px 16px;
-  transition: all var(--dur-base) var(--ease-out);
+  transition: background var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out);
 }
 
 [data-theme="light"] .nav {
@@ -84,6 +85,13 @@
   color: var(--accent);
 }
 
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
 .nav-links {
   display: flex;
   align-items: center;
@@ -105,6 +113,7 @@
   display: flex;
   align-items: center;
   gap: 0.6rem;
+  flex-shrink: 0;
 }
 
 .nav-lang-btn {
@@ -120,7 +129,7 @@
   font-size: var(--fs-xs);
   font-weight: var(--fw-semibold);
   cursor: pointer;
-  transition: all var(--dur-fast);
+  transition: color var(--dur-fast), border-color var(--dur-fast);
 }
 
 .nav-lang-btn:hover { border-color: var(--accent); color: var(--accent); }
@@ -137,7 +146,7 @@
   justify-content: center;
   cursor: pointer;
   font-size: 1rem;
-  transition: all var(--dur-fast);
+  transition: color var(--dur-fast), border-color var(--dur-fast);
 }
 
 .nav-toggle-btn:hover { border-color: var(--accent); color: var(--accent); }
@@ -151,7 +160,7 @@
   font-size: var(--fs-xs);
   font-weight: var(--fw-semibold);
   cursor: pointer;
-  transition: all var(--dur-fast);
+  transition: background var(--dur-fast);
 }
 
 .nav-cv-btn:hover { background: var(--accent-hover); }
@@ -168,7 +177,7 @@
   justify-content: center;
   font-size: var(--fs-xs);
   cursor: pointer;
-  transition: all var(--dur-fast);
+  transition: color var(--dur-fast), border-color var(--dur-fast);
 }
 
 .nav-admin-btn:hover { border-color: var(--accent); color: var(--accent); }
@@ -200,16 +209,16 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  /* Default: LTR — opens from right */
-  right: 0;
-  border-left: 1px solid var(--border);
+  /* Default: LTR — opens from left */
+  left: 0;
+  border-right: 1px solid var(--border);
 }
 
 [dir="rtl"] .mobile-menu {
-  right: auto;
-  left: 0;
-  border-left: none;
-  border-right: 1px solid var(--border);
+  left: auto;
+  right: 0;
+  border-right: none;
+  border-left: 1px solid var(--border);
 }
 
 .mobile-menu a {
@@ -226,7 +235,7 @@
 .mobile-menu-close {
   position: absolute;
   top: 1.25rem;
-  right: 1.25rem;
+  left: 1.25rem;
   background: none;
   border: none;
   color: var(--text);
@@ -235,8 +244,8 @@
 }
 
 [dir="rtl"] .mobile-menu-close {
-  right: auto;
-  left: 1.25rem;
+  left: auto;
+  right: 1.25rem;
 }
 
 .mobile-menu-controls {

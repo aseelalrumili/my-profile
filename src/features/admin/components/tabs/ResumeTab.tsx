@@ -1,17 +1,21 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import { FiPlus, FiCopy, FiTrash2, FiStar, FiEdit3, FiDownload, FiFileText } from 'react-icons/fi';
+import { FiPlus, FiFileText } from 'react-icons/fi';
 import type { AppData } from '@/types';
 import type { ResumeSettings, ResumeVersion } from '@/core/types/resume';
 import { defaultResumeSettings, defaultAtsSettings } from './resume/defaultSettings';
 import ResumeEditor from './resume/ResumeEditor';
 import ResumePreview from './resume/ResumePreview';
 import ResumePDF from './resume/ResumePDF';
+import EditingName from './resume/EditingName';
+import ResumeVersionList from './resume/ResumeVersionList';
 import {
   fetchResumeVersions, createResumeVersion, updateResumeVersion,
   deleteResumeVersion, cloneResumeVersion, setDefaultResume,
 } from '@/api/resume';
+import { useConfirmDelete } from '@/shared/hooks/useConfirmDelete';
+import { getErrorMessage } from '../helpers';
 
 interface Props { data: AppData; onDataUpdate?: () => Promise<void> }
 
@@ -27,12 +31,13 @@ function dedupVersions(arr: ResumeVersion[]): ResumeVersion[] {
 export default function ResumeTab({ data, onDataUpdate }: Props) {
   const { t, i18n } = useTranslation();
   const isAr = i18n.language === 'ar';
+  const confirmDelete = useConfirmDelete();
   const [versions, setVersions] = useState<ResumeVersion[]>([]);
   const [activeTab, setActiveTab] = useState<'ats' | 'regular'>('regular');
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [showPreview, setShowPreview] = useState(false);
+  const [isPreviewVisible, setIsPreviewVisible] = useState(false);
   const [previewKey, setPreviewKey] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const creatingRef = useRef(false);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingSettingsRef = useRef<{ id: string; settings: ResumeSettings } | null>(null);
@@ -41,8 +46,12 @@ export default function ResumeTab({ data, onDataUpdate }: Props) {
     const pending = pendingSettingsRef.current;
     if (!pending) return;
     pendingSettingsRef.current = null;
-    await updateResumeVersion(pending.id, { settings: pending.settings });
-  }, []);
+    try {
+      await updateResumeVersion(pending.id, { settings: pending.settings });
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err, t('admin.failed')));
+    }
+  }, [t]);
 
   useEffect(() => {
     return () => {
@@ -52,10 +61,15 @@ export default function ResumeTab({ data, onDataUpdate }: Props) {
   }, [flushSave]);
 
   const loadVersions = useCallback(async () => {
-    const v = await fetchResumeVersions();
-    setVersions(dedupVersions(v));
-    setLoading(false);
-  }, []);
+    try {
+      const v = await fetchResumeVersions();
+      setVersions(dedupVersions(v));
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err, t('admin.failed')));
+    } finally {
+      setIsLoading(false);
+    }
+  }, [t]);
 
   useEffect(() => { loadVersions(); }, [loadVersions]);
 
@@ -119,38 +133,43 @@ export default function ResumeTab({ data, onDataUpdate }: Props) {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm(isAr ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?')) return;
-    await deleteResumeVersion(id);
-    setVersions(prev => prev.filter(v => v.id !== id));
-    if (editingId === id) setEditingId(null);
-    toast.success(t('resume.versionDeleted'));
-    onDataUpdate?.();
+    if (!confirmDelete()) return;
+    try {
+      await deleteResumeVersion(id);
+      setVersions(prev => prev.filter(v => v.id !== id));
+      if (editingId === id) setEditingId(null);
+      toast.success(t('resume.versionDeleted'));
+      onDataUpdate?.();
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err, t('admin.failed')));
+    }
   };
 
   const handleSetDefault = async (id: string) => {
-    await setDefaultResume(id);
-    setVersions(prev => prev.map(v =>
-      v.type === (versions.find(x => x.id === id)?.type)
-        ? { ...v, isDefault: v.id === id }
-        : v
-    ));
-    toast.success(t('resume.defaultSet'));
-    onDataUpdate?.();
+    try {
+      await setDefaultResume(id);
+      setVersions(prev => prev.map(v =>
+        v.type === (versions.find(x => x.id === id)?.type)
+          ? { ...v, isDefault: v.id === id }
+          : v
+      ));
+      toast.success(t('resume.defaultSet'));
+      onDataUpdate?.();
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err, t('admin.failed')));
+    }
   };
 
   const handleRefreshPreview = () => {
     setPreviewKey(k => k + 1);
-    setShowPreview(true);
+    setIsPreviewVisible(true);
   };
 
   if (editing) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-        <div style={{
-          display: 'flex', gap: '0.5rem', marginBottom: '1rem',
-          alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+      <div className="admin-flex-col" style={{ height: '100%' }}>
+        <div className="admin-flex-between" style={{ flexWrap: 'wrap', marginBottom: '1rem' }}>
+          <div className="admin-flex-center">
             <button className="btn btn-secondary btn-sm" onClick={() => setEditingId(null)}>
               &larr; {t('resume.backToList')}
             </button>
@@ -160,23 +179,19 @@ export default function ResumeTab({ data, onDataUpdate }: Props) {
               isAr={isAr}
             />
           </div>
-          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-            {editing.type === 'ats' ? (
-              <ResumePDF data={data} settings={editing.settings} isAr={isAr} />
-            ) : (
-              <ResumePDF data={data} settings={editing.settings} isAr={isAr} />
-            )}
+          <div className="admin-flex-center">
+            <ResumePDF data={data} settings={editing.settings} />
             {editing.type === 'ats' && (
               <button className="btn btn-secondary btn-sm" onClick={() => {
-                const el = document.getElementById('resume-admin-preview');
-                if (!el) return;
-                const text = el.innerText;
+                const previewElement = document.getElementById('resume-admin-preview');
+                if (!previewElement) return;
+                const text = previewElement.innerText;
                 const blob = new Blob([text], { type: 'text/plain' });
                 const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `${editing.name}.txt`;
-                a.click();
+                const anchorElement = document.createElement('a');
+                anchorElement.href = url;
+                anchorElement.download = `${editing.name}.txt`;
+                anchorElement.click();
                 URL.revokeObjectURL(url);
               }}>
                 <FiFileText style={{ marginRight: 4 }} /> {t('resume.exportText')}
@@ -186,28 +201,13 @@ export default function ResumeTab({ data, onDataUpdate }: Props) {
               👁 {t('resume.preview')}
             </button>
             {editing.type === 'ats' && (
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', padding: '4px 8px', background: 'var(--bg-primary)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
-                ATS Mode
-              </span>
+              <span className="admin-btn-sm">ATS Mode</span>
             )}
           </div>
         </div>
 
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: showPreview ? '320px 1fr' : '1fr',
-          gap: '1rem',
-          flex: 1,
-          minHeight: 0,
-        }}>
-          <div style={{
-            background: 'var(--bg-secondary)',
-            border: '1px solid var(--border)',
-            borderRadius: 'var(--radius)',
-            overflow: 'hidden',
-            display: 'flex',
-            flexDirection: 'column',
-          }}>
+        <div className={`admin-editor-layout ${isPreviewVisible ? 'side-by-side' : 'full'}`}>
+          <div className="admin-editor-panel">
             <ResumeEditor
               settings={editing.settings}
               onChange={(s) => handleSaveSettings(s)}
@@ -215,15 +215,9 @@ export default function ResumeTab({ data, onDataUpdate }: Props) {
             />
           </div>
 
-          {showPreview && (
-            <div style={{
-              background: 'var(--bg-secondary)',
-              border: '1px solid var(--border)',
-              borderRadius: 'var(--radius)',
-              overflow: 'auto',
-              padding: 'var(--space-4)',
-            }}>
-              <ResumePreview key={previewKey} data={data} settings={editing.settings} isAr={isAr} />
+          {isPreviewVisible && (
+            <div className="admin-preview-container">
+              <ResumePreview key={previewKey} data={data} settings={editing.settings} />
             </div>
           )}
         </div>
@@ -232,12 +226,12 @@ export default function ResumeTab({ data, onDataUpdate }: Props) {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <h3 style={{ fontFamily: 'var(--font-heading)', margin: '0 0 1rem', fontSize: 'var(--fs-lg)' }}>
+    <div className="admin-flex-col" style={{ height: '100%' }}>
+      <h3 className="admin-section-title" style={{ marginBottom: '1rem' }}>
         {t('resume.builder')}
       </h3>
 
-      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
+      <div className="admin-tab-bar">
         {(['regular', 'ats'] as const).map(tab => (
           <button
             key={tab}
@@ -250,8 +244,8 @@ export default function ResumeTab({ data, onDataUpdate }: Props) {
         ))}
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-        <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+      <div className="admin-flex-between" style={{ marginBottom: '1rem' }}>
+        <span className="admin-section-count">
           {filtered.length} {isAr ? 'نسخة' : 'versions'}
         </span>
         <button className="btn btn-primary btn-sm" onClick={handleCreate}>
@@ -259,15 +253,11 @@ export default function ResumeTab({ data, onDataUpdate }: Props) {
         </button>
       </div>
 
-      {loading ? (
+      {isLoading ? (
         <p style={{ color: 'var(--text-muted)' }}>{t('loading')}</p>
       ) : filtered.length === 0 ? (
-        <div style={{
-          textAlign: 'center', padding: '3rem 1rem',
-          background: 'var(--bg-secondary)', borderRadius: 'var(--radius)',
-          border: '1px dashed var(--border)',
-        }}>
-          <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>
+        <div className="admin-empty-state">
+          <p>
             {isAr ? 'لا توجد نسخ بعد' : 'No versions yet'}
           </p>
           <button className="btn btn-primary btn-sm" onClick={handleCreate}>
@@ -275,102 +265,18 @@ export default function ResumeTab({ data, onDataUpdate }: Props) {
           </button>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-          {filtered.map(v => (
-            <div
-              key={v.id}
-              style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                padding: '0.75rem 1rem',
-                background: v.id === editingId ? 'var(--accent-bg, rgba(37,99,235,0.08))' : 'var(--bg-secondary)',
-                border: `1px solid ${v.id === editingId ? 'var(--accent)' : 'var(--border)'}`,
-                borderRadius: 'var(--radius)',
-                cursor: 'pointer',
-                transition: 'all 0.15s',
-              }}
-              onClick={() => setEditingId(v.id)}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: 1, minWidth: 0 }}>
-                <FiEdit3 size={16} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
-                <div style={{ minWidth: 0 }}>
-                  <div style={{ fontWeight: 500, fontSize: '0.9rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {v.name}
-                  </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                    {new Date(v.updatedAt).toLocaleDateString(isAr ? 'ar' : 'en')}
-                  </div>
-                </div>
-                {v.isDefault && (
-                  <span style={{
-                    fontSize: '0.7rem', padding: '2px 8px',
-                    background: 'var(--accent)', color: '#fff',
-                    borderRadius: '999px', flexShrink: 0,
-                  }}>
-                    {t('resume.default')}
-                  </span>
-                )}
-              </div>
-
-              <div style={{ display: 'flex', gap: '0.25rem', flexShrink: 0 }} onClick={e => e.stopPropagation()}>
-                {!v.isDefault && (
-                  <button
-                    className="btn btn-secondary btn-sm"
-                    style={{ padding: '4px 8px', fontSize: '0.75rem' }}
-                    onClick={() => handleSetDefault(v.id)}
-                    title={t('resume.setDefault')}
-                  >
-                    <FiStar size={14} />
-                  </button>
-                )}
-                <button
-                  className="btn btn-secondary btn-sm"
-                  style={{ padding: '4px 8px', fontSize: '0.75rem' }}
-                  onClick={() => handleClone(v.id)}
-                  title={t('resume.clone')}
-                >
-                  <FiCopy size={14} />
-                </button>
-                <button
-                  className="btn btn-danger btn-sm"
-                  style={{ padding: '4px 8px', fontSize: '0.75rem' }}
-                  onClick={() => handleDelete(v.id)}
-                  title={t('resume.delete')}
-                >
-                  <FiTrash2 size={14} />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+        <ResumeVersionList
+          filtered={filtered}
+          editingId={editingId}
+          isAr={isAr}
+          onSelect={(id) => setEditingId(id)}
+          onCreate={handleCreate}
+          onClone={handleClone}
+          onDelete={handleDelete}
+          onSetDefault={handleSetDefault}
+          isLoading={isLoading}
+        />
       )}
     </div>
-  );
-}
-
-function EditingName({ name, onSave, isAr }: { name: string; onSave: (n: string) => void; isAr: boolean }) {
-  const [editing, setEditing] = useState(false);
-  const [value, setValue] = useState(name);
-
-  if (!editing) {
-    return (
-      <span
-        style={{ fontWeight: 500, fontSize: '0.95rem', cursor: 'pointer' }}
-        onClick={() => { setEditing(true); setValue(name); }}
-      >
-        {name}
-      </span>
-    );
-  }
-
-  return (
-    <form onSubmit={e => { e.preventDefault(); if (value.trim()) { onSave(value.trim()); setEditing(false); } }} style={{ display: 'flex', gap: '0.25rem' }}>
-      <input
-        autoFocus
-        value={value}
-        onChange={e => setValue(e.target.value)}
-        onBlur={() => { if (value.trim()) { onSave(value.trim()); setEditing(false); } else setEditing(false); }}
-        style={{ padding: '2px 6px', fontSize: '0.95rem', fontWeight: 500, border: '1px solid var(--accent)', borderRadius: 'var(--radius-sm)' }}
-      />
-    </form>
   );
 }

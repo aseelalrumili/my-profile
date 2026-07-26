@@ -1,14 +1,23 @@
 import axios from 'axios';
 import type { AppData } from '../types';
 import { fallbackData } from '../fallbackData';
+import { safeStorage } from '@/shared/utils/safeStorage';
 
 const API = axios.create({ baseURL: '/api' });
 
 API.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = safeStorage.getItem('token');
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
+
+let pendingWrite: Promise<void> = Promise.resolve();
+
+function enqueueWrite<T>(fn: () => Promise<T>): Promise<T> {
+  const chained = pendingWrite.then(() => fn(), () => fn());
+  pendingWrite = chained.then(() => {}, () => {});
+  return chained;
+}
 
 export async function fetchAllData(): Promise<AppData | null> {
   try {
@@ -45,29 +54,35 @@ export async function getCollection<T extends { id: number }>(key: string): Prom
 }
 
 export async function addItem<T extends { id: number }>(key: string, item: Omit<T, 'id'>): Promise<T> {
-  const data = await fetchAllData();
-  const items = (data?.[key as keyof AppData] as unknown as T[]) || [];
-  const maxId = items.length ? Math.max(...items.map((i) => i.id)) : 0;
-  const newItem = { ...item, id: maxId + 1 } as T;
-  items.push(newItem);
-  await updateData({ [key]: items });
-  return newItem;
+  return enqueueWrite(async () => {
+    const data = await fetchAllData();
+    const items = (data?.[key as keyof AppData] as unknown as T[]) || [];
+    const maxId = items.length ? Math.max(...items.map((i) => i.id)) : 0;
+    const newItem = { ...item, id: maxId + 1 } as T;
+    items.push(newItem);
+    await updateData({ [key]: items });
+    return newItem;
+  });
 }
 
 export async function updateItem<T extends { id: number }>(key: string, id: number, patch: Partial<T>): Promise<T> {
-  const data = await fetchAllData();
-  const items = (data?.[key as keyof AppData] as unknown as T[]) || [];
-  const idx = items.findIndex((i) => i.id === id);
-  if (idx === -1) throw new Error('Not found');
-  items[idx] = { ...items[idx], ...patch };
-  await updateData({ [key]: items });
-  return items[idx];
+  return enqueueWrite(async () => {
+    const data = await fetchAllData();
+    const items = (data?.[key as keyof AppData] as unknown as T[]) || [];
+    const index = items.findIndex((item) => item.id === id);
+    if (index === -1) throw new Error('Not found');
+    items[index] = { ...items[index], ...patch };
+    await updateData({ [key]: items });
+    return items[index];
+  });
 }
 
 export async function removeItem<T extends { id: number }>(key: string, id: number): Promise<void> {
-  const data = await fetchAllData();
-  const items = (data?.[key as keyof AppData] as unknown as T[]) || [];
-  await updateData({ [key]: items.filter((i) => i.id !== id) });
+  return enqueueWrite(async () => {
+    const data = await fetchAllData();
+    const items = (data?.[key as keyof AppData] as unknown as T[]) || [];
+    await updateData({ [key]: items.filter((i) => i.id !== id) });
+  });
 }
 
 export async function getObject<K extends keyof AppData>(key: K): Promise<AppData[K]> {
@@ -77,11 +92,14 @@ export async function getObject<K extends keyof AppData>(key: K): Promise<AppDat
 }
 
 export async function updateObject<K extends keyof AppData>(key: K, patch: Partial<AppData[K]>): Promise<void> {
-  const current = await getObject(key);
-  const updated = typeof current === 'object' && !Array.isArray(current)
-    ? { ...current, ...patch }
-    : patch;
-  await updateData({ [key]: updated });
+  return enqueueWrite(async () => {
+    const current = await fetchAllData();
+    const currentVal = current?.[key] ?? fallbackData[key];
+    const updated = typeof currentVal === 'object' && !Array.isArray(currentVal)
+      ? { ...currentVal, ...patch }
+      : patch;
+    await updateData({ [key]: updated });
+  });
 }
 
 export async function getSettings(): Promise<Record<string, string>> {
@@ -90,6 +108,8 @@ export async function getSettings(): Promise<Record<string, string>> {
 }
 
 export async function updateSettings(data: Record<string, string>): Promise<void> {
-  const current = await getSettings();
-  await updateData({ settings: { ...current, ...data } });
+  return enqueueWrite(async () => {
+    const current = await getSettings();
+    await updateData({ settings: { ...current, ...data } });
+  });
 }

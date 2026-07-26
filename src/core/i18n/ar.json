@@ -72,7 +72,7 @@
   },
   "certifications": {
     "title": "الشهادات",
-    "subtitle": "الشهادات المهنية والإنجازات",
+    "subtitle": "الشهادات العلمية والمهنية والإنجازات",
     "viewCredential": "عرض الشهادة",
     "viewAll": "عرض الكل",
     "issued": "تاريخ الإصدار",
@@ -195,7 +195,7 @@
   },
   "certsPage": {
     "title": "الشهادات",
-    "subtitle": "الشهادات المهنية والإنجازات",
+    "subtitle": "الشهادات العلمية والمهنية والإنجازات",
     "loadError": "فشل تحميل الشهادات."
   },
   "loading": "جاري التحميل...",
@@ -358,7 +358,21 @@
     "visitors": "زوار",
     "noMessages": "لا توجد رسائل.",
     "photo": "صورة شخصية",
-    "arSuffix": "(عربي)"
+    "arSuffix": "(عربي)",
+    "sectionVisibility": "إظهار الأقسام",
+    "saveSectionVisibility": "حفظ إعدادات الأقسام",
+    "themeSettings": "إعدادات المظهر",
+    "changePassword": "تغيير كلمة المرور",
+    "newPassword": "كلمة المرور الجديدة",
+    "newPasswordPlaceholder": "أدخل كلمة المرور الجديدة (8 أحرف على الأقل)",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "confirmPasswordPlaceholder": "أكد كلمة المرور الجديدة",
+    "passwordRequired": "كلمة المرور مطلوبة",
+    "passwordTooShort": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
+    "passwordMismatch": "كلمتا المرور غير متطابقتين",
+    "passwordChanged": "تم تغيير كلمة المرور بنجاح!",
+    "failedToUpdatePassword": "فشل تغيير كلمة المرور",
+    "settingsSaved": "تم حفظ الإعدادات!"
   },
   "notFound": {
     "title": "404",

@@ -3,22 +3,50 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { fetchMessages, markMessageRead, deleteMessage } from '../../../../api/api';
 import type { Message } from '../../../../types';
+import type { AppData } from '../../../../types';
 import { getErrorMessage } from '../helpers';
+import { useConfirmDelete } from '@/shared/hooks/useConfirmDelete';
 
-export default function MessagesTab() {
+interface Props {
+  data: AppData;
+  onDataUpdate: () => Promise<void>;
+}
+
+export default function MessagesTab({ data, onDataUpdate }: Props) {
   const { t } = useTranslation();
+  const confirmDelete = useConfirmDelete();
   const [messages, setMessages] = useState<Message[]>([]);
 
-  useEffect(() => { fetchMessages().then(setMessages).catch(() => toast.error('Failed to load messages.')); }, []);
+  useEffect(() => {
+    fetchMessages()
+      .then(setMessages)
+      .catch(() => {
+        setMessages(data.messages || []);
+        toast.error(t('admin.failed'));
+      });
+  }, []);
 
   const handleMarkRead = async (id: number) => {
-    try { await markMessageRead(id); setMessages(messages.map(m => m.id === id ? { ...m, isRead: true } : m)); toast.success(t('admin.markRead')); }
-    catch (err: any) { toast.error(getErrorMessage(err, t('admin.failed'))); }
+    try {
+      await markMessageRead(id);
+      setMessages(messages.map(m => m.id === id ? { ...m, isRead: true } : m));
+      toast.success(t('admin.markRead'));
+      await onDataUpdate();
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err, t('admin.failed')));
+    }
   };
 
   const handleDelete = async (id: number) => {
-    try { await deleteMessage(id); setMessages(messages.filter(m => m.id !== id)); toast.success(t('admin.deleted')); }
-    catch (err: any) { toast.error(getErrorMessage(err, t('admin.failed'))); }
+    if (!confirmDelete()) return;
+    try {
+      await deleteMessage(id);
+      setMessages(messages.filter(m => m.id !== id));
+      toast.success(t('admin.deleted'));
+      await onDataUpdate();
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err, t('admin.failed')));
+    }
   };
 
   return (

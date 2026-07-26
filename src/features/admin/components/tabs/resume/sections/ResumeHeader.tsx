@@ -1,17 +1,18 @@
 import type { ResumeSettings } from '@/core/types/resume';
 import type { Profile } from '@/core/types/profile';
+import { useLocale } from '@/shared/hooks/useLocale';
 
 interface Props {
   profile: Profile;
   settings: ResumeSettings;
-  isAr: boolean;
 }
 
-export default function ResumeHeader({ profile, settings, isAr }: Props) {
+export default function ResumeHeader({ profile, settings }: Props) {
+  const { local } = useLocale();
   const { layout, colors, fonts } = settings;
-  const name = isAr && profile.fullNameAr ? profile.fullNameAr : profile.fullName;
-  const title = isAr && profile.jobTitleAr ? profile.jobTitleAr : profile.jobTitle;
-  const location = isAr && profile.locationAr ? profile.locationAr : profile.location;
+  const name = local(profile, 'fullName');
+  const title = local(profile, 'jobTitle');
+  const location = local(profile, 'location');
 
   const photoRadius =
     layout.photoShape === 'circle' ? '50%' :

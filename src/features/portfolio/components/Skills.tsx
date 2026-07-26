@@ -1,11 +1,14 @@
 import { useMemo } from 'react';
-import { motion } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { FiTool } from 'react-icons/fi';
 import type { AppData, Skill } from '../../../types';
+import { useLocale } from '../../../shared/hooks/useLocale';
+import SectionHeader from '../../../shared/components/UI/SectionHeader';
 
 function SkillColumn({ title, skills, isAr, containerVariants, cardVariants }: {
   title: string; skills: Skill[]; isAr: boolean;
-  containerVariants: any; cardVariants: any;
+  containerVariants: Variants; cardVariants: Variants;
 }) {
   if (skills.length === 0) return null;
   return (
@@ -33,7 +36,7 @@ function SkillColumn({ title, skills, isAr, containerVariants, cardVariants }: {
             transition={{ duration: 0.25 }}
           >
             <div className="skill-header">
-              <span className="skill-name">{isAr && skill.nameAr ? skill.nameAr : skill.name}</span>
+              <span className="skill-name">{isAr ? skill.nameAr || skill.name : skill.name}</span>
               <span className="skill-pct">{skill.percentage}%</span>
             </div>
             <div className="skill-bar">
@@ -53,8 +56,8 @@ function SkillColumn({ title, skills, isAr, containerVariants, cardVariants }: {
 }
 
 export default function Skills({ data }: { data: AppData }) {
-  const { t, i18n } = useTranslation();
-  const isAr = i18n.language === 'ar';
+  const { t } = useTranslation();
+  const { isAr } = useLocale();
 
   const designSkills = useMemo(() =>
     (data.skills || []).filter(s => s.type === 'Development' ? false : true),
@@ -76,25 +79,7 @@ export default function Skills({ data }: { data: AppData }) {
 
   return (
     <section className="section">
-      <motion.h2
-        className="section-title"
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-      >
-        {t('skills.title')}
-        <span className="section-title-underline" />
-      </motion.h2>
-      <motion.p
-        className="section-subtitle"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-      >
-        {t('skills.subtitle')}
-      </motion.p>
+      <SectionHeader title={t('skills.title')} subtitle={t('skills.subtitle')} underline icon={<FiTool />} />
 
       <div className="skills-split">
         <SkillColumn title={t('skills.designTools')} skills={designSkills} isAr={isAr} containerVariants={containerVariants} cardVariants={cardVariants} />
