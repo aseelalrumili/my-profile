@@ -5,6 +5,7 @@ import type { BlogPost } from './blog';
 import type { Testimonial } from './testimonial';
 import type { Review } from './review';
 import type { ResumeVersion } from './resume';
+import type { Message } from './message';
 
 export interface LoginResponse {
   token: string;
@@ -23,6 +24,7 @@ export interface AppData {
   blogPosts: BlogPost[];
   testimonials: Testimonial[];
   reviews: Review[];
+  messages: Message[];
   settings: Record<string, string>;
   resumeVersions: ResumeVersion[];
 }

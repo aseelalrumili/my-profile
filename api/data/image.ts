@@ -22,7 +22,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const { get } = await import('@vercel/blob');
     const result = await get(blobPath, { ...getOpts(), access: 'private' });
-    const blobMeta = (result as unknown as { blob?: { downloadUrl?: string; url?: string } }).blob || result;
+    if (!result) return res.status(404).json({ error: 'Image not found' });
+    const blobMeta = (result as any).blob || result;
 
     const downloadUrl = blobMeta.downloadUrl || blobMeta.url;
     if (!downloadUrl) {

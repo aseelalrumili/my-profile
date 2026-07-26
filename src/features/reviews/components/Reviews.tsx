@@ -132,7 +132,7 @@ function Reviews({ settings }: { settings?: Record<string, string> }) {
 
       <AnimatePresence>
         {isFormVisible && (
-          <ReviewForm onSubmit={handleReviewSubmitted} onCancel={() => setShowForm(false)} />
+          <ReviewForm onSubmit={handleReviewSubmitted} onCancel={() => setIsFormVisible(false)} />
         )}
       </AnimatePresence>
     </section>

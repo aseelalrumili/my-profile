@@ -1,5 +1,3 @@
-import type { VercelBlob } from '@vercel/blob';
-
 export function getToken(): string | null {
   return process.env.PORTFOLIO_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN || null;
 }
@@ -18,14 +16,15 @@ interface BlobMeta {
   url?: string;
 }
 
-function extractBlobMeta(result: VercelBlob.BlobResult): BlobMeta {
-  const blob = (result as unknown as { blob?: BlobMeta }).blob;
-  return blob || result;
+function extractBlobMeta(result: any): BlobMeta {
+  const blob = result?.blob;
+  return blob || result || {};
 }
 
 export async function readBlob<T = unknown>(key: string, opts: Record<string, string>): Promise<T | null> {
   const { get } = await import('@vercel/blob');
   const result = await get(key, { ...opts, access: 'private' });
+  if (!result) return null;
   const blobMeta = extractBlobMeta(result);
 
   if (blobMeta.downloadUrl) {
@@ -36,8 +35,8 @@ export async function readBlob<T = unknown>(key: string, opts: Record<string, st
     const resp = await fetch(blobMeta.url);
     if (resp.ok) return await resp.json();
   }
-  if (result.stream) {
-    const text = await new Response(result.stream).text();
+  if ((result as any).stream) {
+    const text = await new Response((result as any).stream).text();
     return JSON.parse(text);
   }
   return null;
