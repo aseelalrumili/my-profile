@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { FiUser } from 'react-icons/fi';
+import { FiUser, FiBookOpen } from 'react-icons/fi';
 import type { AppData } from '../../../types';
 import { useCountUp } from '../../../shared/hooks/useCountUp';
 import { useLocale } from '../../../shared/hooks/useLocale';
@@ -98,7 +98,10 @@ export default function About({ data }: { data: AppData }) {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            <h3 className="about-subtitle">{t('about.education') || 'Education'}</h3>
+            <h3 className="section-title" style={{ fontSize: 'var(--fs-h3)' }}>
+              <span className="section-title-icon" style={{ width: '1.8rem', height: '1.8rem', fontSize: '0.95rem' }}><FiBookOpen /></span>
+              {t('about.education') || 'Education'}
+            </h3>
             <div className="about-timeline">
               {education.map((edu, idx) => (
                 <motion.div

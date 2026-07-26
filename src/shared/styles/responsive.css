@@ -75,6 +75,17 @@
     flex-shrink: 0;
   }
 
+  .nav-lang-btn {
+    min-width: 44px;
+    width: 44px;
+  }
+
+  .nav-toggle-btn,
+  .nav-admin-btn {
+    width: 44px;
+    height: 44px;
+  }
+
   .nav-lang-btn,
   .nav-toggle-btn,
   .nav-admin-btn {
