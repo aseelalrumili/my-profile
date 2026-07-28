@@ -1173,46 +1173,451 @@ vercel --prod
 
 ## 19. البنية التحتية للمنصة
 
+### Tech Stack النهائي
+
+#### Frontend
+| الطبقة | التقنية | الإصدار |
+|--------|---------|---------|
+| **Web** | React + TypeScript + Vite | 18.3 + 5.4 |
+| **Mobile** | React Native CLI + TypeScript | 0.74+ |
+| **State Management** | React Query | 5.x |
+| **UI Library** | React Native Paper / NativeBase | Latest |
+| **Navigation** | React Navigation | 6.x |
+| **HTTP Client** | Axios | 1.7 |
+| ** Animations** | React Native Reanimated | 3.x |
+
+#### Backend
+| الطبقة | التقنية | الإصدار |
+|--------|---------|---------|
+| **Framework** | ASP.NET Core Web API | 8.0 |
+| **ORM** | Entity Framework Core | 8.0 |
+| **Database** | MySQL | 8.0 |
+| **Auth** | ASP.NET Identity + JWT | 8.0 |
+| **API Design** | REST API | OpenAPI 3.0 |
+| **Documentation** | Swagger / Swashbuckle | 6.5 |
+| **Validation** | FluentValidation | 11.x |
+| **Logging** | Serilog | 3.x |
+| **Caching** | Redis (StackExchange.Redis) | 2.x |
+
+#### DevOps & Infrastructure
+| البند | التقنية | الملاحظات |
+|-------|---------|-----------|
+| **CI/CD** | GitHub Actions | Build + Test + Deploy |
+| **Hosting (حالياً)** | Hostinger VPS | .NET + MySQL |
+| **Hosting (مستقبلي)** | Azure VM | Windows Server + IIS |
+| **Storage** | Cloudflare R2 | S3-compatible + CDN |
+| **Search** | Meilisearch | Self-hosted على Azure |
+| **Email** | Resend / SMTP | Transactional emails |
+| **Monitoring** | Sentry + Application Insights | Error tracking |
+| **Payments** | Stripe | Subscriptions + Invoices |
+
 ### مخطط البنية التحتية
 ```
-                    ┌─────────────┐
-                    │   CDN       │
-                    │ (Cloudflare)│
-                    └──────┬──────┘
-                           │
-                    ┌──────▼──────┐
-                    │   Vercel    │
-                    │ (Frontend + │
-                    │  Serverless)│
-                    └──────┬──────┘
-                           │
-              ┌────────────┼────────────┐
-              │            │            │
-       ┌──────▼──────┐ ┌──▼───┐ ┌─────▼─────┐
-       │ PostgreSQL  │ │Redis │ │ Cloudflare │
-       │ (Supabase)  │ │      │ │    R2      │
-       └─────────────┘ └──────┘ └───────────┘
+┌─────────────────────────────────────────────────────────┐
+│                    المستخدم                              │
+│              (Web Browser / Mobile App)                  │
+└──────────────────────┬──────────────────────────────────┘
+                       │
+                       ▼
+┌──────────────────────────────────────────────────────────┐
+│                   Cloudflare CDN                         │
+│              (Static Assets + DDoS Protection)           │
+└──────────────────────┬───────────────────────────────────┘
+                       │
+         ┌─────────────┼─────────────┐
+         │             │             │
+         ▼             ▼             ▼
+┌─────────────┐ ┌─────────────┐ ┌─────────────┐
+│  React Web  │ │ React Native│ │  Swagger    │
+│  (Vercel/   │ │   (Expo/    │ │   docs      │
+│   Hostinger)│ │   Build)    │ │             │
+└──────┬──────┘ └──────┬──────┘ └──────┬──────┘
+       │               │               │
+       └───────────────┼───────────────┘
+                       │
+                       ▼
+┌──────────────────────────────────────────────────────────┐
+│              .NET 8 Web API (Hostinger/Azure)             │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐   │
+│  │  Auth    │ │  CRUD    │ │ Payments │ │ Search   │   │
+│  │ Controller│ │Controller│ │Controller│ │Controller│   │
+│  └────┬─────┘ └────┬─────┘ └────┬─────┘ └────┬─────┘   │
+│       │            │            │            │           │
+│       └────────────┼────────────┼────────────┘           │
+│                    │                                    │
+│              ┌─────▼─────┐                              │
+│              │    EF     │                              │
+│              │   Core    │                              │
+│              └─────┬─────┘                              │
+└────────────────────┼────────────────────────────────────┘
+                     │
+        ┌────────────┼────────────┬────────────┐
+        │            │            │            │
+        ▼            ▼            ▼            ▼
+┌─────────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐
+│  MySQL 8    │ │  Redis  │ │Cloudflare│ │Meilisearch│
+│  (Azure)    │ │ (Cache) │ │   R2     │ │ (Search) │
+└─────────────┘ └─────────┘ └─────────┘ └─────────┘
 ```
 
-### التقنيات المطلوبة
-| البند | التقنية | البديل |
-|-------|---------|--------|
-| **Frontend** | Next.js 14+ | Remix |
-| **Backend** | Next.js API Routes | NestJS |
-| **ORM** | Prisma | Drizzle |
-| **Database** | PostgreSQL | MySQL |
-| **Cache** | Redis | Upstash |
-| **Auth** | NextAuth.js | Clerk |
-| **Payments** | Stripe | Paddle |
-| **Storage** | Cloudflare R2 | AWS S3 |
-| **Email** | Resend | SendGrid |
-| **Monitoring** | Sentry | Datadog |
-| **Analytics** | PostHog | Mixpanel |
-| **Search** | Algolia | Meilisearch |
-| **CDN** | Cloudflare | Fastly |
-| **CI/CD** | GitHub Actions | GitLab CI |
-| **Containers** | Docker | Podman |
-| **Orchestration** | Kubernetes | Docker Compose |
+### هيكل المشروع (.NET Backend)
+```
+PortfolioPlatform/
+├── src/
+│   ├── PortfolioPlatform.Api/              # Web API Project
+│   │   ├── Controllers/
+│   │   │   ├── AuthController.cs           # POST /api/auth/login, /register
+│   │   │   ├── ProfileController.cs        # GET/PUT /api/profile
+│   │   │   ├── SkillsController.cs         # CRUD /api/skills
+│   │   │   ├── ExperienceController.cs     # CRUD /api/experience
+│   │   │   ├── EducationController.cs      # CRUD /api/education
+│   │   │   ├── ProjectsController.cs       # CRUD /api/projects
+│   │   │   ├── CertificationsController.cs # CRUD /api/certifications
+│   │   │   ├── BlogController.cs           # CRUD /api/blog
+│   │   │   ├── TestimonialsController.cs   # CRUD /api/testimonials
+│   │   │   ├── ReviewsController.cs        # CRUD /api/reviews
+│   │   │   ├── MessagesController.cs       # CRUD /api/messages
+│   │   │   ├── ResumeController.cs         # CRUD /api/resume
+│   │   │   ├── FileController.cs           # Upload/Download files
+│   │   │   ├── SearchController.cs         # Search via Meilisearch
+│   │   │   └── AnalyticsController.cs      # GET /api/analytics
+│   │   ├── Program.cs                      # Entry point + DI
+│   │   ├── appsettings.json                # Configuration
+│   │   └── appsettings.Development.json
+│   │
+│   ├── PortfolioPlatform.Core/             # Business Logic
+│   │   ├── Entities/
+│   │   │   ├── User.cs                     # ASP.NET Identity User
+│   │   │   ├── Profile.cs
+│   │   │   ├── Skill.cs
+│   │   │   ├── Experience.cs
+│   │   │   ├── Education.cs
+│   │   │   ├── Project.cs
+│   │   │   ├── Certification.cs
+│   │   │   ├── BlogPost.cs
+│   │   │   ├── Testimonial.cs
+│   │   │   ├── Review.cs
+│   │   │   ├── Message.cs
+│   │   │   └── ResumeVersion.cs
+│   │   ├── Interfaces/
+│   │   │   ├── IRepository.cs              # Generic repository
+│   │   │   ├── IUserService.cs
+│   │   │   ├── IFileService.cs
+│   │   │   └── ISearchService.cs
+│   │   ├── Services/
+│   │   │   ├── UserService.cs
+│   │   │   ├── FileService.cs              # Cloudflare R2 integration
+│   │   │   └── SearchService.cs            # Meilisearch integration
+│   │   └── DTOs/
+│   │       ├── Auth/
+│   │       ├── Profile/
+│   │       ├── Skills/
+│   │       └── ...
+│   │
+│   ├── PortfolioPlatform.Infrastructure/   # Data Access
+│   │   ├── Data/
+│   │   │   ├── AppDbContext.cs             # EF Core DbContext
+│   │   │   └── Migrations/                 # EF Core migrations
+│   │   ├── Repositories/
+│   │   │   ├── Repository.cs               # Generic CRUD
+│   │   │   ├── UserRepository.cs
+│   │   │   └── ...
+│   │   └── Configurations/
+│   │       ├── UserConfiguration.cs
+│   │       └── ...
+│   │
+│   └── PortfolioPlatform.Tests/            # Unit Tests
+│       ├── Controllers/
+│       ├── Services/
+│       └── Repositories/
+│
+├── docker-compose.yml                      # Local development
+├── PortfolioPlatform.sln                   # Solution file
+└── README.md
+```
+
+### هيكل مشروع React Native
+```
+mobile-app/
+├── src/
+│   ├── api/
+│   │   ├── client.ts                       # Axios instance
+│   │   ├── auth.ts                         # Auth API
+│   │   ├── profile.ts                      # Profile API
+│   │   └── ...
+│   ├── components/
+│   │   ├── common/                         # Shared components
+│   │   ├── profile/                        # Profile components
+│   │   ├── skills/                         # Skills components
+│   │   └── ...
+│   ├── screens/
+│   │   ├── Auth/
+│   │   │   ├── LoginScreen.tsx
+│   │   │   └── RegisterScreen.tsx
+│   │   ├── Main/
+│   │   │   ├── HomeScreen.tsx
+│   │   │   ├── ProfileScreen.tsx
+│   │   │   ├── SkillsScreen.tsx
+│   │   │   ├── ProjectsScreen.tsx
+│   │   │   ├── ExperienceScreen.tsx
+│   │   │   ├── CertificationsScreen.tsx
+│   │   │   ├── BlogScreen.tsx
+│   │   │   ├── ContactScreen.tsx
+│   │   │   └── ResumeScreen.tsx
+│   │   └── Admin/
+│   │       ├── DashboardScreen.tsx
+│   │       ├── ProfileEditScreen.tsx
+│   │       ├── SkillsEditScreen.tsx
+│   │       ├── ProjectsEditScreen.tsx
+│   │       ├── BlogEditScreen.tsx
+│   │       ├── ReviewsManageScreen.tsx
+│   │       ├── MessagesManageScreen.tsx
+│   │       ├── SettingsScreen.tsx
+│   │       └── AnalyticsScreen.tsx
+│   ├── navigation/
+│   │   ├── AppNavigator.tsx
+│   │   ├── AuthNavigator.tsx
+│   │   ├── MainTabNavigator.tsx
+│   │   └── AdminStackNavigator.tsx
+│   ├── hooks/
+│   │   ├── useAuth.ts
+│   │   ├── useProfile.ts
+│   │   └── useQuery.ts
+│   ├── store/
+│   │   ├── authStore.ts                    # React Query
+│   │   └── queryClient.ts
+│   ├── i18n/
+│   │   ├── en.json
+│   │   └── ar.json
+│   ├── utils/
+│   │   ├── storage.ts
+│   │   └── theme.ts
+│   └── types/
+│       └── index.ts
+├── android/                                # Android native code
+├── ios/                                    # iOS native code
+├── App.tsx
+└── package.json
+```
+
+### API Endpoints النهائية
+
+#### Authentication
+```
+POST   /api/auth/register          # تسجيل حساب جديد
+POST   /api/auth/login             # تسجيل الدخول
+POST   /api/auth/refresh           # تجديد JWT token
+POST   /api/auth/logout            # تسجيل الخروج
+POST   /api/auth/forgot-password   # نسيت كلمة المرور
+POST   /api/auth/reset-password    # إعادة تعيين كلمة المرور
+```
+
+#### Profile
+```
+GET    /api/profile                # جلب الملف الشخصي
+PUT    /api/profile                # تحديث الملف الشخصي
+POST   /api/profile/photo          # رفع الصورة
+```
+
+#### Portfolio Sections (CRUD لكل قسم)
+```
+GET    /api/skills                 # جلب المهارات
+POST   /api/skills                 # إضافة مهارة
+PUT    /api/skills/{id}            # تحديث مهارة
+DELETE /api/skills/{id}            # حذف مهارة
+PUT    /api/skills/reorder         # إعادة ترتيب
+
+GET    /api/experience             # جلب الخبرات
+POST   /api/experience             # إضافة خبرة
+PUT    /api/experience/{id}        # تحديث خبرة
+DELETE /api/experience/{id}        # حذف خبرة
+
+# نفس النمط لـ: education, projects, certifications,
+# blog, testimonials, reviews, messages, resume
+```
+
+#### Files
+```
+POST   /api/files/upload           # رفع ملف
+GET    /api/files/{fileName}       # جلب ملف
+DELETE /api/files/{fileName}       # حذف ملف
+```
+
+#### Search
+```
+GET    /api/search?q={query}       # بحث شامل
+GET    /api/search/skills?q={q}    # بحث في المهارات
+GET    /api/search/projects?q={q}  # بحث في المشاريع
+GET    /api/search/blog?q={q}      # بحث في المدونة
+```
+
+#### Analytics
+```
+GET    /api/analytics/dashboard    # إحصائيات لوحة التحكم
+GET    /api/analytics/visitors     # بيانات الزوار
+GET    /api/analytics/pages        # أكثر الصفحات زيارة
+POST   /api/analytics/track        # تتبع حدث
+```
+
+### Stripe Integration
+
+#### الخطوات
+```
+1. إنشاء حساب Stripe
+2. إعداد Products + Prices
+3. ربط Webhook endpoint
+4. إنشاء Checkout Session
+5. معالجة Payment Intents
+6. إعداد Billing Portal
+```
+
+#### النماذج
+```csharp
+// Subscription Plans
+public enum PlanType
+{
+    Free,       // $0/شهر - ميزات أساسية
+    Pro,        // $9/شهر - جميع الميزات
+    Business    // $29/شهر - API + White-label
+}
+
+// Stripe Products
+// prod_xxx → Free Plan
+// prod_yyy → Pro Plan
+// prod_zzz → Business Plan
+```
+
+### CI/CD Pipeline (GitHub Actions)
+
+```yaml
+# .github/workflows/deploy.yml
+name: Build & Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with: { dotnet-version: '8.0.x' }
+      - run: dotnet restore
+      - run: dotnet build --no-restore
+      - run: dotnet test --no-build
+      - run: dotnet publish -c Release -o ./publish
+      - uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_KEY }}
+          source: "./publish/*"
+          target: "/var/www/portfolio-api"
+
+  build-web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm ci
+      - run: npm run build
+      - uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-args: '--prod'
+
+  build-mobile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: cd mobile-app && npm ci
+      - run: cd mobile-app && npx react-native build-android --mode=release
+```
+
+### هيكل قاعدة البيانات (MySQL 8)
+
+```sql
+-- المستخدمين
+CREATE TABLE AspNetUsers (
+    Id VARCHAR(36) PRIMARY KEY,
+    Email VARCHAR(255) UNIQUE NOT NULL,
+    PasswordHash VARCHAR(255) NOT NULL,
+    FullName VARCHAR(255),
+    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- الملف الشخصي
+CREATE TABLE Profiles (
+    Id INT PRIMARY KEY AUTO_INCREMENT,
+    UserId VARCHAR(36) NOT NULL,
+    FullName VARCHAR(255),
+    FullNameAr VARCHAR(255),
+    FirstName VARCHAR(255),
+    FirstNameAr VARCHAR(255),
+    JobTitle VARCHAR(255),
+    JobTitleAr VARCHAR(255),
+    Bio TEXT,
+    BioAr TEXT,
+    PhotoUrl VARCHAR(500),
+    Email VARCHAR(255),
+    Location VARCHAR(255),
+    LocationAr VARCHAR(255),
+    ThemeColor VARCHAR(7) DEFAULT '#c9a84c',
+    FOREIGN KEY (UserId) REFERENCES AspNetUsers(Id)
+);
+
+-- المهارات
+CREATE TABLE Skills (
+    Id INT PRIMARY KEY AUTO_INCREMENT,
+    UserId VARCHAR(36) NOT NULL,
+    Name VARCHAR(255) NOT NULL,
+    NameAr VARCHAR(255),
+    Category VARCHAR(100),
+    Level INT DEFAULT 0,
+    SortOrder INT DEFAULT 0,
+    FOREIGN KEY (UserId) REFERENCES AspNetUsers(Id)
+);
+
+-- الخبرات
+CREATE TABLE Experiences (
+    Id INT PRIMARY KEY AUTO_INCREMENT,
+    UserId VARCHAR(36) NOT NULL,
+    Title VARCHAR(255) NOT NULL,
+    TitleAr VARCHAR(255),
+    Company VARCHAR(255),
+    CompanyAr VARCHAR(255),
+    Period VARCHAR(100),
+    Description TEXT,
+    DescriptionAr TEXT,
+    SortOrder INT DEFAULT 0,
+    FOREIGN KEY (UserId) REFERENCES AspNetUsers(Id)
+);
+
+-- نفس النمط لـ: Educations, Projects, Certifications,
+-- BlogPosts, Testimonials, Reviews, Messages, ResumeVersions
+```
+
+### التكلفة الشهرية المتوقعة
+
+| البند | الخطة المجانية | الخطة المدفوعة |
+|-------|---------------|---------------|
+| **Hostinger VPS** | — | $5-10/شهر |
+| **Azure VM (مستقبلي)** | — | $20-50/شهر |
+| **MySQL (Azure)** | — | $0-15/شهر |
+| **Cloudflare R2** | $0 (10GB مجاني) | $0.015/GB |
+| **Meilisearch** | $0 (self-hosted) | $0 |
+| **Stripe** | 2.9% + $0.30/tx | 2.9% + $0.30/tx |
+| **Domain** | $10/سنة | $10/سنة |
+| **Email (Resend)** | $0 (100/day) | $20/شهر |
+| **Sentry** | $0 (5K events) | $26/شهر |
+| **GitHub Actions** | $0 (2000 min) | $0 |
+| **الإجمالي** | **~$15/شهر** | **~$50-100/شهر** |
 
 ---
 
